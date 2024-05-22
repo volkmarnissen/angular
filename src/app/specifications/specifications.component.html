@@ -1,0 +1,44 @@
+<div>
+    <div class="flexrows">
+        <ng-container *ngFor="let spec of specifications ">
+            <mat-card class="width350pt card">
+                <mat-card-header>
+                    <mat-card-title matTooltip="Contribute Specification" (click)="contributeSpecification(spec)"
+                        class="clickable width200pt">{{getTranslatedSpecName(spec)
+                        }}</mat-card-title>
+                    <div class="card-header-buttons">
+                        <button mat-icon-button class="material-icons app-toolbar-menu delete-button"
+                            matTooltip="Delete" color="warn" [disabled]="[0,1].includes(spec.status)"
+                            (click)="deleteSpecification(spec)">
+                            <mat-icon matTooltip="Delete">delete</mat-icon>
+                        </button>
+                    </div>
+                </mat-card-header>
+                <mat-card-content>
+                    <div *ngFor="let message of spec.messages">
+                        <p class="message errorTextNoBlink">{{getValidationMessage(spec,message)}}</p>
+                    </div>
+                    <button mat-button class="width200pt"
+                        [disabled]="[0,4].includes(spec.status) || spec.messages.length > 0 || contributedSpecificationExists"
+                        (click)="contributeSpecification(spec)">
+                        Contribute
+                    </button>
+                    <button mat-button class=" width200pt" (click)="exportSpecification(spec)">
+                        Downbload as .zip File
+                    </button>
+                </mat-card-content>
+            </mat-card>
+        </ng-container>
+        <mat-card class="width250pt card">
+            <mat-card-header>
+                <mat-card-title class="clickable">Import Specification</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <button mat-button class=" width200pt" (click)="importSpecification()">
+                    Import
+                </button>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

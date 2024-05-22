@@ -1,0 +1,28 @@
+<div class="flexrowsNoWrap header">
+  <div class="menuButton">
+    <button mat-icon-button matTooltip="Configuration" [matMenuTriggerFor]="configMenu" class="hover-display">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <mat-menu #configMenu>
+      <a [routerLink]="'/configure'" [class]="getActiveRoute() == '/configure' ? 'disabled' : ''">
+        <button mat-button>
+          XConfigure MQTT/Github ...
+        </button></a>
+      <a [routerLink]="'/specifications'" [class]="getActiveRoute() == '/specifications' ? 'disabled' : ''">
+        <button mat-button>
+          XContribute/Import/Export Spec.
+        </button></a>
+      <a [routerLink]="'/register'"><button mat-button aria-label="Register User ...">
+          Register User ...
+        </button></a>
+    </mat-menu>
+  </div>
+  <div>
+    <img src="assets/images/icon.png" style=" width:1.5em; height:1.5em;" />
+  </div>
+
+  <div class="middle flex-auto">
+    <h1>Modbus2MQTT</h1>
+  </div>
+
+</div>

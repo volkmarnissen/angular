@@ -1,0 +1,88 @@
+<div #slavesBody>
+      <div class="flexrows">
+        <ng-container *ngFor="let uislave of uiSlaves; let i = index">
+          <mat-card  class="width250pt card">
+            <form (keydown.enter)="keyDown($event, uislave.slaveForm)" [formGroup]="uislave.slaveForm">
+            <mat-card-header><mat-card-title matTooltip="Edit Specification" (click)="editSpecification(uislave.slave)"
+                class="clickable">{{uislave.label }}</mat-card-title>
+                <div class="card-header-buttons">
+                  <button mat-icon-button class="material-icons app-toolbar-menu delete-button" matTooltip="Delete"
+                    color="warn" (click)="deleteSlave(uislave.slave)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                  <button mat-icon-button class="material-icons app-toolbar-menu delete-button"
+                    matTooltip="Add New Specification" color="primary" (click)="addSpecification(uislave.slave)">
+                    <mat-icon>add_box</mat-icon>
+                  </button>
+                  <button *ngIf="uislave.slave.specificationid != undefined" mat-icon-button
+                    class="material-icons app-toolbar-menu delete-button" matTooltip="Edit Specification"
+                    color="primary" (click)="editSpecification(uislave.slave)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                </div>
+            </mat-card-header>
+            <mat-card-content>
+               <mat-form-field>
+                  <mat-label>Specification</mat-label>
+
+                  <mat-select matInput formControlName="ispecs" (valueChange)="onSpecificationChange(uislave.slave, $event)"
+                    (selectionChange)="onSelectionChange( uislave.slave)"
+                    [compareWith]="compareSpecificationIdentification">
+                    <ng-container *ngFor="let i = index; let ispec of uislave.specs|async ">
+                      <mat-option [value]="ispec">
+                        <mat-icon
+                          [matTooltip]="statusTooltip(ispec?ispec.status:3)">{{statusIcon(ispec?ispec.status:3)}}</mat-icon>
+                        <mat-icon [color]="ispec?.identified== 1?'primary':'warn'"
+                          [matTooltip]="identifiedTooltip(ispec.identified)">{{identifiedIcon(ispec.identified)}}</mat-icon>
+                        {{ ispec!== null?getSpecificationI18nName(ispec, currentLanguage):'' }}
+                      </mat-option>
+                    </ng-container>
+                  </mat-select>
+                </mat-form-field>              
+                <mat-expansion-panel >
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    Slave Settings
+                  </mat-panel-title>
+                </mat-expansion-panel-header> 
+                <mat-form-field class="width150pt">
+                  <mat-label>Slave Name</mat-label>
+                  <input matInput formControlName="name" [errorStateMatcher]="errorStateMatcher" (change)="setSlaveName($event, uislave.slave)" />
+                  <mat-error *ngIf="uislave.slaveForm.get('name')!.hasError('duplicates') != null">
+                    Must be unique
+                </mat-error>
+                </mat-form-field>
+                <mat-form-field  class="width150pt">
+                  <mat-label>Poll Interval [ms]</mat-label>
+                    <input matInput formControlName="pollInterval" type="number" placeholder="1000" (change)="setPolInterval($event, uislave.slave)" />
+                  </mat-form-field>
+              </mat-expansion-panel>
+            </mat-card-content>
+          </form>
+        </mat-card>
+      </ng-container>
+      <mat-card  class="width250pt card">
+        <form (keydown.enter)="keyDown($event,slaveNewForm)" [formGroup]="slaveNewForm">
+        <mat-card-header><mat-card-title
+            class="clickable">New Slave</mat-card-title>
+          
+            <div class="card-header-buttons">
+              <button mat-icon-button class="material-icons app-toolbar-menu cancel-button"
+                matTooltip="Add Modbus Slave" color="primary" (click)="addSlave(slaveNewForm)"
+                [disabled]="!slaveNewForm.valid || -1 == getSlaveIdFromForm(slaveNewForm)|| !canAddSlaveId(slaveNewForm)">
+                <mat-icon>add_box</mat-icon>
+              </button>
+            </div>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-form-field class="field width150pt">
+              <mat-label>Slave Id</mat-label>
+              <input matInput name="slaveId" formControlName="slaveId" type="number" (change)="addSlave(slaveNewForm)" />
+            </mat-form-field>
+            <mat-slide-toggle class="width50" formControlName="detectSpec" [matTooltip]="getDetectSpecToolTip()">Enable Specification matching.</mat-slide-toggle>
+
+        </mat-card-content>
+      </form>
+      </mat-card>
+      </div>
+ </div>

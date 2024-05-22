@@ -1,0 +1,53 @@
+{
+  "name": "angular",
+  "version": "0.7.0",
+  "sshserver": "odroid@homeassistant.fritz.box",
+  "credits": "multiple choice by Studio 365 from <a href='https://thenounproject.com/browse/icons/term/multiple-choice/' target='_blank' title='multiple choice Icons'>Noun Project</a> (CC BY 3.0)",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --host 0.0.0.0",
+    "build": "ng build ",
+    "build.ui.dev": "ng build --configuration development",
+    "build.ui.prod": "ng build --configuration production",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "test-debug": "ng test --browsers ChromeDebug --karma-config ./karma.conf.ts"
+  },
+  "main": "dist/en-US/index.html",
+  "private": true,
+  "dependencies": {
+    "material-design-icons": "^3.0.1",
+    "ng-gallery": "^11.0.0",
+    "rxjs": "^7.8.1",
+    "server.shared": "file:../server.shared",
+    "specification.shared": "file:../specification.shared",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.3.0",
+    "typescript-map": "^0.1.0",
+    "url-parse": "^1.5.10"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^17.3.0",
+    "@angular/animations": "^17.3.0",
+    "@angular/cli": "^17.3.0",
+    "@angular/common": "^17.3.0",
+    "@angular/compiler": "^17.3.0",
+    "@angular/compiler-cli": "^17.3.0",
+    "@angular/core": "^17.3.0",
+    "@angular/forms": "^17.3.0",
+    "@angular/localize": "~17.3.0",
+    "@angular/material": "^17.0.1",
+    "@angular/platform-browser": "^17.3.0",
+    "@angular/platform-browser-dynamic": "^17.3.0",
+    "@angular/router": "^17.3.0",
+    "@babel/preset-typescript": "^7.21.5",
+    "@ngx-translate/core": "^15.0.0",
+    "@popperjs/core": "^2.11.6",
+    "@types/jest": "^29.5.12",
+    "@types/ws": "^8.5.10",
+    "ts-jest": "^29.1.0",
+    "tsx": "^3.12.7",
+    "typescript": "^5.2.2",
+    "yaml": "^2.3.1"
+  }
+}

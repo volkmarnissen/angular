@@ -1,0 +1,15 @@
+.downloadLabel {
+    color: white;
+    width: 183px;
+    height: 44px;
+    border-radius: 21.5px;
+    background-color: #db202f;
+    padding: 8px 16px;
+    cursor: pointer;
+
+}
+
+.margins {
+    margin-top: 5pt;
+    margin-bottom: 10pt;
+}

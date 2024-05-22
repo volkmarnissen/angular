@@ -1,0 +1,325 @@
+<mat-card class="card">
+
+    <mat-card-header>
+        <mat-card-title>
+            <div>
+                <div class="card-header-buttons">
+                    <ng-container *ngIf="this.entity.id != -1">
+                        <ng-container *ngIf="!this.allFormGroups.pristine">
+                            <button mat-icon-button class="material-icons app-toolbar-menu save-button"
+                                matTooltip="Restore original Entity" (click)="restoreEntity()" color="primary">
+                                <mat-icon>undo</mat-icon>
+                            </button>
+                        </ng-container>
+                        <button type="button" mat-icon-button class="material-icons app-toolbar-menu save-button"
+                            matTooltip="Add this Entity" color="primary" (click)="copyEntity()">
+                            <mat-icon>file_copy</mat-icon>
+                        </button>
+                        <button type="button" mat-icon-button class="material-icons app-toolbar-menu delete-button"
+                            matTooltip="Delete this Entity" color="warn"
+                            (click)="specificationMethods?specificationMethods.deleteEntity(entity.id):null">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </ng-container>
+                    <ng-container *ngIf="this.entity.id == -1">
+                        <button type="button" mat-icon-button class="material-icons app-toolbar-menu cancel-button"
+                            matTooltip="Add this Entity" color="warn" (click)="addEntity()"
+                            [disabled]="!canSaveEntity()">
+                            <mat-icon>add_circle</mat-icon>
+                        </button>
+                    </ng-container>
+                </div>
+            </div>
+            <div>{{entity.name}}</div>
+            <mat-icon [color]="entity.identified== 1?'primary':entity.identified== -1?'':'warn'" class="icon-display">
+                {{(entity.identified == undefined || entity.identified == -1?'thumbs_up_down':(entity.identified ==
+                1?'thumb_up':'thumb_down')) }}</mat-icon>
+            <app-entity-value-control [entity]="entity" [specificationMethods]="specificationMethods"
+                [mqttValueObservable]="mqttValueObservable" />
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title [matTooltip]="entityFormGroup.valid || isNewEntity(entity)?'':'This panel has errors'">
+                    <p [ngClass]="{'errorText': !entityFormGroup.valid && !isNewEntity(entity)}">Entity</p>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <form [formGroup]="entityFormGroup">
+                <div class="flexcols">
+                    <mat-form-field class="smallfield">
+                        <mat-label>Name({{specificationMethods?specificationMethods.getMqttLanguage():""}})</mat-label>
+                        <input matInput #entityName type="text" class="width150pt" formControlName="name"
+                            [errorStateMatcher]="errorStateMatcher" (change)="onEntityNameValueChange()">
+                        <mat-error *ngIf="entityFormGroup!.get('name')?.hasError('required') != null">
+                            Required! "Set Value" is empty
+                        </mat-error>
+                    </mat-form-field>
+                    <div class="flexrows">
+                        <mat-form-field class="smallfield">
+                            <mat-label>MQTT ID</mat-label>
+                            <input matInput #entityMqttName type="text" class="width150pt" formControlName="mqttname"
+                                (keypress)="onMqttKeyPress($event)" [errorStateMatcher]="errorStateMatcher"
+                                (change)="onEntityNameValueChange()">
+
+                            <mat-error *ngIf="entityFormGroup!.get('mqttname')?.hasError('unique') != null">
+                                Must be unique within table
+                            </mat-error>
+                            <mat-error *ngIf="entityFormGroup!.get('mqttname')?.hasError('required') != null">
+                                Required!
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="smallfield">
+                            <mat-label>Icon</mat-label>
+                            <input #entityIcon matInput type="text" class="width150pt" formControlName="icon"
+                                (change)="specificationMethods.setEntitiesTouched()">
+                        </mat-form-field>
+                    </div>
+                    <mat-slide-toggle class="width50 toggleField" formControlName="forceUpdate"
+                        (change)="specificationMethods.setEntitiesTouched()"
+                        matTooltip="Upddate Home Assistant history even if value hasn't changed">Force
+                        Updates</mat-slide-toggle>
+                    <mat-form-field class="smallfield">
+                        <mat-label>Converter</mat-label>
+                        <mat-select matInput formControlName="converter" [compareWith]="compareIConverters"
+                            (selectionChange)="onModbusAddressChange()">
+                            <mat-option *ngFor="let c of converters| async " [value]="c">
+                                {{ c.name }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <div class="flexrows">
+                        <mat-form-field class="width100pt smallfield">
+                            <mat-label>Modbus Addr.</mat-label>
+                            <input #entityModbusAddress matInput type="number" formControlName="modbusAddress"
+                                [errorStateMatcher]="errorStateMatcher" (change)="onModbusAddressChange()">
+                            <mat-error *ngIf="entityFormGroup.get('modbusAddress')!.hasError('required')">
+                                This field is required
+                            </mat-error>
+                            <mat-error
+                                *ngIf="entityFormGroup.get('modbusAddress')!.hasError('min')|| entityFormGroup.get('modbusAddress')!.hasError('max')">
+                                Range is 1-65536
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="smallfield">
+                            <mat-label>Function Codes</mat-label>
+                            <mat-select #entityFunctionCode matInput formControlName="functionCode"
+                                [errorStateMatcher]="errorStateMatcher" [compareWith]="compareFunctionCodes"
+                                (selectionChange)="onModbusAddressChange()">
+                                <mat-option *ngFor="let fc of functionCodes" [value]="fc">
+                                    {{fc.name}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="entityFormGroup.get('functionCode')!.hasError('required')">
+                                This field is required
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </form>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel
+            *ngIf="isConverterSelected() && entity && getParameterTypeFromConverterFormControl() =='Inumber'">
+            <mat-expansion-panel-header>
+                <mat-panel-title [matTooltip]="numberPropertiesFormGroup.valid?'':'This panel has errors'">
+                    <p [ngClass]="{'errorText': !numberPropertiesFormGroup.valid}">Number Converter Properties</p>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <form [formGroup]="numberPropertiesFormGroup">
+                <div class="flexcols">
+                    <div class="flexrows">
+                        <mat-form-field class="smallfield width150pt">
+                            <mat-label>Device Class</mat-label>
+                            <mat-select matInput formControlName="deviceClass"
+                                (onSelectionChange)="specificationMethods.setEntitiesTouched()">
+                                <mat-option *ngFor="let c of getDeviceClasses()" [value]="c">
+                                    {{ c }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field class="smallfield ">
+                            <mat-label>UOM</mat-label>
+                            <input #propUom matInput type="text" formControlName="uom"
+                                (change)="specificationMethods.setEntitiesTouched()">
+                        </mat-form-field>
+                    </div>
+                    <div class="flexrows">
+                        <mat-form-field class="smallfield width100pt">
+                            <mat-label>Multiplier</mat-label>
+                            <input #propMultiplier matInput type="number" formControlName="multiplier"
+                                (change)="onConverterValueChange()">
+                            <mat-error *ngIf="numberPropertiesFormGroup.get('multiplier')!.hasError('required')">
+                                This field is required
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="smallfield width100pt">
+                            <mat-label>Offset</mat-label>
+                            <input #propOffset matInput type="number" formControlName="offset"
+                                (change)="onConverterValueChange()">
+                            <mat-error *ngIf="numberPropertiesFormGroup.get('offset')!.hasError('required')">
+                                This field is required
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="smallfield width150pt">
+                            <mat-label>Number Format</mat-label>
+                            <mat-select matInput formControlName="numberFormat" [errorStateMatcher]="errorStateMatcher"
+                                (selectionChange)="onConverterValueChange()" [compareWith]="compareNumber">
+                                <mat-option [value]="0">Int 16</mat-option>
+                                <mat-option [value]="1">Float 32</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="entityFormGroup.get('functionCode')!.hasError('required')">
+                                This field is required
+                            </mat-error>
+                        </mat-form-field>
+
+                    </div>
+                    <h3 class="smallfield width150pt"> Identification</h3>
+                    <div class="flexrows">
+                        <mat-form-field class="smallfield  width150pt">
+                            <mat-label>Min</mat-label>
+                            <input matInput type="number"
+                                matTooltip="Optional: The entity is identified if the mqttvalue is between min and max."
+                                formControlName="min" (change)="onConverterValueChange()">
+                        </mat-form-field>
+                        <mat-form-field appearance="fill" class="smallfield  width150pt">
+                            <mat-label>Max</mat-label>
+                            <input matInput type="number"
+                                matTooltip="Optional: The entity is identified if the mqttvalue is between min and max."
+                                formControlName="max" (change)="onConverterValueChange()">
+                        </mat-form-field>
+                    </div>
+                    <ng-container *ngIf="getShowExpertOptions()">
+
+                    </ng-container>
+                </div>
+            </form>
+        </mat-expansion-panel>
+        <mat-expansion-panel
+            *ngIf="isConverterSelected() && entity && getParameterTypeFromConverterFormControl() =='Itext'">
+            <mat-expansion-panel-header [matTooltip]="numberPropertiesFormGroup.valid?'':'This panel has errors'">
+                <mat-panel-title>
+                    <p [ngClass]="{'errorText': !numberPropertiesFormGroup.valid}"> Text Converter Properties</p>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <form [formGroup]="stringPropertiesFormGroup">
+
+                <mat-form-field class="smallfield">
+                    <mat-label>max. Num Chars.</mat-label>
+                    <input #propNumChar matInput type="number" formControlName="stringlength"
+                        (change)="onConverterValueChange()">
+                    <mat-error *ngIf="stringPropertiesFormGroup.get('stringlength')!.hasError('required')">
+                        This field is required
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="smallfield">
+                    <mat-label>Expression for identification</mat-label>
+                    <input #propRegex matInput type="text"
+                        matTooltip="Optional: The entity is identified if the mqttvalue matches the regular expression"
+                        formControlName="identExpr" (change)="onConverterValueChange()">
+                </mat-form-field>
+            </form>
+        </mat-expansion-panel>
+        <mat-expansion-panel
+            *ngIf="isConverterSelected() && entity && getParameterTypeFromConverterFormControl() =='Iselect'">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Select Converter Properties
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <form [formGroup]="selectPropertiesFormGroup">
+
+                <div cdkDropList (cdkDropListDropped)="dropOptions($event)" class="flexcols">
+                    <span cdkDrag *ngFor="let option of (getCurrentOptions()?getCurrentOptions():[])">
+                        <div class="inline width150pt">{{option.key}}</div>
+                        <div class="inline width200pt"> {{option.name}}</div>
+                        <div class="inline">
+                            <button type="button" mat-icon-button class="material-icons app-toolbar-menu delete-button"
+                                matTooltip="Delete" color="warn" (click)="deleteOption(option)" *ngIf="entity">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                    </span>
+                </div>
+                <div class="flexrows">
+                    <mat-form-field class=" width100pt smallfield">
+                        <input #propOptionModbus class="center" matInput type="number" formControlName="optionModbus"
+                            (change)="onChangeSelectOption()" (keyup.enter)="addOption()">
+                        <mat-error *ngIf="selectPropertiesFormGroup!.get('optionModbus')!.hasError('required')">
+                            This field is required
+                        </mat-error>
+                        <mat-error *ngIf="selectPropertiesFormGroup!.get('optionModbus')!.hasError('unique')">
+                            The value must be unique in the table
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field class="smallfield">
+                        <input #propOptionMqtt matInput class="center" type="text" formControlName="optionMqtt"
+                            (keyup.enter)="addOption()">
+                        <mat-error *ngIf="selectPropertiesFormGroup!.get('optionMqtt')!.hasError('required')">
+                            This field is required
+                        </mat-error>
+                        <mat-error *ngIf="selectPropertiesFormGroup!.get('optionMqtt')!.hasError('unique')">
+                            The value must be unique in the table
+                        </mat-error>
+                    </mat-form-field>
+                    <button type="button" mat-icon-button [disabled]="!canAddOption()" (click)="addOption()"
+                        matTooltip="Add" color="primary" class="material-icons app-toolbar-menu add-button">
+                        <mat-icon>add_box</mat-icon>
+                    </button>
+                </div>
+                <mat-form-field class="smallfield" *ngIf="getShowExpertOptions()">
+                    <mat-label>Device Class</mat-label>
+                    <mat-select matInput formControlName="deviceClass">
+                        <mat-option *ngFor="let c of getDeviceClasses()" [value]="c">
+                            {{ c }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </form>
+        </mat-expansion-panel>
+        <mat-expansion-panel *ngIf="! ['binary_sensor', 'button'] .includes(entity.converter.name)">
+            <mat-expansion-panel-header>
+                <mat-panel-title [matTooltip]="variableFormGroup.valid?'':'This panel has errors'">
+                    <p [ngClass]="{'errorText': !variableFormGroup.valid}"> Properties & others</p>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <form [formGroup]="variableFormGroup">
+                <div class="flexcols">
+
+
+                    <mat-form-field class="smallfield">
+                        <mat-label>Set Value </mat-label>
+                        <mat-select matInput type="number" formControlName="variableType" [compareWith]="compareNumber"
+                            (selectionChange)="onEntityNameValueChange();entityFormGroup.updateValueAndValidity();">
+                            <mat-option [value]="0"></mat-option>
+                            <mat-option [value]="5">Serial Number</mat-option>
+                            <mat-option [value]="6">Software Version</mat-option>
+                            <mat-option [value]="1">Identification for Discovery</mat-option>
+                            <mat-option [value]="2">Multiplier</mat-option>
+                            <mat-option [value]="3">Offset</mat-option>
+                            <mat-option [value]="4">Unit of Measurement</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field class="smallfield">
+                        <mat-label>Referenced Entity</mat-label>
+                        <mat-select matInput formControlName="variableEntity" [compareWith]="compareEntities"
+                            [errorStateMatcher]="errorStateMatcher" [errorStateMatcher]="errorStateMatcher"
+                            (selectionChange)="onEntityNameValueChange()">
+                            <mat-option
+                                *ngFor="let c of specificationMethods?specificationMethods.getNonVariableNumberEntities():[]"
+                                [value]="c">
+                                {{ c.name }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="entityFormGroup!.get('variableEntity')?.hasError('unique') != null">
+                            Referenced Entity and Set Value must be unique
+                        </mat-error>
+                    </mat-form-field>
+
+                </div>
+            </form>
+
+        </mat-expansion-panel>
+    </mat-card-content>
+</mat-card>

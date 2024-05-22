@@ -1,0 +1,39 @@
+<ng-container *ngIf="getConverterName() =='number'|| getConverterName()=='sensor'">
+    <mat-form-field>
+        <mat-label>MQTT Value</mat-label>
+        <input matInput (change)="onNumberChange()" type="number" [formControl]="numberFormControl"
+            (keyup.enter)="onNumberChange()" class="width50" />
+        <mat-error *ngIf="numberFormControl.hasError('min')">
+            The value is lower than the minimum
+        </mat-error>
+        <mat-error *ngIf="numberFormControl.hasError('max')">
+            The value is greater than the maximum
+        </mat-error>
+    </mat-form-field>
+</ng-container>
+<ng-container *ngIf="getConverterName().indexOf('text') >=0 ">
+    <mat-form-field class="width50">
+        <mat-label>MQTT Value</mat-label>
+        <input matInput (change)="onTextChange($event)" [formControl]="textFormControl" class="width50" />
+    </mat-form-field>
+</ng-container>
+<ng-container *ngIf="getConverterName()=='select'">
+    <mat-form-field class="width50">
+        <mat-label>Options</mat-label>
+        <mat-select matInput [formControl]="optionsFormControl" (selectionChange)="onOptionChange()" class="width50">
+            <mat-option *ngFor="let c of getOptions()" [value]="c.key">
+                {{ c.name }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</ng-container>
+<ng-container *ngIf="['button', 'binary_sensor'].includes(getConverterName())">
+    <mat-slide-toggle class="width50" [formControl]="toggleFormControl" (toggleChange)="onButton()"></mat-slide-toggle>
+</ng-container>
+<ng-container *ngIf="isSensor() && !['text_sensor','sensor','binary_sensor'].includes(getConverterName())">
+    <mat-form-field class="width50">
+        <mat-label>MQTT Value</mat-label>
+        <input matInput [formControl]="textFormControl" />
+    </mat-form-field>
+
+</ng-container>

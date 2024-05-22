@@ -1,0 +1,18 @@
+{
+  "/api": {
+    "target": "http://homeassistant.fritz.box:1007",
+    "secure": false
+  },
+  "/userAuthenticationStatus": {
+    "target": "http://homeassistant.fritz.box:1007",
+    "secure": false
+  },
+  "/user/login": {
+    "target": "http://homeassistant.fritz.box:1007",
+    "secure": false
+  },
+  "/user/register": {
+    "target": "http://homeassistant.fritz.box:1007",
+    "secure": false
+  }
+}
