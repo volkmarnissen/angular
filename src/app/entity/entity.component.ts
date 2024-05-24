@@ -2,7 +2,7 @@ import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Ou
 import { ApiService } from '../services/api-service';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { EnumNumberFormat, IFunctionCode, Iconverter, IdentifiedStates, Ientity, ImodbusData, ImodbusEntity, Iname, Inumber, Iselect, IselectOption, Itext, ModbusFunctionCodes, VariableTargetParameters, getFileNameFromName, getParameterType, setSpecificationI18nEntityName } from 'specification.shared';
+import { EnumNumberFormat, IFunctionCode, Iconverter, IdentifiedStates, Ientity, ImodbusData, ImodbusEntity, Iname, Inumber, Iselect, IselectOption, Itext, ModbusRegisterType, VariableTargetParameters, getFileNameFromName, getParameterType, setSpecificationI18nEntityName } from 'specification.shared';
 import { SessionStorage } from '../services/SessionStorage';
 import { M2mErrorStateMatcher } from '../services/M2mErrorStateMatcher';
 import { ISpecificationMethods, ImodbusEntityWithName, isDeviceVariable } from '../services/specificationInterface';
@@ -19,10 +19,11 @@ const mqttNameFormControlName = "mqttname"
 
 const newEntity: ImodbusEntityWithName = {
   name: "",
-  functionCode: ModbusFunctionCodes.readWriteHoldingRegisters,
+  registerType: ModbusRegisterType.HoldingRegister,
+  readonly:true,
   modbusValue: [0], mqttValue: "", identified: IdentifiedStates.unknown, converter: {
-    name: "sensor", functionCodes: [ModbusFunctionCodes.readWriteHoldingRegisters,
-    ModbusFunctionCodes.readAnalogInputs]
+    name: "number", registerTypes: [ModbusRegisterType.HoldingRegister,
+    ModbusRegisterType.AnalogInputs]
   },
   modbusAddress: 0, id: -1
 }
@@ -74,9 +75,9 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
   stringPropertiesFormGroup: FormGroup;
   entityObservable: Observable<ImodbusEntity>;
   functionCodes: IFunctionCode[] =
-    [{ code: ModbusFunctionCodes.readWriteHoldingRegisters, name: "Holding Registers" },
-    { code: ModbusFunctionCodes.readAnalogInputs, name: "Analog Input" },
-    { code: ModbusFunctionCodes.readWriteCoils, name: "Coils" }]
+    [{ registerType: ModbusRegisterType.HoldingRegister, name: "Holding Registers" },
+    { registerType: ModbusRegisterType.AnalogInputs, name: "Analog Input" },
+    { registerType: ModbusRegisterType.Coils, name: "Coils" }]
 
   entitiesDisplayedColumns = ['select', nameFormControlName, 'identified', 'mqttValue', 'action']
 
@@ -88,7 +89,7 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
       mqttname: [null as string | null, this.entityMqttNameValidator.bind(this)],
       converter: [null as Iconverter | null, Validators.required],
       modbusAddress: [null as number | null, Validators.compose([Validators.required, Validators.min(0), Validators.max(65536)])],
-      functionCode: [null as IFunctionCode | null, Validators.required],
+      registerType: [null as IFunctionCode | null, Validators.required],
       icon: [null as string | null],
       forceUpdate: [false],
     })
@@ -207,7 +208,7 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
 
     this.entityFormGroup.get('icon')!.setValue(entity.icon);
     this.entityFormGroup.get('forceUpdate')!.setValue(entity.forceUpdate);
-    this.entityFormGroup.get('functionCode')!.setValue(this.getFunctionCode(entity.functionCode))
+    this.entityFormGroup.get('registerType')!.setValue(this.getFunctionCode(entity.registerType))
     converterFormControl.setValue(entity.converter);
     modbusAddressFormControl.setValue(entity.modbusAddress != undefined ? entity.modbusAddress : null);
 
@@ -354,9 +355,9 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
         this.entity.converter = (converterFormControl.value as Iconverter);
       }
     }
-    this.entity.functionCode = (this.entityFormGroup.get('functionCode')!.value != null ?
-      this.entityFormGroup.get('functionCode')!.value.code :
-      this.entity.functionCode = ModbusFunctionCodes.readWriteHoldingRegisters)
+    this.entity.registerType = (this.entityFormGroup.get('registerType')!.value != null ?
+      this.entityFormGroup.get('registerType')!.value.code :
+      this.entity.registerType = ModbusRegisterType.HoldingRegister)
     this.readFromModbus()
   }
 
@@ -581,7 +582,7 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
   }
   getMqttValue(rc: ImodbusEntity): string {
     if (rc)
-      if ((rc.converter.name === "sensor" || rc.converter.name === "number") && rc.mqttValue) {
+      if (( rc.converter.name === "number") && rc.mqttValue) {
         return (rc.mqttValue as number).toString();
       }
       else
@@ -607,7 +608,7 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     return c1 != null && c2 != null && c1.name === c2.name
   }
   compareFunctionCodes(f1: IFunctionCode, f2: IFunctionCode) {
-    return (f1 && f2 && f1.code == f2.code)
+    return (f1 && f2 && f1.registerType == f2.registerType)
   }
 
   compareNumber(f1: number, f2: number) {
@@ -618,10 +619,10 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     return (f1 && f2 && f1.id == f2.id)
   }
 
-  getFunctionCode(functionCode: ModbusFunctionCodes | undefined): IFunctionCode {
+  getFunctionCode(functionCode: ModbusRegisterType | undefined): IFunctionCode {
     let rc: IFunctionCode | undefined = undefined
     if (functionCode)
-      rc = this.functionCodes.find(fc => fc.code == functionCode)
+      rc = this.functionCodes.find(fc => fc.registerType == functionCode)
     if (rc)
       return rc;
     return this.functionCodes[0]

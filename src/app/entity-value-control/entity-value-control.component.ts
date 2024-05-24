@@ -79,7 +79,6 @@ export class EntityValueControlComponent implements OnInit, OnDestroy, OnChanges
       this.entityName = (s ? s : "")
       let fc: FormControl | undefined = undefined
       switch (this.entity.converter.name) {
-        case 'sensor':
         case 'number':
           if (this.entity.mqttValue != undefined)
             this.numberFormControl.setValue(this.getMqttValue() as number)
@@ -93,26 +92,24 @@ export class EntityValueControlComponent implements OnInit, OnDestroy, OnChanges
           break;
         case 'select':
           if (this.entity.modbusValue)
-            this.optionsFormControl.setValue(this.entity.modbusValue[0])
-          fc = this.optionsFormControl
+            if( this.entity.readonly){
+                this.optionsFormControl.setValue(this.entity.modbusValue[0])
+                fc = this.optionsFormControl
+            }else{
+              this.textFormControl.setValue(this.entity.mqttValue != null ? this.entity.mqttValue as string : '')
+              fc = this.textFormControl    
+            }
           break;
-        case 'select_sensor':
-          this.textFormControl.setValue(this.entity.mqttValue != null ? this.entity.mqttValue as string : '')
-          fc = this.textFormControl
-          break;
-        case 'text_sensor':
         case 'text':
           fc = this.textFormControl
           if (this.entity.mqttValue)
             fc.setValue(this.getMqttValue())
           break;
-        case 'binary_sensor':
-        case 'button':
+        case 'binary':
           fc = this.toggleFormControl
           if (this.entity.mqttValue)
             fc.setValue(this.entity.mqttValue == 'ON')
           break;
-        case 'value_sensor':
         case 'value':
       }
       if (fc)

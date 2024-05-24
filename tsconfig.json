@@ -6,7 +6,7 @@
     "outDir": "./dist",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-
+   
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "strictPropertyInitialization": false,
@@ -33,4 +33,7 @@
     "**/environments/environment*.ts",
     "**/*.spec.ts"
   ],
+  "paths":{
+    "angular/src/*": ["./src/*"]
+  }
 }

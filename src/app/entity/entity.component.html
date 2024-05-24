@@ -103,7 +103,7 @@
                         </mat-form-field>
                         <mat-form-field class="smallfield">
                             <mat-label>Function Codes</mat-label>
-                            <mat-select #entityFunctionCode matInput formControlName="functionCode"
+                            <mat-select #entityFunctionCode matInput formControlName="registerType"
                                 [errorStateMatcher]="errorStateMatcher" [compareWith]="compareFunctionCodes"
                                 (selectionChange)="onModbusAddressChange()">
                                 <mat-option *ngFor="let fc of functionCodes" [value]="fc">

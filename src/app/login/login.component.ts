@@ -37,7 +37,10 @@ export class LoginComponent implements OnInit, AfterViewInit {
     this.api.getUserLogin(username, password).subscribe(token => {
       new SessionStorage().setAuthToken(token)
       var u = new Url(this.router.url, '', true)
-      this.toUrl = u.query.toUrl
+      if( u.query.toUrl)
+        this.toUrl = u.query.toUrl
+      else
+        this.toUrl =""
       this.router.navigate([this.toUrl], { queryParams: { tokenWasExpired: true } })
     })
   }
