@@ -31,7 +31,10 @@ export class SpecificationsComponent implements OnInit {
     specs.forEach(spec => {
       if (spec.status == SpecificationStatus.contributed)
         this.contributedSpecificationExists = true;
-      let ox = this.getValidationMessages(spec)
+      // Specifications Component doesn't change a Specification
+      // for validation of identification, it's better to use the Filespecification
+      // This happens in getForSpecificationValidation
+      let ox = this.apiService.getForSpecificationValidation(spec.filename, this.config.mqttdiscoverylanguage)
       a[spec.filename] = ox
     })
     forkJoin(a).subscribe((o: any) => {
@@ -51,9 +54,7 @@ export class SpecificationsComponent implements OnInit {
       this.apiService.getSpecifications().subscribe(this.fillSpecifications.bind(this))
     }))
   }
-  getValidationMessages(spec: ImodbusSpecification): Observable<Imessage[]> {
-    return this.apiService.postForSpecificationValidation(spec, this.config.mqttdiscoverylanguage)
-  }
+
   
   importSpecification() {
     throw new Error('Method not implemented.');
@@ -90,7 +91,10 @@ export class SpecificationsComponent implements OnInit {
       }, 1);
       return s.pipe(first())
     }
-    return this.getValidationMessages(spec).pipe(map((messages) => {
+     // Specifications Component doesn't change a Specification
+      // for validation of identification, it's better to use the Filespecification
+      // This happens in getForSpecificationValidation
+    return  this.apiService.getForSpecificationValidation(spec.filename, this.config.mqttdiscoverylanguage).pipe(map((messages) => {
       return messages.length == 0
     }))
   }

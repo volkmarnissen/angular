@@ -40,6 +40,7 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
   private i18nTouched: boolean = false;
   private filesTouched: boolean = false;
   private specServices: SpecificationServices | undefined
+  private currentMessage:Imessage|undefined;
   disabled: boolean;
   specificationMethods: ISpecificationMethods
   entities: ImodbusEntityWithName[] | undefined
@@ -56,6 +57,7 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
   validationForms: FormGroup;
 
   private setCurrentSpecification(spec: Ispecification | null) {
+    this.currentMessage = undefined
     this.currentSpecification = (spec ? spec : null) as ImodbusSpecification;
     this.entities = this.currentSpecification == null ? undefined : this.currentSpecification.entities as ImodbusEntityWithName[]
     if (this.entities && this.currentSpecification) {
@@ -194,8 +196,10 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
       },
       getSaveObservable: (): Observable<void> => {
         return this.saveSubject;
+      },
+      getCurrentMessage: ():Imessage|undefined => {
+        return this.currentMessage
       }
-
     }
 
     this.originalSpecification = structuredClone(spec) as ImodbusSpecification;
@@ -367,7 +371,7 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
 
     this.entityApiService.getConfiguration().subscribe(config => {
       this.config = config
-      new SpecificationServices(this.config.mqttdiscoverylanguage, this.entityApiService)
+      this.specServices = new SpecificationServices(this.config.mqttdiscoverylanguage, this.entityApiService)
       this.sub = this.route.params.subscribe(params => {
         this.busId = +params['busid']
         this.slaveid = +params['slaveid']
@@ -394,6 +398,9 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
   setValidationMessages(): void {
     if (!this.currentSpecification)
       return
+    // specification component may have changed the stored specification
+    // So, it must post the changes.
+    // However, the validation, can happen only for existant test data. 
     this.entityApiService.postForSpecificationValidation(this.currentSpecification!, this.config.mqttdiscoverylanguage).subscribe(mesgs => {
       this.validationMessages = mesgs;
     })
@@ -404,8 +411,8 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
     }
     return false;
   }
-  jump2Message(_message: Imessage) {
-
+  jump2Message(message: Imessage) {
+      this.currentMessage = message
   }
   isTouched(): boolean {
 

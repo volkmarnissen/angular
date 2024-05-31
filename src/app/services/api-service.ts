@@ -305,8 +305,15 @@ export class ApiService {
         return new Observable<IimageAndDocumentUrl[]>();
       }));
   }
-  postForSpecificationValidation(spec: ImodbusSpecification, language: string): Observable<Imessage[]> {
-    return this.httpClient.post<Imessage[]>(apiUri.specificationValidate + `?language=${language}`, spec).pipe(
+  getForSpecificationValidation(specfilename:string, language: string): Observable<Imessage[]> {
+    return this.httpClient.get<Imessage[]>(apiUri.specificationValidate + `?language=${language}&spec=${specfilename}`).pipe(
+      catchError(err => {
+        this.errorHandler(err);
+        return new Observable<Imessage[]>();
+      }));
+  }
+  postForSpecificationValidation(spec:ImodbusSpecification, language: string): Observable<Imessage[]> {
+    return this.httpClient.post<Imessage[]>(apiUri.specificationValidate + `?language=${language}`,spec).pipe(
       catchError(err => {
         this.errorHandler(err);
         return new Observable<Imessage[]>();

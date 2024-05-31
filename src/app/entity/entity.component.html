@@ -30,7 +30,7 @@
                     </ng-container>
                 </div>
             </div>
-            <div>{{entity.name}}</div>
+            <span [ngClass]="{'errorText': isCurrentMessage()}">{{entity.name}}</span>
             <mat-icon [color]="entity.identified== 1?'primary':entity.identified== -1?'':'warn'" class="icon-display">
                 {{(entity.identified == undefined || entity.identified == -1?'thumbs_up_down':(entity.identified ==
                 1?'thumb_up':'thumb_down')) }}</mat-icon>
@@ -72,14 +72,19 @@
                         <mat-form-field class="smallfield">
                             <mat-label>Icon</mat-label>
                             <input #entityIcon matInput type="text" class="width150pt" formControlName="icon"
-                                (change)="specificationMethods.setEntitiesTouched()">
+                                (change)="form2Entity()">
                         </mat-form-field>
                     </div>
+                    <div class="flexrows">
+                  
                     <mat-slide-toggle class="width50 toggleField" formControlName="forceUpdate"
-                        (change)="specificationMethods.setEntitiesTouched()"
-                        matTooltip="Upddate Home Assistant history even if value hasn't changed">Force
+                        (change)="form2Entity()"
+                        matTooltip="Update Home Assistant history even if value hasn't changed" (change)="form2Entity()">Force
                         Updates</mat-slide-toggle>
-                    <mat-form-field class="smallfield">
+                    <mat-slide-toggle class="width50 toggleField" formControlName="readonly"   
+                        matTooltip="The Modbus Value is read only" [disabled]="isAnalogInput()" (change)="form2Entity()">Read Only</mat-slide-toggle>
+                    </div>
+                    <mat-form-field class="smallfield"> 
                         <mat-label>Converter</mat-label>
                         <mat-select matInput formControlName="converter" [compareWith]="compareIConverters"
                             (selectionChange)="onModbusAddressChange()">
@@ -102,19 +107,20 @@
                             </mat-error>
                         </mat-form-field>
                         <mat-form-field class="smallfield">
-                            <mat-label>Function Codes</mat-label>
+                            <mat-label>Register variableType</mat-label>
                             <mat-select #entityFunctionCode matInput formControlName="registerType"
                                 [errorStateMatcher]="errorStateMatcher" [compareWith]="compareFunctionCodes"
                                 (selectionChange)="onModbusAddressChange()">
-                                <mat-option *ngFor="let fc of functionCodes" [value]="fc">
+                                <mat-option *ngFor="let fc of registerTypes" [value]="fc">
                                     {{fc.name}}
                                 </mat-option>
                             </mat-select>
-                            <mat-error *ngIf="entityFormGroup.get('functionCode')!.hasError('required')">
+                            <mat-error *ngIf="entityFormGroup.get('registerType')!.hasError('required')">
                                 This field is required
                             </mat-error>
                         </mat-form-field>
                     </div>
+                 
                 </div>
             </form>
         </mat-expansion-panel>
@@ -132,7 +138,7 @@
                         <mat-form-field class="smallfield width150pt">
                             <mat-label>Device Class</mat-label>
                             <mat-select matInput formControlName="deviceClass"
-                                (onSelectionChange)="specificationMethods.setEntitiesTouched()">
+                                (onSelectionChange)="form2Entity()">
                                 <mat-option *ngFor="let c of getDeviceClasses()" [value]="c">
                                     {{ c }}
                                 </mat-option>
@@ -141,7 +147,7 @@
                         <mat-form-field class="smallfield ">
                             <mat-label>UOM</mat-label>
                             <input #propUom matInput type="text" formControlName="uom"
-                                (change)="specificationMethods.setEntitiesTouched()">
+                                (change)="form2Entity()">
                         </mat-form-field>
                     </div>
                     <div class="flexrows">
@@ -168,7 +174,7 @@
                                 <mat-option [value]="0">Int 16</mat-option>
                                 <mat-option [value]="1">Float 32</mat-option>
                             </mat-select>
-                            <mat-error *ngIf="entityFormGroup.get('functionCode')!.hasError('required')">
+                            <mat-error *ngIf="numberPropertiesFormGroup.get('numberFormat')!.hasError('required')">
                                 This field is required
                             </mat-error>
                         </mat-form-field>
@@ -189,9 +195,6 @@
                                 formControlName="max" (change)="onConverterValueChange()">
                         </mat-form-field>
                     </div>
-                    <ng-container *ngIf="getShowExpertOptions()">
-
-                    </ng-container>
                 </div>
             </form>
         </mat-expansion-panel>

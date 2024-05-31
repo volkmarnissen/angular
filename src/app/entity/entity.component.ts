@@ -2,7 +2,7 @@ import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Ou
 import { ApiService } from '../services/api-service';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { EnumNumberFormat, IFunctionCode, Iconverter, IdentifiedStates, Ientity, ImodbusData, ImodbusEntity, Iname, Inumber, Iselect, IselectOption, Itext, ModbusRegisterType, VariableTargetParameters, getFileNameFromName, getParameterType, setSpecificationI18nEntityName } from 'specification.shared';
+import { EnumNumberFormat, IFunctionCode as IRegisterType, Iconverter, IdentifiedStates, Ientity, Imessage, ImodbusData, ImodbusEntity, Iname, Inumber, Iselect, IselectOption, Itext, ModbusRegisterType, VariableTargetParameters, getFileNameFromName, getParameterType, setSpecificationI18nEntityName } from 'specification.shared';
 import { SessionStorage } from '../services/SessionStorage';
 import { M2mErrorStateMatcher } from '../services/M2mErrorStateMatcher';
 import { ISpecificationMethods, ImodbusEntityWithName, isDeviceVariable } from '../services/specificationInterface';
@@ -74,7 +74,7 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
   numberPropertiesFormGroup: FormGroup;
   stringPropertiesFormGroup: FormGroup;
   entityObservable: Observable<ImodbusEntity>;
-  functionCodes: IFunctionCode[] =
+  registerTypes: IRegisterType[] =
     [{ registerType: ModbusRegisterType.HoldingRegister, name: "Holding Registers" },
     { registerType: ModbusRegisterType.AnalogInputs, name: "Analog Input" },
     { registerType: ModbusRegisterType.Coils, name: "Coils" }]
@@ -89,7 +89,8 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
       mqttname: [null as string | null, this.entityMqttNameValidator.bind(this)],
       converter: [null as Iconverter | null, Validators.required],
       modbusAddress: [null as number | null, Validators.compose([Validators.required, Validators.min(0), Validators.max(65536)])],
-      registerType: [null as IFunctionCode | null, Validators.required],
+      registerType: [null as IRegisterType | null, Validators.required],
+      readonly:[null as boolean|null],
       icon: [null as string | null],
       forceUpdate: [false],
     })
@@ -117,11 +118,14 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
         deviceClass: [null as string | null],
       })
     this.generateEntityCopyToForm()
-    this.specificationSavedObservable = this.specificationMethods.getSaveObservable();
-    this.subSpec = this.specificationSavedObservable.subscribe(() => {
-      this.backupEntity = null;
-      this.allFormGroups.markAsPristine()
-    })
+    if(this.specificationMethods){
+      this.specificationSavedObservable = this.specificationMethods.getSaveObservable();
+      this.subSpec = this.specificationSavedObservable.subscribe(() => {
+        this.backupEntity = null;
+        this.allFormGroups.markAsPristine()
+      })
+    }
+
     this.allFormGroups.setControl("entity", this.entityFormGroup)
     this.allFormGroups.setControl("variable", this.variableFormGroup)
 
@@ -297,7 +301,11 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
       this.mqttValueObservable.next(data)
     })
   }
-
+  isCurrentMessage():boolean{
+    if(this.specificationMethods == undefined)
+      return false;
+    return this.specificationMethods.getCurrentMessage()?.referencedEntity == this.entity.id
+  }
   onEntityNameValueChange() {
     // set mqtt name in form control, 
     // read variable configuration and set values accordingly.
@@ -356,12 +364,20 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
       }
     }
     this.entity.registerType = (this.entityFormGroup.get('registerType')!.value != null ?
-      this.entityFormGroup.get('registerType')!.value.code :
+      this.entityFormGroup.get('registerType')!.value.registerType :
       this.entity.registerType = ModbusRegisterType.HoldingRegister)
+    if(this.entity.registerType == ModbusRegisterType.AnalogInputs){
+      this.entityFormGroup.get('registerType')
+      this.entity.readonly = true
+      this.entityFormGroup.get('readonly')?.setValue(true)
+    }
+      this.entity.readonly = true
     this.readFromModbus()
   }
-
-  private form2Entity() {
+  isAnalogInput():boolean{
+    return this.entity.registerType == ModbusRegisterType.AnalogInputs
+  }
+ form2Entity() {
     // copies all values which are not relevant to 
     // this.saveButton.disabled = !this.canSaveEntity(entity)
     if (!this.entity)
@@ -371,6 +387,9 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
       this.entity.icon = this.entityFormGroup.get('icon')!.value;
     if (this.entityFormGroup.get('forceUpdate')!.value != null)
       this.entity.forceUpdate = this.entityFormGroup.get('forceUpdate')!.value;
+    if (this.entityFormGroup.get('readonly')!.value != null)
+      this.entity.readonly = this.entityFormGroup.get('readonly')!.value;
+    
     switch (this.getParameterTypeFromConverterFormControl()) {
       case "Inumber":
         if (this.numberPropertiesFormGroup.get('deviceClass')!.value != null)
@@ -379,6 +398,7 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
           (this.entity.converterParameters as any).uom = this.numberPropertiesFormGroup.get('uom')!.value;
         break;
     }
+    this.setEntitiesTouched()
   }
   onConverterValueChange() {
 
@@ -607,7 +627,7 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
 
     return c1 != null && c2 != null && c1.name === c2.name
   }
-  compareFunctionCodes(f1: IFunctionCode, f2: IFunctionCode) {
+  compareFunctionCodes(f1: IRegisterType, f2: IRegisterType) {
     return (f1 && f2 && f1.registerType == f2.registerType)
   }
 
@@ -619,13 +639,13 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     return (f1 && f2 && f1.id == f2.id)
   }
 
-  getFunctionCode(functionCode: ModbusRegisterType | undefined): IFunctionCode {
-    let rc: IFunctionCode | undefined = undefined
+  getFunctionCode(functionCode: ModbusRegisterType | undefined): IRegisterType {
+    let rc: IRegisterType | undefined = undefined
     if (functionCode)
-      rc = this.functionCodes.find(fc => fc.registerType == functionCode)
+      rc = this.registerTypes.find(fc => fc.registerType == functionCode)
     if (rc)
       return rc;
-    return this.functionCodes[0]
+    return this.registerTypes[0]
   }
 
   addOption() {
@@ -650,6 +670,9 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
         this.entity = structuredClone(this.entity)
       }
     }
+  }
+  setEntitiesTouched(){
+    this.specificationMethods.setEntitiesTouched()
   }
   dropOptions(event: CdkDragDrop<any, any, any>) {
     moveItemInArray((this.entity.converterParameters as Iselect).options!, event.previousIndex, event.currentIndex);

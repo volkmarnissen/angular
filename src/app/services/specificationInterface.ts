@@ -1,4 +1,4 @@
-import { Ientity, ImodbusData, ImodbusEntity, VariableTargetParameters } from "specification.shared";
+import { Ientity, Imessage, ImodbusData, ImodbusEntity, VariableTargetParameters } from "specification.shared";
 import { Observable } from "rxjs";
 export interface ImodbusEntityWithName extends ImodbusEntity {
     name?: string
@@ -10,6 +10,7 @@ export interface ISpecificationMethods {
     postModbusWriteMqtt(entity: ImodbusEntity, value: string): Observable<string>;
     getNonVariableNumberEntities(): ImodbusEntityWithName[];
     getMqttNames(entityId: number): string[];
+    getCurrentMessage():Imessage|undefined;
     hasDuplicateVariableConfigurations(entityId: number, targetParameter: VariableTargetParameters): boolean;
     canEditEntity(): boolean;
     getMqttLanguage(): string;

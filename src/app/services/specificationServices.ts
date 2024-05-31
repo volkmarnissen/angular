@@ -6,11 +6,11 @@ export class SpecificationServices {
     constructor(private mqttdiscoverylanguage: string, private apiService: ApiService) {
 
     }
-    getValidationMessages(spec: ImodbusSpecification, forContribution: boolean): Observable<Imessage[]> {
-        if (!spec)
+    getValidationMessages(specfilename: string, forContribution: boolean): Observable<Imessage[]> {
+        if (!specfilename)
             throw new Error("spec is undefined")
 
-        return this.apiService.postForSpecificationValidation(spec, this.mqttdiscoverylanguage)
+        return this.apiService.getForSpecificationValidation(specfilename, this.mqttdiscoverylanguage)
     }
     getValidationMessage(spec: IbaseSpecification, message: Imessage): string {
         switch (message.type) {
