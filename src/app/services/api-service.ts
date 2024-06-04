@@ -298,11 +298,11 @@ export class ApiService {
         return new Observable<IimageAndDocumentUrl[]>();
       }));
   }
-  postSpecificationContribution(spec: string, note: string) {
+  postSpecificationContribution(spec: string, note: string):Observable<number> {
     return this.httpClient.post<number>(apiUri.specficationContribute + `?spec=${spec}`, note).pipe(
       catchError(err => {
         this.errorHandler(err);
-        return new Observable<IimageAndDocumentUrl[]>();
+        return new Observable<number>();
       }));
   }
   getForSpecificationValidation(specfilename:string, language: string): Observable<Imessage[]> {

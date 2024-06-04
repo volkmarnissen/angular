@@ -63,13 +63,18 @@ export class SpecificationsComponent implements OnInit {
     throw new Error('Method not implemented.');
   }
   deleteSpecification(spec: ImodbusSpecification) {
-    if (confirm("Are you sure to delete " + this.getTranslatedSpecName(spec))) {
+    if([ SpecificationStatus.added, SpecificationStatus.cloned].includes(spec.status)){
+      if (confirm("Are you sure to delete " + this.getTranslatedSpecName(spec))) {
       this.apiService.deleteSpecification(spec.filename).subscribe(() => {
         this.apiService.getSpecifications().subscribe(this.fillSpecifications.bind(this))
         alert(this.getTranslatedSpecName(spec) + " has been deleted");
       })
 
+    }      
+    }else{
+      alert(this.getTranslatedSpecName(spec) + " is not local. Only local specifications can be deleted");
     }
+
   }
   getTranslatedSpecName(spec: IbaseSpecification): string | null {
     if (this.config && this.config.mqttdiscoverylanguage && spec)
@@ -79,6 +84,7 @@ export class SpecificationsComponent implements OnInit {
   contributeSpecification(spec: ImodbusSpecification) {
     this.apiService.postSpecificationContribution(spec.filename, JSON.stringify("Test")).subscribe(_issue => {
       this.apiService.getSpecifications().subscribe(this.fillSpecifications.bind(this))
+      alert("Successfully contributed. Created pull Request #" + _issue)
     })
   }
 
