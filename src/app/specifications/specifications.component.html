@@ -1,10 +1,24 @@
 <div>
     <div class="flexrows">
+        <mat-card class="width250pt card">
+            <mat-card-header>
+                <mat-card-title >Functions</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <button mat-button class=" width200pt" (click)="importSpecification()">
+                    Import Specification
+                </button>
+                <button mat-button class=" width200pt" (click)="fetchPublic()">
+                    Update Public Specifications
+                </button>
+
+            </mat-card-content>
+        </mat-card>
         <ng-container *ngFor="let spec of specifications ">
             <mat-card class="width350pt card">
                 <mat-card-header>
                     <mat-card-title matTooltip="Contribute Specification" (click)="contributeSpecification(spec)"
-                        class="clickable width200pt">{{getTranslatedSpecName(spec)
+                        class="clickable width200pt"><mat-icon [matTooltip]="getStatusText(spec.status)">{{getStatusIcon(spec.status)}}</mat-icon>{{getTranslatedSpecName(spec)
                         }}</mat-card-title>
                     <div class="card-header-buttons">
                         <button mat-icon-button class="material-icons app-toolbar-menu delete-button"
@@ -15,30 +29,30 @@
                     </div>
                 </mat-card-header>
                 <mat-card-content>
-                    <div *ngFor="let message of spec.messages">
-                        <p class="message errorTextNoBlink">{{getValidationMessage(spec,message)}}</p>
-                    </div>
-                    <button mat-button class="width200pt"
-                        [disabled]="[0,4].includes(spec.status) || spec.messages.length > 0 || contributedSpecificationExists"
+                    <gallery class="gallery marginsall"[autoHeight]="true" id="specImages" [counter]="galleryItems.length >1" [thumb]="galleryItems.length >1"
+                        [items]="galleryItems.get(spec.filename)" [imageSize]="'cover'">
+                      </gallery>
+                      <div [matTooltip]="[0,4].includes(spec.status)?'has wrong status':spec.messages.length?'has messages':'Press to contribute to the public'">
+                        <button mat-button class="width200pt"
+                        [disabled]="[0,4].includes(spec.status) || spec.messages.length > 0 "
+                        
                         (click)="contributeSpecification(spec)">
                         Contribute
-                    </button>
+                        </button>
+                    </div>
                     <button mat-button class=" width200pt" (click)="exportSpecification(spec)">
                         Downbload as .zip File
                     </button>
+                    <p>
+                    <a *ngIf="spec.pullUrl != undefined" [href]="spec.pullUrl" target="_blank">View Pull Request on Github</a>
+                    </p>
+                    <div *ngFor="let message of spec.messages">
+                        <p class="message errorTextNoBlink">{{getValidationMessage(spec,message)}}</p>
+                    </div>
+
                 </mat-card-content>
             </mat-card>
         </ng-container>
-        <mat-card class="width250pt card">
-            <mat-card-header>
-                <mat-card-title class="clickable">Import Specification</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-                <button mat-button class=" width200pt" (click)="importSpecification()">
-                    Import
-                </button>
-
-            </mat-card-content>
-        </mat-card>
+       
     </div>
 </div>

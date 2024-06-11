@@ -1,4 +1,4 @@
-import { IbaseSpecification, Imessage, ImodbusSpecification, MessageTypes, getSpecificationI18nEntityName } from "specification.shared";
+import { IbaseSpecification, Imessage, ImodbusSpecification, MessageTypes, SpecificationStatus, getSpecificationI18nEntityName } from "specification.shared";
 import { ApiService } from "./api-service";
 import { Observable } from "rxjs";
 
@@ -43,4 +43,22 @@ export class SpecificationServices {
         }
         return "unknown message";
     }
+    static getStatusIcon(status:SpecificationStatus| null):string{
+        switch(status){
+          case SpecificationStatus.published: return "public"
+          case SpecificationStatus.added: return "location_on"
+          case SpecificationStatus.cloned: return "file_copy"
+          case SpecificationStatus.contributed: return "publish"
+        }
+        return ""
+      }
+      static getStatusText(status:SpecificationStatus| null):string{
+        switch(status){
+          case SpecificationStatus.published: return "Published"
+          case SpecificationStatus.added: return "Locally added"
+          case SpecificationStatus.cloned: return "Copy from Published"
+          case SpecificationStatus.contributed: return "In publication"
+        }
+        return ""
+      }
 }

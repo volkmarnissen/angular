@@ -238,3 +238,14 @@ body {
 .inline {
   display: inline-block;
 }
+
+.gallery{
+  width: 220pt
+}
+.margins {
+  margin-top: 5pt;
+  margin-bottom: 10pt;
+}
+.marginsall {
+  margin: 15pt;
+}

@@ -11,7 +11,7 @@
 
 <div class="flexrowsWrapWhenSmall">
   <mat-card class="card flex-align">
-    <mat-card-header><mat-card-title>{{getTranslatedSpecName()}}</mat-card-title>
+    <mat-card-header><mat-card-title><mat-icon [matTooltip]="getStatusText(currentSpecification?.status)">{{getStatusIcon(currentSpecification?.status)}}</mat-icon>{{getTranslatedSpecName()}}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <p class="messages">

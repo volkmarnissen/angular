@@ -470,6 +470,12 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
       })
     )
   }
+  getStatusIcon(status:SpecificationStatus| null):string{
+    return SpecificationServices.getStatusIcon(status)
+  }
+  getStatusText(status:SpecificationStatus| null):string{
+    return SpecificationServices.getStatusText(status)
+  }
 }
 
 

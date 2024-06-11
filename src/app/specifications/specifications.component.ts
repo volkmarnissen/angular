@@ -3,9 +3,10 @@ import { ApiService } from '../services/api-service';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, Subject, first, forkJoin, map } from 'rxjs';
-import { IbaseSpecification,  Imessage, ImodbusSpecification, SpecificationStatus, getSpecificationI18nName } from 'specification.shared';
+import { IbaseSpecification,  IimageAndDocumentUrl,  Imessage, ImodbusSpecification, SpecificationFileUsage, SpecificationStatus, getSpecificationI18nName } from 'specification.shared';
 import { SpecificationServices } from '../services/specificationServices';
 import { Iconfiguration } from 'server.shared';
+import { GalleryItem, ImageItem } from 'ng-gallery';
 
 interface ImodbusSpecificationWithMessages extends ImodbusSpecification {
   messages: Imessage[]
@@ -19,23 +20,23 @@ interface ImodbusSpecificationWithMessages extends ImodbusSpecification {
 
 export class SpecificationsComponent implements OnInit {
   config: Iconfiguration;
-  contributedSpecificationExists: boolean = false
   private specServices: SpecificationServices | undefined
   specifications: ImodbusSpecificationWithMessages[]
+  galleryItems:  Map<string, GalleryItem[]>;
   constructor(private apiService: ApiService, private fb: FormBuilder, private router: Router) {
   }
 
   fillSpecifications(specs: ImodbusSpecification[]) {
     let a: any = {}
-    this.contributedSpecificationExists = false;
+    this.galleryItems = new Map<string, GalleryItem[]>()
+
     specs.forEach(spec => {
-      if (spec.status == SpecificationStatus.contributed)
-        this.contributedSpecificationExists = true;
       // Specifications Component doesn't change a Specification
       // for validation of identification, it's better to use the Filespecification
       // This happens in getForSpecificationValidation
       let ox = this.apiService.getForSpecificationValidation(spec.filename, this.config.mqttdiscoverylanguage)
       a[spec.filename] = ox
+      this.generateImageGalleryItems(spec)
     })
     forkJoin(a).subscribe((o: any) => {
       Object.entries(o).forEach(([key, value]) => {
@@ -90,7 +91,7 @@ export class SpecificationsComponent implements OnInit {
 
   canContribute(spec: ImodbusSpecification): Observable<boolean> {
     let rc = ![SpecificationStatus.published, SpecificationStatus.contributed].includes(spec.status)
-    if (!rc && !this.contributedSpecificationExists) {
+    if (!rc ) {
       let s = new Subject<boolean>()
       setTimeout(() => {
         s.next(false)
@@ -115,4 +116,25 @@ export class SpecificationsComponent implements OnInit {
     else return "unknown message"
   }
 
+  getStatusIcon(status:SpecificationStatus):string{
+    return SpecificationServices.getStatusIcon(status)
+  }
+  getStatusText(status:SpecificationStatus):string{
+    return SpecificationServices.getStatusText(status)
+  }
+  fetchPublic(){
+    this.apiService.getSpecificationFetchPublic().subscribe(()=>{
+      this.ngOnInit()
+      alert("Public directory updated")
+    })
+  }
+  generateImageGalleryItems(spec:ImodbusSpecification): void {
+    let rc: GalleryItem[] = []
+    spec.files.forEach(img => {
+      if (img.usage == SpecificationFileUsage.img) {
+        rc.push(new ImageItem({ src: img.url, thumb: img.url }))
+      }
+    })
+    this.galleryItems.set(spec.filename, rc);
+  }
 }

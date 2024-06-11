@@ -366,10 +366,15 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     this.entity.registerType = (this.entityFormGroup.get('registerType')!.value != null ?
       this.entityFormGroup.get('registerType')!.value.registerType :
       this.entity.registerType = ModbusRegisterType.HoldingRegister)
+
     if(this.entity.registerType == ModbusRegisterType.AnalogInputs){
       this.entityFormGroup.get('registerType')
       this.entity.readonly = true
+      this.entityFormGroup.get('readonly')?.disable()
       this.entityFormGroup.get('readonly')?.setValue(true)
+    }
+    else{
+      this.entityFormGroup.get('readonly')?.enable()  
     }
       this.entity.readonly = true
     this.readFromModbus()

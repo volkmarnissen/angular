@@ -312,6 +312,14 @@ export class ApiService {
         return new Observable<Imessage[]>();
       }));
   }
+  getSpecificationFetchPublic(): Observable<void> {
+    return this.httpClient.get<void>(apiUri.specificationFetchPublic).pipe(
+      catchError(err => {
+        this.errorHandler(err);
+        return new Observable<void>();
+      }));
+  }
+  
   postForSpecificationValidation(spec:ImodbusSpecification, language: string): Observable<Imessage[]> {
     return this.httpClient.post<Imessage[]>(apiUri.specificationValidate + `?language=${language}`,spec).pipe(
       catchError(err => {
