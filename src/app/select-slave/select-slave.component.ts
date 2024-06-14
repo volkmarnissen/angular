@@ -1,12 +1,12 @@
 import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { ApiService } from '../services/api-service';
-import {  getCurrentLanguage,  IbaseSpecification, getSpecificationI18nName, SpecificationStatus, IdentifiedStates } from 'specification.shared';
+import {  getCurrentLanguage,  IbaseSpecification, getSpecificationI18nName, SpecificationStatus, IdentifiedStates } from '@modbus2mqtt/specification.shared';
 import { Observable, Subscription, map } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SessionStorage } from '../services/SessionStorage';
 import { M2mErrorStateMatcher } from '../services/M2mErrorStateMatcher';
-import { Islave, IidentificationSpecification, IBus, getConnectionName } from 'server.shared';
+import { Islave, IidentificationSpecification, IBus, getConnectionName } from '@modbus2mqtt/server.shared';
 
 const ISELECTED_FORMNAME = 'isSelected'
 const ISLAVENAME_FORMNAME = 'name'

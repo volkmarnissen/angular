@@ -1,4 +1,4 @@
-import { IbaseSpecification, Imessage, ImodbusSpecification, MessageTypes, SpecificationStatus, getSpecificationI18nEntityName } from "specification.shared";
+import { IbaseSpecification, Imessage, ImodbusSpecification, MessageTypes, SpecificationStatus, getSpecificationI18nEntityName } from '@modbus2mqtt/specification.shared';
 import { ApiService } from "./api-service";
 import { Observable } from "rxjs";
 

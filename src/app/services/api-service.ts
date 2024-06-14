@@ -4,12 +4,12 @@ import { Observable, Subject } from "rxjs";
 import { catchError, first, map } from "rxjs/operators";
 
 //we've defined our base url here in the env
-import { ImodbusSpecification, Iconverter, ImodbusEntity, IimageAndDocumentUrl, HttpErrorsEnum, Ispecification, SpecificationFileUsage, editableConverters, Imessage } from 'specification.shared';
+import { ImodbusSpecification, Iconverter, ImodbusEntity, IimageAndDocumentUrl, HttpErrorsEnum, Ispecification, SpecificationFileUsage, editableConverters, Imessage } from '@modbus2mqtt/specification.shared';
 import { SessionStorage } from './SessionStorage';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18nService } from './i18n.service';
 import { ImodbusEntityWithName } from './specificationInterface';
-import { apiUri, Iconfiguration, IUserAuthenticationStatus, IBus, Islave, IidentificationSpecification, IModbusConnection } from 'server.shared';
+import { apiUri, Iconfiguration, IUserAuthenticationStatus, IBus, Islave, IidentificationSpecification, IModbusConnection } from '@modbus2mqtt/server.shared';
 
 @Injectable({
   providedIn: 'root'

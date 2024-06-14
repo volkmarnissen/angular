@@ -2,7 +2,7 @@ import { HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
 import { OnChanges, Component, Input, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { GalleryItem, ImageItem } from 'ng-gallery';
-import { IimageAndDocumentUrl, IbaseSpecification, SpecificationFileUsage, ImodbusSpecification, FileLocation } from 'specification.shared';
+import { IimageAndDocumentUrl, IbaseSpecification, SpecificationFileUsage, ImodbusSpecification, FileLocation } from '@modbus2mqtt/specification.shared';
 import { ApiService } from '../services/api-service';
 import { MatIconButton } from '@angular/material/button';
 

@@ -2,7 +2,7 @@ import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Ou
 import { ApiService } from '../services/api-service';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { EnumNumberFormat, IFunctionCode as IRegisterType, Iconverter, IdentifiedStates, Ientity, Imessage, ImodbusData, ImodbusEntity, Iname, Inumber, Iselect, IselectOption, Itext, ModbusRegisterType, VariableTargetParameters, getFileNameFromName, getParameterType, setSpecificationI18nEntityName } from 'specification.shared';
+import { EnumNumberFormat, IFunctionCode as IRegisterType, Iconverter, IdentifiedStates, Ientity, Imessage, ImodbusData, ImodbusEntity, Iname, Inumber, Iselect, IselectOption, Itext, ModbusRegisterType, VariableTargetParameters, getFileNameFromName, getParameterType, setSpecificationI18nEntityName } from '@modbus2mqtt/specification.shared';
 import { SessionStorage } from '../services/SessionStorage';
 import { M2mErrorStateMatcher } from '../services/M2mErrorStateMatcher';
 import { ISpecificationMethods, ImodbusEntityWithName, isDeviceVariable } from '../services/specificationInterface';

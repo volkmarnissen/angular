@@ -1,4 +1,4 @@
-import { ImodbusEntity, ImodbusSpecification, Iselect, getSpecificationI18nEntityName, getSpecificationI18nEntityOptionName, getSpecificationI18nName, setSpecificationI18nEntityName, setSpecificationI18nEntityOptionName } from "specification.shared"
+import { ImodbusEntity, ImodbusSpecification, Iselect, getSpecificationI18nEntityName, getSpecificationI18nEntityOptionName, getSpecificationI18nName, setSpecificationI18nEntityName, setSpecificationI18nEntityOptionName } from '@modbus2mqtt/specification.shared'
 
 interface AssociativeArray {
   [key: string]: string

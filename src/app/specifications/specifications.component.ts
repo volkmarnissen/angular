@@ -3,9 +3,9 @@ import { ApiService } from '../services/api-service';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, Subject, first, forkJoin, map } from 'rxjs';
-import { IbaseSpecification,  IimageAndDocumentUrl,  Imessage, ImodbusSpecification, SpecificationFileUsage, SpecificationStatus, getSpecificationI18nName } from 'specification.shared';
+import { IbaseSpecification,  IimageAndDocumentUrl,  Imessage, ImodbusSpecification, SpecificationFileUsage, SpecificationStatus, getSpecificationI18nName } from '@modbus2mqtt/specification.shared';
 import { SpecificationServices } from '../services/specificationServices';
-import { Iconfiguration } from 'server.shared';
+import { Iconfiguration } from '@modbus2mqtt/server.shared';
 import { GalleryItem, ImageItem } from 'ng-gallery';
 
 interface ImodbusSpecificationWithMessages extends ImodbusSpecification {

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { IUpdatei18nText, Imessage, ImodbusSpecification, Iselect,  VariableTargetParameters, getParameterType, getSpecificationI18nText, setSpecificationI18nText, validateTranslation } from 'specification.shared';
+import { IUpdatei18nText, Imessage, ImodbusSpecification, Iselect,  VariableTargetParameters, getParameterType, getSpecificationI18nText, setSpecificationI18nText, validateTranslation } from '@modbus2mqtt/specification.shared';
 import { ApiService } from '../services/api-service';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ISpecificationMethods } from '../services/specificationInterface';

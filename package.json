@@ -1,5 +1,5 @@
 {
-  "name": "angular",
+  "name": "@modbus2mqtt/angular",
   "version": "0.7.0",
   "sshserver": "odroid@homeassistant.fritz.box",
   "credits": "multiple choice by Studio 365 from <a href='https://thenounproject.com/browse/icons/term/multiple-choice/' target='_blank' title='multiple choice Icons'>Noun Project</a> (CC BY 3.0)",
@@ -17,11 +17,11 @@
   "main": "dist/en-US/index.html",
   "private": true,
   "dependencies": {
+    "@modbus2mqtt/server.shared": "file:../server.shared",
+    "@modbus2mqtt/specification.shared": "file:../specification.shared",
     "material-design-icons": "^3.0.1",
     "ng-gallery": "^11.0.0",
     "rxjs": "^7.8.1",
-    "server.shared": "file:../server.shared",
-    "specification.shared": "file:../specification.shared",
     "ts-node": "^10.9.1",
     "tslib": "^2.3.0",
     "typescript-map": "^0.1.0",

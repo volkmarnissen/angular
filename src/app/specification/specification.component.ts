@@ -2,16 +2,16 @@ import { ChangeDetectorRef, Component, EventEmitter, HostListener, OnDestroy, On
 import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { ApiService } from '../services/api-service';
 import { Observable, Subject, Subscription, catchError, first, map, startWith } from 'rxjs';
-import {  ImodbusSpecification, IbaseSpecification, getSpecificationI18nName, getFileNameFromName, IdentifiedStates, SpecificationStatus, setSpecificationI18nName, IimageAndDocumentUrl, ImodbusEntity, newSpecification, getParameterType, VariableTargetParameters, setSpecificationI18nEntityOptionName, setSpecificationI18nEntityName, Iselect, deleteSpecificationI18nEntityNameAndOptions, IUpdatei18nText, ImodbusData, Ispecification, getBaseFilename } from 'specification.shared';
+import {  ImodbusSpecification, IbaseSpecification, getSpecificationI18nName, getFileNameFromName, IdentifiedStates, SpecificationStatus, setSpecificationI18nName, IimageAndDocumentUrl, ImodbusEntity, newSpecification, getParameterType, VariableTargetParameters, setSpecificationI18nEntityOptionName, setSpecificationI18nEntityName, Iselect, deleteSpecificationI18nEntityNameAndOptions, IUpdatei18nText, ImodbusData, Ispecification, getBaseFilename } from '@modbus2mqtt/specification.shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SessionStorage } from '../services/SessionStorage';
-import { Imessage } from 'specification.shared';
+import { Imessage } from '@modbus2mqtt/specification.shared';
 import { GalleryConfig } from 'ng-gallery';
 import { ISpecificationMethods, ImodbusEntityWithName } from '../services/specificationInterface';
 import { I18nService } from '../services/i18n.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { SpecificationServices } from '../services/specificationServices';
-import { Iconfiguration, IidentificationSpecification } from 'server.shared';
+import { Iconfiguration, IidentificationSpecification } from '@modbus2mqtt/server.shared';
 
 @Component({
   selector: 'app-specification',

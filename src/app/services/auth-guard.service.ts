@@ -4,7 +4,7 @@ import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { ApiService } from './api-service';
 import { Observable, map, tap } from 'rxjs';
 import { SessionStorage } from './SessionStorage';
-import { IUserAuthenticationStatus } from 'server.shared';
+import { IUserAuthenticationStatus } from '@modbus2mqtt/server.shared';
 
 @Injectable({
   providedIn: 'root'

@@ -1,7 +1,7 @@
 import { OnInit, Component, EventEmitter, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ApiService } from '../services/api-service';
-import { Iconfiguration } from 'server.shared';
+import { Iconfiguration } from '@modbus2mqtt/server.shared';
 import { Observable, Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 @Component({

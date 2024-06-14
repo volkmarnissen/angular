@@ -3,7 +3,7 @@ import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Valida
 import { MatSelectionList, MatSelectionListChange } from '@angular/material/list';
 import { ApiService } from '../services/api-service';
 import { MatTableDataSource } from '@angular/material/table';
-import { IBus, IModbusConnection, IRTUConnection, ITCPConnection,  getBusName,  getConnectionName } from 'server.shared';
+import { IBus, IModbusConnection, IRTUConnection, ITCPConnection,  getBusName,  getConnectionName } from '@modbus2mqtt/server.shared';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
