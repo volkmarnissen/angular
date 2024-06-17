@@ -24,7 +24,10 @@
     "lib": [
       "ES2022",
       "dom"
-    ]
+    ],
+    "paths":{
+      "angular/src/*": ["./src/*"]
+    }
   },
   "exclude":[
     "node_modules/**/*",
@@ -32,8 +35,5 @@
     "**/__tests__/**",
     "**/environments/environment*.ts",
     "**/*.spec.ts"
-  ],
-  "paths":{
-    "angular/src/*": ["./src/*"]
-  }
+  ]
 }

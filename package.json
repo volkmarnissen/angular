@@ -18,7 +18,6 @@
   "main": "dist/en-US/index.html",
   "private": true,
   "devDependencies": {
-    "@angular-builders/custom-webpack": "17.0.2",
     "@angular-devkit/build-angular": "^18.0.4",
     "@angular/animations": "^18.0.3",
     "@angular/cli": "^18.0.4",
@@ -40,6 +39,7 @@
     "@types/jest": "^29.5.12",
     "@types/ws": "^8.5.10",
     "material-design-icons": "^3.0.1",
+    "ng-gallery": "^11.0.0",
     "rxjs": "^7.8.1",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.2",
