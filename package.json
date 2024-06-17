@@ -7,26 +7,16 @@
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0",
     "stop": "pkill -f 'nodemon --watch ../server' & pkill 'ng serve' ",
-    "build": "ng build ",
-    "build.ui.dev": "ng build --configuration development",
-    "build.ui.prod": "ng build --configuration production",
+    "build.dev": "ng build --configuration development",
+    "build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test-debug": "ng test --browsers ChromeDebug --karma-config ./karma.conf.ts"
+    "test-debug": "ng test --browsers ChromeDebug --karma-config ./karma.conf.ts",
+    "prepack": "../server.shared/changeModbusDependencies.sh package.json",
+    "postpack": "rm package.json && mv package.json.bck package.json"
   },
   "main": "dist/en-US/index.html",
   "private": true,
-  "dependencies": {
-    "@modbus2mqtt/server.shared": "file:../server.shared",
-    "@modbus2mqtt/specification.shared": "file:../specification.shared",
-    "material-design-icons": "^3.0.1",
-    "ng-gallery": "^11.0.0",
-    "rxjs": "^7.8.1",
-    "ts-node": "^10.9.1",
-    "tslib": "^2.3.0",
-    "typescript-map": "^0.1.0",
-    "url-parse": "^1.5.10"
-  },
   "devDependencies": {
     "@angular-builders/custom-webpack": "17.0.2",
     "@angular-devkit/build-angular": "^17.3.0",
@@ -43,13 +33,21 @@
     "@angular/platform-browser-dynamic": "^17.3.0",
     "@angular/router": "^17.3.0",
     "@babel/preset-typescript": "^7.21.5",
+    "@modbus2mqtt/server.shared": "file:../server.shared",
+    "@modbus2mqtt/specification.shared": "file:../specification.shared",
     "@ngx-translate/core": "^15.0.0",
     "@popperjs/core": "^2.11.6",
     "@types/jest": "^29.5.12",
     "@types/ws": "^8.5.10",
+    "material-design-icons": "^3.0.1",
+    "rxjs": "^7.8.1",
     "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.2",
+    "tslib": "^2.6.3",
     "tsx": "^3.12.7",
     "typescript": "^5.2.2",
+    "typescript-map": "^0.1.0",
+    "url-parse": "^1.5.10",
     "yaml": "^2.3.1"
   }
 }
