@@ -1,6 +1,6 @@
 /// <reference types="@angular/localize" />
 
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -19,25 +19,20 @@ import { Modbus2MqttMaterialModule } from './app/material-module';
 // Default MatFormField appearance to 'fill' as that is the new recommended approach and the
 // `legacy` and `standard` appearances are scheduled for deprecation in version 10.
 // This makes the examples that use MatFormField render the same in StackBlitz as on the docs site.
-@NgModule({
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    FormsModule,
-    HttpClientModule,
-    MatNativeDateModule,
-    ReactiveFormsModule,
-    Modbus2MqttMaterialModule,
-    AppModules
-  ],
-  //   entryComponents: [AppComponent],
-  //  declarations: [TableBasicExample,
-  //  DisableControlDirective, MatPaginatorGotoComponent],
-  bootstrap: [AppComponent],
-  providers: [
-    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } },
-  ]
-})
+@NgModule({ 
+    //   entryComponents: [AppComponent],
+    //  declarations: [TableBasicExample,
+    //  DisableControlDirective, MatPaginatorGotoComponent],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        BrowserAnimationsModule,
+        FormsModule,
+        MatNativeDateModule,
+        ReactiveFormsModule,
+        Modbus2MqttMaterialModule,
+        AppModules], providers: [
+        { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } },
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 export class AppModule { }
 
 platformBrowserDynamic().bootstrapModule(AppModule)

@@ -13,7 +13,7 @@ import { SpecificationsComponent } from './specifications/specifications.compone
 import { DragndropDirective } from './dragndrop/dragndrop.directive';
 import { SelectModbusComponent } from './select-modbus/select-modbus.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ConfigureComponent } from './configure/configure.component';
 import { SelectSlaveComponent } from './select-slave/select-slave.component';
 import { HeaderComponent } from './header/header.component';
@@ -28,39 +28,33 @@ import { EntityComponent } from './entity/entity.component';
 import { DragDropModule } from '@angular/cdk/drag-drop'
 
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    SpecificationComponent,
-    SpecificationsComponent,
-    DragndropDirective,
-    SelectModbusComponent,
-    ConfigureComponent,
-    SelectSlaveComponent,
-    HeaderComponent,
-    RootRoutingComponent,
-    TranslationComponent,
-    LoginComponent,
-    EntityValueControlComponent,
-    EntityComponent,
-    UploadFilesComponent
-  ],
-  imports: [
-    BrowserModule,
-    FormsModule, ReactiveFormsModule,
-    Modbus2MqttMaterialModule,
-    AppRoutingModule, MatDialogModule,
-    GalleryModule,
-    RouterModule.forRoot([]),
-    TranslateModule.forRoot(), HttpClientModule,
-    DragDropModule
-  ],
-  providers: [{
-    provide: HTTP_INTERCEPTORS,
-    useClass: AuthHeaderInterceptor,
-    multi: true,
-  }],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        SpecificationComponent,
+        SpecificationsComponent,
+        DragndropDirective,
+        SelectModbusComponent,
+        ConfigureComponent,
+        SelectSlaveComponent,
+        HeaderComponent,
+        RootRoutingComponent,
+        TranslationComponent,
+        LoginComponent,
+        EntityValueControlComponent,
+        EntityComponent,
+        UploadFilesComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        FormsModule, ReactiveFormsModule,
+        Modbus2MqttMaterialModule,
+        AppRoutingModule, MatDialogModule,
+        GalleryModule,
+        RouterModule.forRoot([]),
+        TranslateModule.forRoot(),
+        DragDropModule], providers: [{
+            provide: HTTP_INTERCEPTORS,
+            useClass: AuthHeaderInterceptor,
+            multi: true,
+        }, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModules { }
 
