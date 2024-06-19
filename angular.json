@@ -16,6 +16,7 @@
             "outputPath": {
               "base": "dist"
             },
+            "baseHref": "modbus2mqtt",
             "localize": true,
             "index": "src/index.html",
             "polyfills": [
@@ -40,8 +41,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "1mb",
-                  "maximumError": "2mb"
+                  "maximumWarning": "2mb",
+                  "maximumError": "3mb"
                 },
                 {
                   "type": "anyComponentStyle",

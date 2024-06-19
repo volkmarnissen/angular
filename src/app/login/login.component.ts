@@ -4,7 +4,6 @@ import { ApiService } from '../services/api-service';
 import { SessionStorage } from '../services/SessionStorage';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-var Url = require('url-parse')
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -36,9 +35,10 @@ export class LoginComponent implements OnInit, AfterViewInit {
   private login(username: string, password: string) {
     this.api.getUserLogin(username, password).subscribe(token => {
       new SessionStorage().setAuthToken(token)
-      var u = new Url(this.router.url, '', true)
-      if( u.query.toUrl)
-        this.toUrl = u.query.toUrl
+      var u = new URLSearchParams(new URL(this.router.url).search )
+      var toUrl = u.get("toUrl")
+      if( u && toUrl)
+        this.toUrl = toUrl
       else
         this.toUrl =""
       this.router.navigate([this.toUrl], { queryParams: { tokenWasExpired: true } })

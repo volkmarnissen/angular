@@ -7,7 +7,6 @@
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
     "strict": true,
-   
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "strictPropertyInitialization": false,
@@ -35,5 +34,5 @@
     "**/__tests__/**",
     "**/environments/environment*.ts",
     "**/*.spec.ts"
-  ]
+  ],
 }

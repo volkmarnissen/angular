@@ -15,7 +15,7 @@
     "prepack": "../server.shared/changeModbusDependencies.sh package.json",
     "postpack": "rm package.json && mv package.json.bck package.json"
   },
-  "main": "dist/en-US/index.html",
+  "main": "dist/browser/en-US/index.html",
   "private": true,
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.0.4",
