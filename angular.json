@@ -16,7 +16,6 @@
             "outputPath": {
               "base": "dist"
             },
-            "baseHref": "modbus2mqtt",
             "localize": true,
             "index": "src/index.html",
             "polyfills": [

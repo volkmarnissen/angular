@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   private login(username: string, password: string) {
     this.api.getUserLogin(username, password).subscribe(token => {
       new SessionStorage().setAuthToken(token)
-      var u = new URLSearchParams(new URL(this.router.url).search )
+      var u = new URLSearchParams(this.router.url.replace(/^[^?]*\?/,""))
       var toUrl = u.get("toUrl")
       if( u && toUrl)
         this.toUrl = toUrl
