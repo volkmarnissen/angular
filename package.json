@@ -12,7 +12,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test-debug": "ng test --browsers ChromeDebug --karma-config ./karma.conf.ts",
-    "prepack": "../server.shared/changeModbusDependencies.sh package.json",
+    "prepack": "../changeModbusDependencies.sh package.json",
     "postpack": "rm package.json && mv package.json.bck package.json"
   },
   "main": "dist/browser/en-US/index.html",

@@ -1,0 +1,16 @@
+src/*
+tsconfig.json
+
+package-lock.json
+package.json.bck
+node_modules/*
+*.tsbuildinfo
+
+**/.DS_Store
+**/secrets.*
+.vscode/** 
+.jest/
+.angular
+proxy*
+angular.json
+tv.sh
