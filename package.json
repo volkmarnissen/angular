@@ -1,6 +1,6 @@
 {
   "name": "@modbus2mqtt/angular",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "sshserver": "odroid@homeassistant.fritz.box",
   "credits": "multiple choice by Studio 365 from <a href='https://thenounproject.com/browse/icons/term/multiple-choice/' target='_blank' title='multiple choice Icons'>Noun Project</a> (CC BY 3.0)",
   "scripts": {
@@ -11,9 +11,7 @@
     "build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test-debug": "ng test --browsers ChromeDebug --karma-config ./karma.conf.ts",
-    "prepack": "../changeModbusDependencies.sh package.json",
-    "postpack": "rm package.json && mv package.json.bck package.json"
+    "test-debug": "ng test --browsers ChromeDebug --karma-config ./karma.conf.ts"
   },
   "main": "dist/browser/en-US/index.html",
    "devDependencies": {
@@ -31,8 +29,8 @@
     "@angular/platform-browser-dynamic": "^18.0.3",
     "@angular/router": "^18.0.3",
     "@babel/preset-typescript": "^7.24.7",
-    "@modbus2mqtt/server.shared": "file:../server.shared",
-    "@modbus2mqtt/specification.shared": "file:../specification.shared",
+    "@modbus2mqtt/server.shared": "0.8.0",
+    "@modbus2mqtt/specification.shared": "0.7.0",
     "@ngx-translate/core": "^15.0.0",
     "@popperjs/core": "^2.11.6",
     "@types/jest": "^29.5.12",
