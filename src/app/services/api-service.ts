@@ -18,7 +18,7 @@ export class ApiService {
   converterCache: Iconverter[] | undefined = undefined
   constructor(private httpClient: HttpClient, private router: Router, private activeatedRoute: ActivatedRoute) {
     this.errorHandler = (err: HttpErrorResponse) => {
-      if (err.status == HttpErrorsEnum.ErrUnauthorized) {
+      if ([HttpErrorsEnum.ErrUnauthorized, HttpErrorsEnum.ErrForbidden].includes(err.status)) {
         new SessionStorage().removeAuthToken()
         this.router.navigate(['login'], { queryParams: { toUrl: router.url } })
       }

@@ -9,16 +9,16 @@ import { SelectModbusComponent } from './select-modbus/select-modbus.component';
 import { SelectSlaveComponent } from './select-slave/select-slave.component';
 import { RootRoutingComponent } from './root-routing/root-routing.component';
 import { SpecificationsComponent } from './specifications/specifications.component';
-
+import { RoutingNames } from '@modbus2mqtt/server.shared'
 export const routes: Routes = [
   { path: '', component: RootRoutingComponent, pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: LoginComponent },
-  { path: 'configure', component: ConfigureComponent, canActivate: [AuthGuardService] },
-  { path: 'busses', component: SelectModbusComponent, canActivate: [AuthGuardService] },
-  { path: 'specifications', component: SpecificationsComponent, canActivate: [AuthGuardService] },
-  { path: 'slaves/:busid', component: SelectSlaveComponent, canActivate: [AuthGuardService] },
-  { path: 'specification/:busid/:slaveid/:disabled', canActivate: [AuthGuardService], component: SpecificationComponent, canDeactivate: [(component: SpecificationComponent) => !component.canDeactivate()], },
+  { path: RoutingNames.login, component: LoginComponent },
+  { path: RoutingNames.register, component: LoginComponent },
+  { path: RoutingNames.configure, component: ConfigureComponent, canActivate: [AuthGuardService] },
+  { path: RoutingNames.busses, component: SelectModbusComponent, canActivate: [AuthGuardService] },
+  { path: RoutingNames.specifications, component: SpecificationsComponent, canActivate: [AuthGuardService] },
+  { path: RoutingNames.slaves + '/:busid', component: SelectSlaveComponent, canActivate: [AuthGuardService] },
+  { path: RoutingNames.specification  +'/:busid/:slaveid/:disabled', canActivate: [AuthGuardService], component: SpecificationComponent, canDeactivate: [(component: SpecificationComponent) => !component.canDeactivate()], },
 ];
 // bootstrapApplication(AppComponent,{
 //   providers:[provideRouter(routes, withComponentInputBinding())]
