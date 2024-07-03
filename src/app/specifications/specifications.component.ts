@@ -3,7 +3,7 @@ import { ApiService } from '../services/api-service';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, Subject, first, forkJoin, map } from 'rxjs';
-import { IbaseSpecification,  IimageAndDocumentUrl,  Imessage, ImodbusSpecification, SpecificationFileUsage, SpecificationStatus, getSpecificationI18nName } from '@modbus2mqtt/specification.shared';
+import { IbaseSpecification, IimageAndDocumentUrl, Imessage, ImodbusSpecification, SpecificationFileUsage, SpecificationStatus, getSpecificationI18nName } from '@modbus2mqtt/specification.shared';
 import { SpecificationServices } from '../services/specificationServices';
 import { Iconfiguration } from '@modbus2mqtt/server.shared';
 import { GalleryItem, ImageItem } from 'ng-gallery';
@@ -22,7 +22,7 @@ export class SpecificationsComponent implements OnInit {
   config: Iconfiguration;
   private specServices: SpecificationServices | undefined
   specifications: ImodbusSpecificationWithMessages[]
-  galleryItems:  Map<string, GalleryItem[]>;
+  galleryItems: Map<string, GalleryItem[]>;
   constructor(private apiService: ApiService, private fb: FormBuilder, private router: Router) {
   }
 
@@ -56,7 +56,7 @@ export class SpecificationsComponent implements OnInit {
     }))
   }
 
-  
+
   importSpecification() {
     throw new Error('Method not implemented.');
   }
@@ -64,15 +64,15 @@ export class SpecificationsComponent implements OnInit {
     throw new Error('Method not implemented.');
   }
   deleteSpecification(spec: ImodbusSpecification) {
-    if([ SpecificationStatus.added, SpecificationStatus.cloned].includes(spec.status)){
+    if ([SpecificationStatus.added, SpecificationStatus.cloned].includes(spec.status)) {
       if (confirm("Are you sure to delete " + this.getTranslatedSpecName(spec))) {
-      this.apiService.deleteSpecification(spec.filename).subscribe(() => {
-        this.apiService.getSpecifications().subscribe(this.fillSpecifications.bind(this))
-        alert(this.getTranslatedSpecName(spec) + " has been deleted");
-      })
+        this.apiService.deleteSpecification(spec.filename).subscribe(() => {
+          this.apiService.getSpecifications().subscribe(this.fillSpecifications.bind(this))
+          alert(this.getTranslatedSpecName(spec) + " has been deleted");
+        })
 
-    }      
-    }else{
+      }
+    } else {
       alert(this.getTranslatedSpecName(spec) + " is not local. Only local specifications can be deleted");
     }
 
@@ -91,17 +91,17 @@ export class SpecificationsComponent implements OnInit {
 
   canContribute(spec: ImodbusSpecification): Observable<boolean> {
     let rc = ![SpecificationStatus.published, SpecificationStatus.contributed].includes(spec.status)
-    if (!rc ) {
+    if (!rc) {
       let s = new Subject<boolean>()
       setTimeout(() => {
         s.next(false)
       }, 1);
       return s.pipe(first())
     }
-     // Specifications Component doesn't change a Specification
-      // for validation of identification, it's better to use the Filespecification
-      // This happens in getForSpecificationValidation
-    return  this.apiService.getForSpecificationValidation(spec.filename, this.config.mqttdiscoverylanguage).pipe(map((messages) => {
+    // Specifications Component doesn't change a Specification
+    // for validation of identification, it's better to use the Filespecification
+    // This happens in getForSpecificationValidation
+    return this.apiService.getForSpecificationValidation(spec.filename, this.config.mqttdiscoverylanguage).pipe(map((messages) => {
       return messages.length == 0
     }))
   }
@@ -116,19 +116,19 @@ export class SpecificationsComponent implements OnInit {
     else return "unknown message"
   }
 
-  getStatusIcon(status:SpecificationStatus):string{
+  getStatusIcon(status: SpecificationStatus): string {
     return SpecificationServices.getStatusIcon(status)
   }
-  getStatusText(status:SpecificationStatus):string{
+  getStatusText(status: SpecificationStatus): string {
     return SpecificationServices.getStatusText(status)
   }
-  fetchPublic(){
-    this.apiService.getSpecificationFetchPublic().subscribe(()=>{
+  fetchPublic() {
+    this.apiService.getSpecificationFetchPublic().subscribe(() => {
       this.ngOnInit()
       alert("Public directory updated")
     })
   }
-  generateImageGalleryItems(spec:ImodbusSpecification): void {
+  generateImageGalleryItems(spec: ImodbusSpecification): void {
     let rc: GalleryItem[] = []
     spec.files.forEach(img => {
       if (img.usage == SpecificationFileUsage.img) {
@@ -136,5 +136,11 @@ export class SpecificationsComponent implements OnInit {
       }
     })
     this.galleryItems.set(spec.filename, rc);
+  }
+  getImage(fn: string) {
+    let d = this.galleryItems.get(fn)
+    if (d && d.length > 0 && d[0].data && d[0].data.src)
+      return (d[0].data.src as string)
+    return ""
   }
 }
