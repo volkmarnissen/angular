@@ -83,7 +83,7 @@ export class SpecificationsComponent implements OnInit {
     return null
   }
   contributeSpecification(spec: ImodbusSpecification) {
-    this.apiService.postSpecificationContribution(spec.filename, JSON.stringify("Test")).subscribe(_issue => {
+    this.apiService.postSpecificationContribution(spec.filename, "My test note").subscribe(_issue => {
       this.apiService.getSpecifications().subscribe(this.fillSpecifications.bind(this))
       alert("Successfully contributed. Created pull Request #" + _issue)
     })

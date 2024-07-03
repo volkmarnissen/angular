@@ -301,7 +301,7 @@ export class ApiService {
       }));
   }
   postSpecificationContribution(spec: string, note: string): Observable<number> {
-    return this.httpClient.post<number>(apiUri.specficationContribute + `?spec=${spec}`, note).pipe(
+    return this.httpClient.post<number>(apiUri.specficationContribute + `?spec=${spec}`, { note: note }).pipe(
       catchError(err => {
         this.errorHandler(err);
         return new Observable<number>();
