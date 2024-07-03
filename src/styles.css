@@ -239,13 +239,19 @@ body {
   display: inline-block;
 }
 
-.gallery{
+.gallery {
   width: 220pt
 }
+
 .margins {
   margin-top: 5pt;
   margin-bottom: 10pt;
 }
+
 .marginsall {
   margin: 15pt;
+}
+
+.tooltip-class {
+  white-space: pre-line;
 }

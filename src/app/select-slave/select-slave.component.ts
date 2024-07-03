@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { ApiService } from '../services/api-service';
-import {  getCurrentLanguage,  IbaseSpecification, getSpecificationI18nName, SpecificationStatus, IdentifiedStates } from '@modbus2mqtt/specification.shared';
+import { getCurrentLanguage, IbaseSpecification, getSpecificationI18nName, SpecificationStatus, IdentifiedStates } from '@modbus2mqtt/specification.shared';
 import { Observable, Subscription, map } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SessionStorage } from '../services/SessionStorage';
@@ -25,6 +25,7 @@ interface IuiSlave {
   styleUrls: ['./select-slave.component.css']
 })
 export class SelectSlaveComponent extends SessionStorage implements OnInit {
+
   getDetectSpecToolTip(): string {
     return this.slaveNewForm.get("detectSpec")?.value == true ? "If there is exactly one specification matching to the modbus data for this slave, " +
       "the specification will be selected automatically" : "Please set the specification for the new slave after adding it"
@@ -45,6 +46,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   constructor(private _formBuilder: FormBuilder, private route: ActivatedRoute, private entityApiService: ApiService, private routes: Router) {
     super()
   }
+  showAllPublicSpecs = new FormControl<boolean>(false)
   uiSlaves: IuiSlave[] = [];
   slaves: (Islave)[] = [];
   // label:string;
@@ -119,10 +121,10 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     this.uiSlaves.forEach(uis => { this.slaves.push(uis.slave) })
   }
   getUiSlave(slave: Islave, detectSpec: boolean | undefined): IuiSlave {
-    let fg = this.initiateSlaveControl(slave.slaveid, null)
+    let fg = this.initiateSlaveControl(slave.slaveid, null, slave.name)
     return {
       slave: slave,
-      specs: this.entityApiService.getSpecsForSlave(this.bus!.busId!, slave.slaveid).pipe(
+      specs: this.entityApiService.getSpecsForSlave(this.bus!.busId!, slave.slaveid, this.showAllPublicSpecs.value!).pipe(
         map(this.fillSpecs.bind(this, detectSpec, fg, slave))),
       label: this.getSlaveName(slave),
       slaveForm: fg
@@ -154,7 +156,10 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       this.updateUiSlaves(slave, false)
     })
   }
-
+  showUnmatched(event: any) {
+    this.showAllPublicSpecs.value
+    this.updateSlaves(this.bus, false)
+  }
   compareSpecificationIdentification(o1: IidentificationSpecification, o2: IidentificationSpecification) {
     return o1 && o2 && o1.filename == o2.filename;
   }
@@ -333,7 +338,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     if (slave == null)
       return "New"
     if (slave.name)
-      return slave.name + "(" + slave + ")"
+      return slave.name + "(" + slave.slaveid + ")"
     if (slave.specification)
       return getSpecificationI18nName(slave.specification!, this.currentLanguage!)! + "(" + slave.slaveid + ")"
     return "Slave " + slave.slaveid

@@ -162,9 +162,11 @@ export class ApiService {
       }));
   }
 
-  getSpecsForSlave(busid: number, specificSlaveId: number): Observable<IidentificationSpecification[]> {
+  getSpecsForSlave(busid: number, specificSlaveId: number, showAllPublicSpecs: boolean): Observable<IidentificationSpecification[]> {
     let p1 = (specificSlaveId ? "&slaveid=" + specificSlaveId : "")
     let param = "?busid=" + busid + p1;
+    if (showAllPublicSpecs)
+      param = param + "&showAllPublicSpecs=true"
     return this.httpClient.get<IidentificationSpecification[]>(apiUri.specsForSlaveId + `${param}`).pipe(
       catchError(err => {
         this.errorHandler(err);
@@ -298,14 +300,14 @@ export class ApiService {
         return new Observable<IimageAndDocumentUrl[]>();
       }));
   }
-  postSpecificationContribution(spec: string, note: string):Observable<number> {
+  postSpecificationContribution(spec: string, note: string): Observable<number> {
     return this.httpClient.post<number>(apiUri.specficationContribute + `?spec=${spec}`, note).pipe(
       catchError(err => {
         this.errorHandler(err);
         return new Observable<number>();
       }));
   }
-  getForSpecificationValidation(specfilename:string, language: string): Observable<Imessage[]> {
+  getForSpecificationValidation(specfilename: string, language: string): Observable<Imessage[]> {
     return this.httpClient.get<Imessage[]>(apiUri.specificationValidate + `?language=${language}&spec=${specfilename}`).pipe(
       catchError(err => {
         this.errorHandler(err);
@@ -319,9 +321,9 @@ export class ApiService {
         return new Observable<void>();
       }));
   }
-  
-  postForSpecificationValidation(spec:ImodbusSpecification, language: string): Observable<Imessage[]> {
-    return this.httpClient.post<Imessage[]>(apiUri.specificationValidate + `?language=${language}`,spec).pipe(
+
+  postForSpecificationValidation(spec: ImodbusSpecification, language: string): Observable<Imessage[]> {
+    return this.httpClient.post<Imessage[]>(apiUri.specificationValidate + `?language=${language}`, spec).pipe(
       catchError(err => {
         this.errorHandler(err);
         return new Observable<Imessage[]>();
