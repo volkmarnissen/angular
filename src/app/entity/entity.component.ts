@@ -20,7 +20,7 @@ const mqttNameFormControlName = "mqttname"
 const newEntity: ImodbusEntityWithName = {
   name: "",
   registerType: ModbusRegisterType.HoldingRegister,
-  readonly:true,
+  readonly: true,
   modbusValue: [0], mqttValue: "", identified: IdentifiedStates.unknown, converter: {
     name: "number", registerTypes: [ModbusRegisterType.HoldingRegister,
     ModbusRegisterType.AnalogInputs]
@@ -90,7 +90,7 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
       converter: [null as Iconverter | null, Validators.required],
       modbusAddress: [null as number | null, Validators.compose([Validators.required, Validators.min(0), Validators.max(65536)])],
       registerType: [null as IRegisterType | null, Validators.required],
-      readonly:[null as boolean|null],
+      readonly: [null as boolean | null],
       icon: [null as string | null],
       forceUpdate: [false],
     })
@@ -118,7 +118,7 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
         deviceClass: [null as string | null],
       })
     this.generateEntityCopyToForm()
-    if(this.specificationMethods){
+    if (this.specificationMethods) {
       this.specificationSavedObservable = this.specificationMethods.getSaveObservable();
       this.subSpec = this.specificationSavedObservable.subscribe(() => {
         this.backupEntity = null;
@@ -187,9 +187,9 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     this.variableFormGroup.get(variableTypeFormControlName)!.setValue(entity.variableConfiguration ? entity.variableConfiguration.targetParameter : null)
     this.variableFormGroup.get(variableEntityFormControlName)!.setValue(entity.variableConfiguration && entity.variableConfiguration.entityId ? entity.variableConfiguration.entityId : null)
     if (this.variableFormGroup.get(variableTypeFormControlName)!.value != null && this.variableFormGroup.get(variableTypeFormControlName)!.value != 0) {
-      this.variableFormGroup.get(nameFormControlName)!.disable()
-      this.variableFormGroup.get(nameFormControlName)!.setValue(null)
-      variableEntityFormControlName
+      this.entityFormGroup.get(nameFormControlName)!.disable()
+      this.entityFormGroup.get(nameFormControlName)!.setValue(null)
+
       if (isDeviceVariable(this.variableFormGroup.get(variableTypeFormControlName)!.value))
         this.variableFormGroup.get(variableEntityFormControlName)!.disable()
       else
@@ -301,8 +301,8 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
       this.mqttValueObservable.next(data)
     })
   }
-  isCurrentMessage():boolean{
-    if(this.specificationMethods == undefined)
+  isCurrentMessage(): boolean {
+    if (this.specificationMethods == undefined)
       return false;
     return this.specificationMethods.getCurrentMessage()?.referencedEntity == this.entity.id
   }
@@ -367,22 +367,22 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
       this.entityFormGroup.get('registerType')!.value.registerType :
       this.entity.registerType = ModbusRegisterType.HoldingRegister)
 
-    if(this.entity.registerType == ModbusRegisterType.AnalogInputs){
+    if (this.entity.registerType == ModbusRegisterType.AnalogInputs) {
       this.entityFormGroup.get('registerType')
       this.entity.readonly = true
       this.entityFormGroup.get('readonly')?.disable()
       this.entityFormGroup.get('readonly')?.setValue(true)
     }
-    else{
-      this.entityFormGroup.get('readonly')?.enable()  
+    else {
+      this.entityFormGroup.get('readonly')?.enable()
     }
-      this.entity.readonly = true
+    this.entity.readonly = true
     this.readFromModbus()
   }
-  isAnalogInput():boolean{
+  isAnalogInput(): boolean {
     return this.entity.registerType == ModbusRegisterType.AnalogInputs
   }
- form2Entity() {
+  form2Entity() {
     // copies all values which are not relevant to 
     // this.saveButton.disabled = !this.canSaveEntity(entity)
     if (!this.entity)
@@ -394,7 +394,7 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
       this.entity.forceUpdate = this.entityFormGroup.get('forceUpdate')!.value;
     if (this.entityFormGroup.get('readonly')!.value != null)
       this.entity.readonly = this.entityFormGroup.get('readonly')!.value;
-    
+
     switch (this.getParameterTypeFromConverterFormControl()) {
       case "Inumber":
         if (this.numberPropertiesFormGroup.get('deviceClass')!.value != null)
@@ -607,7 +607,7 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
   }
   getMqttValue(rc: ImodbusEntity): string {
     if (rc)
-      if (( rc.converter.name === "number") && rc.mqttValue) {
+      if ((rc.converter.name === "number") && rc.mqttValue) {
         return (rc.mqttValue as number).toString();
       }
       else
@@ -676,7 +676,7 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
       }
     }
   }
-  setEntitiesTouched(){
+  setEntitiesTouched() {
     this.specificationMethods.setEntitiesTouched()
   }
   dropOptions(event: CdkDragDrop<any, any, any>) {
