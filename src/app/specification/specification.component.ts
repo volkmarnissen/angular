@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, EventEmitter, HostListener, OnDestroy, On
 import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { ApiService } from '../services/api-service';
 import { Observable, Subject, Subscription, catchError, first, map, startWith } from 'rxjs';
-import {  ImodbusSpecification, IbaseSpecification, getSpecificationI18nName, getFileNameFromName, IdentifiedStates, SpecificationStatus, setSpecificationI18nName, IimageAndDocumentUrl, ImodbusEntity, newSpecification, getParameterType, VariableTargetParameters, setSpecificationI18nEntityOptionName, setSpecificationI18nEntityName, Iselect, deleteSpecificationI18nEntityNameAndOptions, IUpdatei18nText, ImodbusData, Ispecification, getBaseFilename } from '@modbus2mqtt/specification.shared';
+import { ImodbusSpecification, IbaseSpecification, getSpecificationI18nName, getFileNameFromName, IdentifiedStates, SpecificationStatus, setSpecificationI18nName, IimageAndDocumentUrl, ImodbusEntity, newSpecification, getParameterType, VariableTargetParameters, setSpecificationI18nEntityOptionName, setSpecificationI18nEntityName, Iselect, deleteSpecificationI18nEntityNameAndOptions, IUpdatei18nText, ImodbusData, Ispecification, getBaseFilename } from '@modbus2mqtt/specification.shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SessionStorage } from '../services/SessionStorage';
 import { Imessage } from '@modbus2mqtt/specification.shared';
@@ -40,7 +40,7 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
   private i18nTouched: boolean = false;
   private filesTouched: boolean = false;
   private specServices: SpecificationServices | undefined
-  private currentMessage:Imessage|undefined;
+  private currentMessage: Imessage | undefined;
   disabled: boolean;
   specificationMethods: ISpecificationMethods
   entities: ImodbusEntityWithName[] | undefined
@@ -197,7 +197,7 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
       getSaveObservable: (): Observable<void> => {
         return this.saveSubject;
       },
-      getCurrentMessage: ():Imessage|undefined => {
+      getCurrentMessage: (): Imessage | undefined => {
         return this.currentMessage
       }
     }
@@ -405,6 +405,21 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
       this.validationMessages = mesgs;
     })
   }
+  getErrorMessages(): Iterable<string> {
+    let messages = new Set<string>()
+    this.currentSpecification?.entities.forEach(entity => {
+      if (entity.modbusError)
+        messages.add(entity.modbusError)
+    })
+    return messages;
+  }
+  getErrorMessageHint(message: string): string {
+    switch (message) {
+      case "Timed out": return "Please check the timeout in"
+    }
+    return ""
+  }
+
   isValid(): boolean {
     if (this.currentSpecification && this.validationMessages.length == 0) {
       return this.validationForms.valid
@@ -412,7 +427,7 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
     return false;
   }
   jump2Message(message: Imessage) {
-      this.currentMessage = message
+    this.currentMessage = message
   }
   isTouched(): boolean {
 
@@ -470,10 +485,10 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
       })
     )
   }
-  getStatusIcon(status:SpecificationStatus| null):string{
+  getStatusIcon(status: SpecificationStatus | null): string {
     return SpecificationServices.getStatusIcon(status)
   }
-  getStatusText(status:SpecificationStatus| null):string{
+  getStatusText(status: SpecificationStatus | null): string {
     return SpecificationServices.getStatusText(status)
   }
 }

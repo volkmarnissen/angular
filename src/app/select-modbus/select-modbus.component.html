@@ -19,11 +19,12 @@
                   </button>
                 </ng-container>
                 <ng-container *ngIf="!needsSaving(i)">
-                  <button mat-icon-button class=" width100pt material-icons app-toolbar-menu delete-button"
-                    matTooltip="Delete" color="warn" (click)="deleteBus(bus)" [disabled]="needsSaving(i)">
+                  <button mat-icon-button type="button"
+                    class=" width100pt material-icons app-toolbar-menu delete-button" matTooltip="Delete" color="warn"
+                    (click)="deleteBus(bus)" [disabled]="needsSaving(i)">
                     <mat-icon>delete</mat-icon>
                   </button>
-                  <button mat-icon-button class="material-icons app-toolbar-menu delete-button"
+                  <button mat-icon-button type="submit" class="material-icons app-toolbar-menu delete-button"
                     [disabled]="needsSaving(i)" matTooltip="List or add Slaves" color="primary" (click)="listSlaves(i)">
                     <mat-icon> list</mat-icon>
                   </button>
