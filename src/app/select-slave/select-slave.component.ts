@@ -31,11 +31,10 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       "the specification will be selected automatically" : "Please set the specification for the new slave after adding it"
   }
   keyDown(event: Event, fg: FormGroup) {
-    if ((event.target as HTMLInputElement).name == 'newSlaveId')
+    if ((event.target as HTMLInputElement).name == 'slaveId')
       this.addSlave(fg)
     event.preventDefault()
   }
-
 
 
   getSpecIcon(arg0: any) {
@@ -107,7 +106,6 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     return spec
   }
   private updateSlaves(bus: IBus, detectSpec?: boolean) {
-
     this.entityApiService.getSlaves(this.bus.busId).subscribe((slaves) => {
       this.uiSlaves = []
       slaves.forEach(s => {
@@ -270,7 +268,6 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     return (slaveId >= 0 && (null == this.uiSlaves.find(uis => uis != null && uis.slave.slaveid != null && uis.slave.slaveid == slaveId)))
   }
   addSlave(newSlaveFormGroup: FormGroup): void {
-
     let slaveId: number = this.getSlaveIdFromForm(newSlaveFormGroup)
     let detectSpec = newSlaveFormGroup.get(['detectSpec'])?.value
     if (this.canAddSlaveId(newSlaveFormGroup))

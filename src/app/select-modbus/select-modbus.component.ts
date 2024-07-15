@@ -8,6 +8,8 @@ import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { BUS_TIMEOUT_DEFAULT } from '@modbus2mqtt/specification.shared';
+
 @Component({
   selector: 'app-select-modbus',
   templateUrl: './select-modbus.component.html',
@@ -234,7 +236,7 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
         serial: [null, this.serialValidator],
         serialDeviceSelection: [null, this.serialDevicesValidator],
         selectBaudRate: [9600, Validators.required],
-        timeout: [100, Validators.required]
+        timeout: [BUS_TIMEOUT_DEFAULT, Validators.required]
       }),
       tcp: this._formBuilder.group({
         host: ["", Validators.required],
