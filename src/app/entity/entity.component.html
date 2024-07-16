@@ -76,15 +76,17 @@
                         </mat-form-field>
                     </div>
                     <div class="flexrows">
-                  
-                    <mat-slide-toggle class="width50 toggleField" formControlName="forceUpdate"
-                        (change)="form2Entity()"
-                        matTooltip="Update Home Assistant history even if value hasn't changed" (change)="form2Entity()">Force
-                        Updates</mat-slide-toggle>
-                    <mat-slide-toggle class="width50 toggleField" formControlName="readonly"   
-                        matTooltip="The Modbus Value is read only"  (change)="form2Entity()">Read Only</mat-slide-toggle>
+
+                        <mat-slide-toggle class="width50 toggleField" formControlName="forceUpdate"
+                            (change)="form2Entity()"
+                            matTooltip="Update Home Assistant history even if value hasn't changed"
+                            (change)="form2Entity()">Force
+                            Updates</mat-slide-toggle>
+                        <mat-slide-toggle class="width50 toggleField" formControlName="readonly"
+                            matTooltip="The Modbus Value is read only" (change)="form2Entity()">Read
+                            Only</mat-slide-toggle>
                     </div>
-                    <mat-form-field class="smallfield"> 
+                    <mat-form-field class="smallfield">
                         <mat-label>Converter</mat-label>
                         <mat-select matInput formControlName="converter" [compareWith]="compareIConverters"
                             (selectionChange)="onModbusAddressChange()">
@@ -120,7 +122,7 @@
                             </mat-error>
                         </mat-form-field>
                     </div>
-                 
+
                 </div>
             </form>
         </mat-expansion-panel>
@@ -137,8 +139,7 @@
                     <div class="flexrows">
                         <mat-form-field class="smallfield width150pt">
                             <mat-label>Device Class</mat-label>
-                            <mat-select matInput formControlName="deviceClass"
-                                (onSelectionChange)="form2Entity()">
+                            <mat-select matInput formControlName="deviceClass" (selectionChange)="form2Entity()">
                                 <mat-option *ngFor="let c of getDeviceClasses()" [value]="c">
                                     {{ c }}
                                 </mat-option>
@@ -146,8 +147,7 @@
                         </mat-form-field>
                         <mat-form-field class="smallfield ">
                             <mat-label>UOM</mat-label>
-                            <input #propUom matInput type="text" formControlName="uom"
-                                (change)="form2Entity()">
+                            <input #propUom matInput type="text" formControlName="uom" (change)="form2Entity()">
                         </mat-form-field>
                     </div>
                     <div class="flexrows">
