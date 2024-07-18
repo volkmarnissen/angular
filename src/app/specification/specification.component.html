@@ -43,7 +43,9 @@
 
         </mat-expansion-panel>
       </p>
-      <app-upload-files [specification]="currentSpecification" />
+      <div class="margins">
+        <app-upload-files [specification]="currentSpecification" (updateDocumentation)="updateDocuments($event)" />
+      </div>
       <form [formGroup]="enterSpecNameFormGroup" class="flexcolumns">
         <mat-form-field class="width250pt">
           <mat-label>Specification

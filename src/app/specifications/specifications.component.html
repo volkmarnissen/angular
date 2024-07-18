@@ -17,8 +17,7 @@
         <ng-container *ngFor="let spec of specifications ">
             <mat-card class="width350pt card">
                 <mat-card-header>
-                    <mat-card-title matTooltip="Contribute Specification" (click)="contributeSpecification(spec)"
-                        class="clickable width200pt"><mat-icon
+                    <mat-card-title matTooltip="Contribute Specification" class=" width200pt"><mat-icon
                             [matTooltip]="getStatusText(spec.status)">{{getStatusIcon(spec.status)}}</mat-icon>{{getTranslatedSpecName(spec)
                         }}</mat-card-title>
                     <div class="card-header-buttons">
@@ -33,9 +32,9 @@
                     <img class="marginsall" [src]="getImage(spec.filename)" />
 
                     <div
-                        [matTooltip]="[0,4].includes(spec.status)?'has wrong status':spec.messages.length? 'has messages':config.githubPersonalToken == undefined? 'configure github access token first':'Press to contribute to the public'">
+                        [matTooltip]="[0].includes(spec.status)?'is public':spec.messages.length? 'has messages':config.githubPersonalToken == undefined? 'configure github access token first':'Press to contribute to the public'">
                         <button mat-button class="width200pt"
-                            [disabled]="[0,4].includes(spec.status) || spec.messages.length > 0 || config.githubPersonalToken == undefined"
+                            [disabled]="[0].includes(spec.status) || spec.messages.length > 0 || config.githubPersonalToken == undefined"
                             (click)="contributeSpecification(spec)">
                             Contribute
                         </button>

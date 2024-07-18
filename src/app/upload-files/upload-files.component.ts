@@ -1,5 +1,5 @@
 import { HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
-import { OnChanges, Component, Input, ViewChild } from '@angular/core';
+import { OnChanges, Component, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { GalleryItem, ImageItem } from 'ng-gallery';
 import { IimageAndDocumentUrl, IbaseSpecification, SpecificationFileUsage, ImodbusSpecification, FileLocation } from '@modbus2mqtt/specification.shared';
@@ -17,6 +17,9 @@ export class UploadFilesComponent implements OnChanges {
   @Input("specification") currentSpecification: ImodbusSpecification | null
   urlDocumentControl: FormControl<string | null> = new FormControl<string | null>(null)
   urlImageControl: FormControl<string | null> = new FormControl<string | null>(null)
+  @Output()
+  updateDocumentation = new EventEmitter<IimageAndDocumentUrl[]>()
+
   @ViewChild('addImageUrlButton')
   addImageUrlButton: MatIconButton
   @ViewChild('addDocumentUrlButton')
@@ -80,6 +83,8 @@ export class UploadFilesComponent implements OnChanges {
           this.generateImageGalleryItems()
         else
           this.generateDocumentUrls()
+        this.updateDocumentation.next(event)
+
       });
 
     }

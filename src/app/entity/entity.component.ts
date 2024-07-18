@@ -59,7 +59,11 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
   backupEntity: ImodbusEntityWithName | null
   @Input()
   disabled: boolean = true
-
+  entityCategories: string[] = [
+    "",
+    "config",
+    "diagnostic"
+  ]
 
   mqttValues: HTMLElement;
   converters: Observable<Iconverter[]>;
@@ -91,6 +95,7 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
       modbusAddress: [null as number | null, Validators.compose([Validators.required, Validators.min(0), Validators.max(65536)])],
       registerType: [null as IRegisterType | null, Validators.required],
       readonly: [null as boolean | null],
+      entityCategory: [""],
       icon: [null as string | null],
       forceUpdate: [false],
     })
@@ -212,6 +217,7 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
 
     this.entityFormGroup.get('icon')!.setValue(entity.icon);
     this.entityFormGroup.get('forceUpdate')!.setValue(entity.forceUpdate);
+    this.entityFormGroup.get('entityCategory')!.setValue(entity.entityCategory);
     this.entityFormGroup.get('registerType')!.setValue(this.getFunctionCode(entity.registerType))
     converterFormControl.setValue(entity.converter);
     modbusAddressFormControl.setValue(entity.modbusAddress != undefined ? entity.modbusAddress : null);
@@ -394,7 +400,10 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
       this.entity.forceUpdate = this.entityFormGroup.get('forceUpdate')!.value;
     if (this.entityFormGroup.get('readonly')!.value != null)
       this.entity.readonly = this.entityFormGroup.get('readonly')!.value;
-
+    if (this.entityFormGroup.get('entityCategory')!.value != null && this.entityFormGroup.get('entityCategory')!.value.length > 0)
+      this.entity.entityCategory = this.entityFormGroup.get('entityCategory')!.value;
+    else
+      delete this.entity.entityCategory
     switch (this.getParameterTypeFromConverterFormControl()) {
       case "Inumber":
         if (this.numberPropertiesFormGroup.get('deviceClass')!.value != null)
@@ -410,6 +419,22 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     this.onConverterValueChangeLocal()
     this.readFromModbus()
   }
+  updateReadonly() {
+    let category = this.entityFormGroup.get('entityCategory')!.value
+    switch (category) {
+      case "diagnostic": this.entityFormGroup.get('readonly')!.setValue(true); break;
+      case "config": this.entityFormGroup.get('readonly')!.setValue(false); break;
+      default: break;
+    }
+  }
+  updateCategory() {
+    let category = this.entityFormGroup.get('entityCategory')!.value
+    if (category.length) {
+      category = this.entityFormGroup.get('readonly')!.value ? "diagnostic" : "config";
+      this.entityFormGroup.get('entityCategory')!.setValue(category)
+    }
+  }
+
   private onConverterValueChangeLocal() {
     this.specificationMethods.setEntitiesTouched()
     switch (this.getParameterTypeFromConverterFormControl()) {

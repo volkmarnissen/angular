@@ -30,7 +30,7 @@ export class ApiService {
           else
             msg += err.error + "\n";
         msg += err.statusText
-        if (!err.error && !err.error.error && !err.statusText && err.message)
+        if (!err.error && !err.statusText && err.message)
           msg = err.message
         alert(msg);
         console.log(JSON.stringify(err));
@@ -261,7 +261,14 @@ export class ApiService {
         return new Observable<ImodbusEntityWithName>();
       }))
   }
-
+  deleteNewSpecfiles() {
+    return this.httpClient.delete<void>(apiUri.newSpecificationfiles).pipe(
+      catchError((err): Observable<void> => {
+        this.loadingError$.next(true);
+        this.errorHandler(err);
+        return new Observable<void>();
+      }));
+  }
   postModbusWriteMqtt(spec: ImodbusSpecification, entityid: number, busid: number, slaveid: number, language: string, mqttValue: string): Observable<string> {
     let lSpec: ImodbusSpecification = structuredClone(spec)
     let entity = lSpec.entities.find(e => e.id == entityid)

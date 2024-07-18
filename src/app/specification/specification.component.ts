@@ -49,6 +49,10 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
   validationMessages: Imessage[] = [];
   constructor(private entityApiService: ApiService, private fb: FormBuilder, private route: ActivatedRoute, private router: Router, private cdr: ChangeDetectorRef) { super() }
   ngOnDestroy(): void {
+    if (this.currentSpecification?.filename == "_new") {
+      this.entityApiService.deleteNewSpecfiles().subscribe(() => { })
+    }
+
     if (this.sub)
       this.sub.unsubscribe()
   }
@@ -383,7 +387,7 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
               this.entityApiService.getModbusSpecification(this.busId, this.slaveid, slave.specificationid).subscribe(this.setCurrentSpecification.bind(this))
             })
           else
-            this.setCurrentSpecification(newSpecification)
+            this.setCurrentSpecification(structuredClone(newSpecification))
         })
       })
 
