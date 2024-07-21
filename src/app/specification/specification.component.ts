@@ -82,7 +82,7 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
         this.entitiesTouched = true
       }),
 
-      getMqttLanguage: (() => {
+      getMqttLanguageName: (() => {
         return I18nService.getLanguageName(this.config.mqttdiscoverylanguage)
       }),
       postModbusEntity: ((changedEntity: ImodbusEntityWithName): Observable<ImodbusData> => {
@@ -184,6 +184,7 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
             this.currentSpecification.entities.push(newEntity);
             this.updateTranslation(newEntity)
           }
+          this.setValidationMessages()
         }
 
       },
@@ -196,6 +197,7 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
             this.entities = this.currentSpecification.entities
             deleteSpecificationI18nEntityNameAndOptions(this.currentSpecification, entityId)
           }
+          this.setValidationMessages()
         }
       },
       getSaveObservable: (): Observable<void> => {
@@ -300,15 +302,17 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
           status: this.currentSpecification!.status,
           files: this.currentSpecification!.files,
         }
-        // Restore entities with name and options
-        this.currentSpecification!.entities = this.entities as ImodbusEntityWithName[]
-        this.entitiesTouched = false;
-        this.filesTouched = false;
-        this.i18nTouched = false;
-        this.enterSpecNameFormGroup.markAsPristine();
-        this.saveSubject.next()
-        if (close)
-          this.closeAndBack()
+        this.entityApiService.getModbusSpecification(this.busId, this.slaveid, spec.filename).subscribe(spec => {
+          this.setCurrentSpecification(spec)
+          this.entitiesTouched = false;
+          this.filesTouched = false;
+          this.i18nTouched = false;
+          this.enterSpecNameFormGroup.markAsPristine();
+          this.saveSubject.next()
+          if (close)
+            this.closeAndBack()
+        })
+
       })
 
     }

@@ -48,7 +48,7 @@
             <form [formGroup]="entityFormGroup">
                 <div class="flexcols">
                     <mat-form-field class="smallfield">
-                        <mat-label>Name({{specificationMethods?specificationMethods.getMqttLanguage():""}})</mat-label>
+                        <mat-label>Name({{specificationMethods?specificationMethods.getMqttLanguageName():""}})</mat-label>
                         <input matInput #entityName type="text" class="width150pt" formControlName="name"
                             [errorStateMatcher]="errorStateMatcher" (change)="onEntityNameValueChange()">
                         <mat-error *ngIf="entityFormGroup!.get('name')?.hasError('required') != null">

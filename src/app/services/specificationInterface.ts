@@ -13,7 +13,7 @@ export interface ISpecificationMethods {
     getCurrentMessage():Imessage|undefined;
     hasDuplicateVariableConfigurations(entityId: number, targetParameter: VariableTargetParameters): boolean;
     canEditEntity(): boolean;
-    getMqttLanguage(): string;
+    getMqttLanguageName(): string;
     addEntity(addedEntity: ImodbusEntityWithName): void,
     deleteEntity(entityId: number): void,
     copy2Translation(entity: Ientity): void,

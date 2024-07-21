@@ -49,7 +49,7 @@
       <form [formGroup]="enterSpecNameFormGroup" class="flexcolumns">
         <mat-form-field class="width250pt">
           <mat-label>Specification
-            Name({{specificationMethods?specificationMethods.getMqttLanguage():""}})</mat-label>
+            Name({{specificationMethods?specificationMethods.getMqttLanguageName():""}})</mat-label>
           <input matInput formControlName="name" (change)="setFilename();copyToSpec()" />
         </mat-form-field>
         <mat-expansion-panel>

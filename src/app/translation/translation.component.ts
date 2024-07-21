@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { IUpdatei18nText, Imessage, ImodbusSpecification, Iselect,  VariableTargetParameters, getParameterType, getSpecificationI18nText, setSpecificationI18nText, validateTranslation } from '@modbus2mqtt/specification.shared';
+import { IUpdatei18nText, Imessage, ImodbusSpecification, Iselect, VariableTargetParameters, getParameterType, getSpecificationI18nText, setSpecificationI18nText, validateTranslation } from '@modbus2mqtt/specification.shared';
 import { ApiService } from '../services/api-service';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ISpecificationMethods } from '../services/specificationInterface';
@@ -46,7 +46,6 @@ export class TranslationComponent implements OnInit, OnDestroy {
   ids: string[]
 
   ngOnInit() {
-    this.specificationFormGroup.setControl("translation", this.translationFormGroup)
     this.translationFormGroup.addControl("name", new FormControl<string | null>(null))
     this.specificationSubscription = this.specificationObservable.subscribe(_specFromParent => {
       if (_specFromParent)
@@ -54,9 +53,11 @@ export class TranslationComponent implements OnInit, OnDestroy {
       this.translationLanguage = this.mqttdiscoverylanguage
       let enLang = this.currentSpecification.i18n.find(l => l.lang == 'en')
       this.originalLanguage = 'en'
-      if (this.mqttdiscoverylanguage != 'en')
+      if (this.mqttdiscoverylanguage != 'en') {
+        this.specificationFormGroup.setControl("translation", this.translationFormGroup)
         if (enLang == null && this.currentSpecification.i18n.length > 0)
           this.originalLanguage = this.currentSpecification.i18n[0].lang
+      }
 
       this.fillLanguages()
       this.translationFormGroup.setControl("name", new FormControl<string | null>(
@@ -110,7 +111,7 @@ export class TranslationComponent implements OnInit, OnDestroy {
     if (textFc) {
       let text = textFc.value
       setSpecificationI18nText(this.currentSpecification, this.translationLanguage, key, text)
-      this.updateI18n.emit({key:key, i18n:this.currentSpecification.i18n})
+      this.updateI18n.emit({ key: key, i18n: this.currentSpecification.i18n })
     }
   }
   translatedText(key: string): string | null {
@@ -201,19 +202,19 @@ export class TranslationComponent implements OnInit, OnDestroy {
     let rc: string[] = []
     if (this.currentSpecification) {
       let ent = this.currentSpecification.entities.find(ent => ent.id == entityId)
-      if (ent && getParameterType(ent.converter) == "Iselect"){
+      if (ent && getParameterType(ent.converter) == "Iselect") {
         let opt = (ent.converterParameters as Iselect).options
         let optm = (ent.converterParameters as Iselect).optionModbusValues
-        if( opt && opt.length)
+        if (opt && opt.length)
           opt.forEach(opt => rc.push("e" + ent!.id + "o." + opt.key))
-        if( optm && optm.length)
-          optm.forEach(opt =>{
+        if (optm && optm.length)
+          optm.forEach(opt => {
             let oname = "e" + ent!.id + "o." + opt
-            if(! rc.includes( oname))
+            if (!rc.includes(oname))
               rc.push(oname)
-        } )
+          })
       }
-      }
+    }
     return rc;
   }
 }

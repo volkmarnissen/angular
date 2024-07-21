@@ -1,4 +1,4 @@
-<mat-expansion-panel>
+<mat-expansion-panel *ngIf="mqttdiscoverylanguage != 'en'">
   <mat-expansion-panel-header>
     <mat-panel-title>
       <p [ngClass]="{'errorText': !translationFormGroup.valid}">
