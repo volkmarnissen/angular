@@ -6,6 +6,7 @@ import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from
 import { ISpecificationMethods } from '../services/specificationInterface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { I18nService } from '../services/i18n.service';
 
 const originalLanguageFormGroupName = "originalLanguage"
 const translationLanguageFormGroupName = "translationLanguage"
@@ -29,7 +30,7 @@ export class TranslationComponent implements OnInit, OnDestroy {
   mqttdiscoverylanguage: string;
   @Input({ required: true })
   specificationMethods: ISpecificationMethods
-
+  languageToggle: boolean = false
   currentSpecification: ImodbusSpecification;
   supportsGoogleTranslate: boolean = true;
   allKeys: string[] = []
@@ -46,37 +47,72 @@ export class TranslationComponent implements OnInit, OnDestroy {
   ids: string[]
 
   ngOnInit() {
+    if (this.mqttdiscoverylanguage != 'en') {
+      this.specificationFormGroup.setControl("translation", this.translationFormGroup)
+
+    }
+
     this.translationFormGroup.addControl("name", new FormControl<string | null>(null))
     this.specificationSubscription = this.specificationObservable.subscribe(_specFromParent => {
       if (_specFromParent)
         this.currentSpecification = _specFromParent
-      this.translationLanguage = this.mqttdiscoverylanguage
-      let enLang = this.currentSpecification.i18n.find(l => l.lang == 'en')
-      this.originalLanguage = 'en'
       if (this.mqttdiscoverylanguage != 'en') {
-        this.specificationFormGroup.setControl("translation", this.translationFormGroup)
-        if (enLang == null && this.currentSpecification.i18n.length > 0)
-          this.originalLanguage = this.currentSpecification.i18n[0].lang
+        let dql = this.currentSpecification.i18n.find(langStruct => langStruct.lang == this.mqttdiscoverylanguage)
+        if (!dql) // language is missing completely
+          this.languageToggle = false
       }
+      this.reloadTexts()
+    });
+  }
+  onLanguageToggle() {
+    this.languageToggle = !this.languageToggle;
+    this.reloadTexts()
+  }
 
-      this.fillLanguages()
+  reloadTexts() {
+    if (this.languageToggle) {
+      this.originalLanguage = this.mqttdiscoverylanguage
+      this.translationLanguage = 'en'
+    }
+    else {
+      this.originalLanguage = 'en'
+      this.translationLanguage = this.mqttdiscoverylanguage
+    }
+
+    if (!this.translationFormGroup.get("name"))
       this.translationFormGroup.setControl("name", new FormControl<string | null>(
         getSpecificationI18nText(this.currentSpecification, this.translationLanguage, "name", true), Validators.required))
 
-      for (let key of this.getAllKeys()) {
-        try {
+    this.fillLanguages()
+    for (let key of this.getAllKeys()) {
+      try {
+        if (!this.translationFormGroup.get(key))
           this.translationFormGroup.addControl(key, new FormControl<string | null>(
             getSpecificationI18nText(this.currentSpecification, this.translationLanguage, key, true), Validators.required))
-
-          this.getOptionKeys(key).forEach(optionKey => this.translationFormGroup.addControl(optionKey, new FormControl<string | null>(
-            getSpecificationI18nText(this.currentSpecification, this.translationLanguage, optionKey, true), Validators.required)))
+        let oKeys = this.getOptionKeys(key)
+        oKeys.forEach(optionKey => {
+          if (!this.translationFormGroup.get(optionKey))
+            this.translationFormGroup.addControl(optionKey, new FormControl<string | null>(
+              getSpecificationI18nText(this.currentSpecification, this.translationLanguage, optionKey, true), Validators.required))
+        })
+        for (const field in this.translationFormGroup.controls) { // 'field' is a string
+          if (field.startsWith(key) && field != key && !oKeys.includes(field))
+            this.translationFormGroup.removeControl(field)
         }
-        catch (e) {
-          console.log("error")
-        }
-        this.translationFormGroupInitialized = true;
       }
-    });
+      catch (e) {
+        console.log("error")
+      }
+      this.translationFormGroup.updateValueAndValidity()
+
+      this.translationFormGroupInitialized = true;
+
+    }
+
+  }
+
+  getLanguageName(lang: string): string {
+    return I18nService.getLanguageName(lang)
   }
   showTranslation(): boolean {
     // en should always be availabe. The discovery language is al
@@ -107,10 +143,11 @@ export class TranslationComponent implements OnInit, OnDestroy {
     return getSpecificationI18nText(this.currentSpecification, this.originalLanguage, key, true)!
   }
   changeText(key: string): void {
-    let textFc = this.translationFormGroup.get([key])
+    let textFc = this.translationFormGroup.get(key)
     if (textFc) {
       let text = textFc.value
       setSpecificationI18nText(this.currentSpecification, this.translationLanguage, key, text)
+      this.translationFormGroup.updateValueAndValidity()
       this.updateI18n.emit({ key: key, i18n: this.currentSpecification.i18n })
     }
   }
@@ -128,9 +165,10 @@ export class TranslationComponent implements OnInit, OnDestroy {
     return rc;
   }
   errorHandler(err: HttpErrorResponse): boolean {
-    if (err.error.code == 7) {
+    if (err.status == 406) {
       // Forward to translation
       this.supportsGoogleTranslate = false;
+      this.googleTranslate()
       return true
     }
     return false

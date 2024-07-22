@@ -354,7 +354,6 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
       this.entityFormGroup.get(mqttNameFormControlName)!.setValue(this.entity.mqttname != null ? this.entity.mqttname : null)
     }
     this.specificationMethods.copy2Translation(this.entity)
-
   }
   onModbusAddressChange() {
     if (!this.entity)

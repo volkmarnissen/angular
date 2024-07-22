@@ -185,6 +185,9 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
             this.updateTranslation(newEntity)
           }
           this.setValidationMessages()
+          if (this.specificationSubject)
+            this.specificationSubject.next(this.currentSpecification!);
+
         }
 
       },
@@ -198,6 +201,8 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
             deleteSpecificationI18nEntityNameAndOptions(this.currentSpecification, entityId)
           }
           this.setValidationMessages()
+          if (this.specificationSubject)
+            this.specificationSubject.next(this.currentSpecification!);
         }
       },
       getSaveObservable: (): Observable<void> => {
@@ -217,7 +222,7 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
     let filename: string | null = null
     if (this.currentSpecification && this.currentSpecification.filename && this.currentSpecification.filename != "_new")
       filename = this.currentSpecification.filename
-    this.enterSpecNameFormGroup.get('name')?.setValue(this.currentSpecification ? getSpecificationI18nName(this.currentSpecification, this.config.mqttdiscoverylanguage) : null);
+    this.enterSpecNameFormGroup.get('name')?.setValue(this.currentSpecification ? getSpecificationI18nName(this.currentSpecification, this.config.mqttdiscoverylanguage, true) : null);
     this.enterSpecNameFormGroup.get('filename')?.setValue(filename);
     this.enterSpecNameFormGroup.get('model')?.setValue(this.currentSpecification && this.currentSpecification.model ? this.currentSpecification.model : null);
     this.enterSpecNameFormGroup.get('manufacturer')?.setValue(this.currentSpecification && this.currentSpecification.manufacturer ? this.currentSpecification.manufacturer : null);
@@ -248,10 +253,13 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
     I18nService.specificationTextsToTranslation(this.currentSpecification, this.config.mqttdiscoverylanguage)
     this.currentSpecification.entities = e;
     this.entities = e;
+    if (this.specificationSubject)
+      this.specificationSubject.next(this.currentSpecification!);
+
   }
   getTranslatedSpecName(): string | null {
     if (this.config && this.config.mqttdiscoverylanguage && this.currentSpecification)
-      return getSpecificationI18nName(this.currentSpecification!, this.config.mqttdiscoverylanguage)
+      return getSpecificationI18nName(this.currentSpecification!, this.config.mqttdiscoverylanguage, true)
     return null
   }
   updateDocuments($event: IimageAndDocumentUrl[]) {
@@ -276,8 +284,12 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
     if (!$event || !this.currentSpecification)
       return;
     I18nService.updateSpecificationI18n($event.key, this.currentSpecification!, this.config.mqttdiscoverylanguage)
-    if ($event.key == 'name')
-      this.enterSpecNameFormGroup.get('name')!.setValue(getSpecificationI18nName(this.currentSpecification, this.config.mqttdiscoverylanguage))
+    if ($event.key == 'name') {
+      let specName = getSpecificationI18nName(this.currentSpecification, this.config.mqttdiscoverylanguage, true)
+      if (specName)
+        this.enterSpecNameFormGroup.get('name')!.setValue(specName)
+    }
+
     this.setValidationMessages()
     this.i18nTouched = true;
   }
