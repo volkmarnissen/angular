@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { IUpdatei18nText, Imessage, ImodbusSpecification, Iselect, VariableTargetParameters, getParameterType, getSpecificationI18nText, setSpecificationI18nText, validateTranslation } from '@modbus2mqtt/specification.shared';
 import { ApiService } from '../services/api-service';
@@ -58,8 +58,13 @@ export class TranslationComponent implements OnInit, OnDestroy {
         this.currentSpecification = _specFromParent
       if (this.mqttdiscoverylanguage != 'en') {
         let dql = this.currentSpecification.i18n.find(langStruct => langStruct.lang == this.mqttdiscoverylanguage)
-        if (!dql) // language is missing completely
-          this.languageToggle = false
+        let en = this.currentSpecification.i18n.find(langStruct => langStruct.lang == "en")
+        if (en)
+          this.languageToggle = (dql != undefined)
+        else
+          this.languageToggle = true
+
+
       }
       this.reloadTexts()
     });
@@ -68,7 +73,16 @@ export class TranslationComponent implements OnInit, OnDestroy {
     this.languageToggle = !this.languageToggle;
     this.reloadTexts()
   }
+  private addOrUpdateControl(textId: string) {
+    let text = getSpecificationI18nText(this.currentSpecification, this.translationLanguage, textId, true)
+    let control = this.translationFormGroup.get(textId)
 
+    if (!control)
+      this.translationFormGroup.setControl(textId, new FormControl<string | null>(
+        text, Validators.required))
+    else
+      control.setValue(text)
+  }
   reloadTexts() {
     if (this.languageToggle) {
       this.originalLanguage = this.mqttdiscoverylanguage
@@ -78,22 +92,15 @@ export class TranslationComponent implements OnInit, OnDestroy {
       this.originalLanguage = 'en'
       this.translationLanguage = this.mqttdiscoverylanguage
     }
-
-    if (!this.translationFormGroup.get("name"))
-      this.translationFormGroup.setControl("name", new FormControl<string | null>(
-        getSpecificationI18nText(this.currentSpecification, this.translationLanguage, "name", true), Validators.required))
+    this.addOrUpdateControl("name")
 
     this.fillLanguages()
     for (let key of this.getAllKeys()) {
       try {
-        if (!this.translationFormGroup.get(key))
-          this.translationFormGroup.addControl(key, new FormControl<string | null>(
-            getSpecificationI18nText(this.currentSpecification, this.translationLanguage, key, true), Validators.required))
+        this.addOrUpdateControl(key)
         let oKeys = this.getOptionKeys(key)
         oKeys.forEach(optionKey => {
-          if (!this.translationFormGroup.get(optionKey))
-            this.translationFormGroup.addControl(optionKey, new FormControl<string | null>(
-              getSpecificationI18nText(this.currentSpecification, this.translationLanguage, optionKey, true), Validators.required))
+          this.addOrUpdateControl(optionKey)
         })
         for (const field in this.translationFormGroup.controls) { // 'field' is a string
           if (field.startsWith(key) && field != key && !oKeys.includes(field))

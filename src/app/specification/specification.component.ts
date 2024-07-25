@@ -69,13 +69,13 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
     }
     this.specificationMethods = {
       copy2Translation: ((entity: ImodbusEntityWithName): void => {
-        if (entity && this.currentSpecification) {
-          if (entity.name)
+        if (entity && entity.id >= 0 && this.currentSpecification) {
             setSpecificationI18nEntityName(this.currentSpecification, this.config.mqttdiscoverylanguage, entity.id, entity.name)
           if (entity.converterParameters && (entity.converterParameters as Iselect).options)
             (entity.converterParameters as Iselect).options?.forEach(option => {
               setSpecificationI18nEntityOptionName(this.currentSpecification as IbaseSpecification, this.config.mqttdiscoverylanguage, entity.id, option.key, option.name)
             })
+          this.specificationSubject.next(this.currentSpecification)
         }
       }),
       setEntitiesTouched: ((): void => {
