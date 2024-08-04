@@ -1,6 +1,6 @@
 {
   "name": "@modbus2mqtt/angular",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "sshserver": "odroid@homeassistant.fritz.box",
   "credits": "multiple choice by Studio 365 from <a href='https://thenounproject.com/browse/icons/term/multiple-choice/' target='_blank' title='multiple choice Icons'>Noun Project</a> (CC BY 3.0)",
   "scripts": {
