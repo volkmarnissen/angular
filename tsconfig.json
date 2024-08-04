@@ -20,19 +20,16 @@
     "target": "ES2022",
     "module": "ES2022",
     "useDefineForClassFields": false,
-    "lib": [
-      "ES2022",
-      "dom"
-    ],
-    "paths":{
+    "lib": ["ES2022", "dom"],
+    "paths": {
       "angular/src/*": ["./src/*"]
     }
   },
-  "exclude":[
+  "exclude": [
     "node_modules/**/*",
     "dist/**/*",
     "**/__tests__/**",
     "**/environments/environment*.ts",
     "**/*.spec.ts"
-  ],
+  ]
 }

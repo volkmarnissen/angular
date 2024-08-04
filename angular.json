@@ -18,21 +18,12 @@
             },
             "localize": true,
             "index": "src/index.html",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.json",
-            "assets": [
-              "src/assets/images",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.css"
-            ],
+            "assets": ["src/assets/images", "src/assets"],
+            "styles": ["src/styles.css"],
             "scripts": [],
-            "allowedCommonJsDependencies": [
-              "@modbus2mqtt/shared"
-            ],
+            "allowedCommonJsDependencies": ["@modbus2mqtt/shared"],
             "browser": "src/main.ts"
           },
           "configurations": {
@@ -84,18 +75,10 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.json",
-            "assets": [
-              "src/assets/images/*",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.css"
-            ],
+            "assets": ["src/assets/images/*", "src/assets"],
+            "styles": ["src/styles.css"],
             "scripts": []
           }
         }

@@ -1,7 +1,16 @@
-import { ImodbusEntity, ImodbusSpecification, Iselect, getSpecificationI18nEntityName, getSpecificationI18nEntityOptionName, getSpecificationI18nName, setSpecificationI18nEntityName, setSpecificationI18nEntityOptionName } from '@modbus2mqtt/specification.shared'
+import {
+  ImodbusEntity,
+  ImodbusSpecification,
+  Iselect,
+  getSpecificationI18nEntityName,
+  getSpecificationI18nEntityOptionName,
+  getSpecificationI18nName,
+  setSpecificationI18nEntityName,
+  setSpecificationI18nEntityOptionName,
+} from "@modbus2mqtt/specification.shared";
 
 interface AssociativeArray {
-  [key: string]: string
+  [key: string]: string;
 }
 
 const languages: AssociativeArray = {
@@ -145,87 +154,125 @@ const languages: AssociativeArray = {
   yo: "Yorùbá",
   za: "Vahcuengh",
   zh: "中文",
-  zu: "isiZulu"
-}
-
+  zu: "isiZulu",
+};
 
 export class I18nService {
-
-  constructor() { }
+  constructor() {}
   static getLanguageName(code: string): string {
-    return languages[code]
+    return languages[code];
   }
-  static specificationTextsToTranslation(spec: ImodbusSpecification, language: string, entity?: ImodbusEntity) {
+  static specificationTextsToTranslation(
+    spec: ImodbusSpecification,
+    language: string,
+    entity?: ImodbusEntity,
+  ) {
     spec.entities.forEach((e) => {
-      if( (e as any).name )
-          setSpecificationI18nEntityName(spec,language,e.id,(e as any).name)
-        let opt = (e.converterParameters as Iselect).options
+      if ((e as any).name)
+        setSpecificationI18nEntityName(spec, language, e.id, (e as any).name);
+      let opt = (e.converterParameters as Iselect).options;
       if (opt && opt.length > 0 && (!entity || e.id == entity.id)) {
         (e.converterParameters as Iselect).optionModbusValues = [];
-        (e.converterParameters as Iselect).options!.forEach(option => {
-          (e.converterParameters as Iselect).optionModbusValues!.push(option.key);
-          setSpecificationI18nEntityOptionName(spec, language, e.id, option.key, option.name)
+        (e.converterParameters as Iselect).options!.forEach((option) => {
+          (e.converterParameters as Iselect).optionModbusValues!.push(
+            option.key,
+          );
+          setSpecificationI18nEntityOptionName(
+            spec,
+            language,
+            e.id,
+            option.key,
+            option.name,
+          );
         });
-        delete (e.converterParameters as Iselect).options
+        delete (e.converterParameters as Iselect).options;
       }
-
-    })
+    });
   }
-  static specificationTextsFromTranslation(spec: ImodbusSpecification, language: string, entity?: ImodbusEntity) {
-      spec.entities.forEach((e) => {
-   
-      let name = getSpecificationI18nEntityName(spec,language,e.id,true)
-      if( name )
-        (e as any).name = name;  
-      if ((e.converterParameters as Iselect).optionModbusValues && (!entity || e.id == entity.id)) {
+  static specificationTextsFromTranslation(
+    spec: ImodbusSpecification,
+    language: string,
+    entity?: ImodbusEntity,
+  ) {
+    spec.entities.forEach((e) => {
+      let name = getSpecificationI18nEntityName(spec, language, e.id, true);
+      if (name) (e as any).name = name;
+      if (
+        (e.converterParameters as Iselect).optionModbusValues &&
+        (!entity || e.id == entity.id)
+      ) {
         (e.converterParameters as Iselect).options = [];
-        (e.converterParameters as Iselect).optionModbusValues!.forEach(option => {
-          let name = getSpecificationI18nEntityOptionName(spec, language, e.id, option!,true);
-          if (name)
-            (e.converterParameters as Iselect).options!.push({ key: option, name: name });
-        });
+        (e.converterParameters as Iselect).optionModbusValues!.forEach(
+          (option) => {
+            let name = getSpecificationI18nEntityOptionName(
+              spec,
+              language,
+              e.id,
+              option!,
+              true,
+            );
+            if (name)
+              (e.converterParameters as Iselect).options!.push({
+                key: option,
+                name: name,
+              });
+          },
+        );
       }
-
-    })
-   
- 
+    });
   }
-  static updateSpecificationI18n(key:string,spec: ImodbusSpecification, language: string, entity?: ImodbusEntity) {
-    if( key.startsWith('e') ){
-      let entityId = parseInt(key.substring(1))
-      let ent = spec.entities.find(e=>e.id == entityId)
-      if( ent == null)
-          return
-      let oIdx = key.indexOf('o.')
-      if (oIdx > 0){
-        let optionId = parseInt(key.substring(oIdx +2))
-        let option = getSpecificationI18nEntityOptionName(spec, language, ent.id, optionId,true);
-        if((ent.converterParameters as Iselect).options == undefined){
-          (ent.converterParameters as Iselect).options = []
+  static updateSpecificationI18n(
+    key: string,
+    spec: ImodbusSpecification,
+    language: string,
+    entity?: ImodbusEntity,
+  ) {
+    if (key.startsWith("e")) {
+      let entityId = parseInt(key.substring(1));
+      let ent = spec.entities.find((e) => e.id == entityId);
+      if (ent == null) return;
+      let oIdx = key.indexOf("o.");
+      if (oIdx > 0) {
+        let optionId = parseInt(key.substring(oIdx + 2));
+        let option = getSpecificationI18nEntityOptionName(
+          spec,
+          language,
+          ent.id,
+          optionId,
+          true,
+        );
+        if ((ent.converterParameters as Iselect).options == undefined) {
+          (ent.converterParameters as Iselect).options = [];
         }
-        if(option && null == (ent.converterParameters as Iselect).options?.find(o=> o.key == optionId))
-          (ent.converterParameters as Iselect).options!.push({ key: optionId, name: option })
-      }
-      else{
-        let name = getSpecificationI18nEntityName(spec,language,entityId,true)
-        
-        if( name ){
+        if (
+          option &&
+          null ==
+            (ent.converterParameters as Iselect).options?.find(
+              (o) => o.key == optionId,
+            )
+        )
+          (ent.converterParameters as Iselect).options!.push({
+            key: optionId,
+            name: option,
+          });
+      } else {
+        let name = getSpecificationI18nEntityName(
+          spec,
+          language,
+          entityId,
+          true,
+        );
+
+        if (name) {
           (ent as any).name = name;
           // trigger update of entites
-          let ents = structuredClone(spec.entities)
+          let ents = structuredClone(spec.entities);
           spec.entities = ents;
         }
-           
       }
-
-          
-    }else if( key == 'name' ){
-      let name = getSpecificationI18nName(spec,language)
-      if( name )
-        (spec as any).name = name;  
+    } else if (key == "name") {
+      let name = getSpecificationI18nName(spec, language);
+      if (name) (spec as any).name = name;
     }
-
-
- 
   }
 }
