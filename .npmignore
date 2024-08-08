@@ -14,3 +14,4 @@ node_modules/*
 proxy*
 angular.json
 tv.sh
+.github/
