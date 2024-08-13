@@ -38,9 +38,7 @@ export const routes: Routes = [
     path: RoutingNames.specification + "/:busid/:slaveid/:disabled",
     canActivate: [AuthGuardService],
     component: SpecificationComponent,
-    canDeactivate: [
-      (component: SpecificationComponent) => !component.canDeactivate(),
-    ],
+    canDeactivate: [(component: SpecificationComponent) => !component.canDeactivate()],
   },
 ];
 // bootstrapApplication(AppComponent,{
@@ -53,6 +51,7 @@ export const routes: Routes = [
     CommonModule,
     RouterModule.forRoot(routes, {
       bindToComponentInputs: true,
+      useHash: true,
     }),
   ],
   providers: [AuthGuardService],
