@@ -37,8 +37,7 @@ export class ApiService {
   constructor(
     private httpClient: HttpClient,
     private router: Router,
-    private activeatedRoute: ActivatedRoute,
-    @Inject(APP_BASE_HREF) private baseHref: string
+    private activeatedRoute: ActivatedRoute
   ) {
     this.errorHandler = (err: HttpErrorResponse) => {
       if ([HttpErrorsEnum.ErrUnauthorized, HttpErrorsEnum.ErrForbidden].includes(err.status)) {
@@ -57,7 +56,7 @@ export class ApiService {
     };
   }
   private getFullUri(uri: apiUri): string {
-    return [this.baseHref, uri].join("/").replace(new RegExp("/" + "{1,}", "g"), "/");
+    return uri;
   }
 
   loadingError$ = new Subject<boolean>();

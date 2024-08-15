@@ -1,25 +1,20 @@
+import { AfterViewInit, Component, Input, OnDestroy, ViewChild } from "@angular/core";
 import {
-  AfterViewInit,
-  Component,
-  Input,
-  OnDestroy,
-  ViewChild,
-} from "@angular/core";
-import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
-import {
-  MatSelectionList,
-  MatSelectionListChange,
-} from "@angular/material/list";
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from "@angular/forms";
+import { MatSelectionList, MatSelectionListChange } from "@angular/material/list";
 import { ApiService } from "../services/api-service";
 import { MatTableDataSource } from "@angular/material/table";
-import {
-  IBus,
-  IModbusConnection,
-  IRTUConnection,
-  ITCPConnection,
-  getBusName,
-  getConnectionName,
-} from "@modbus2mqtt/server.shared";
+import { IBus, IModbusConnection, IRTUConnection, ITCPConnection, getBusName, getConnectionName } from "@modbus2mqtt/server.shared";
 import { MatSelectChange, MatSelect } from "@angular/material/select";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subscription } from "rxjs";
@@ -35,44 +30,39 @@ import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from "@angular/m
 import { NgFor, NgIf } from "@angular/common";
 
 @Component({
-    selector: "app-select-modbus",
-    templateUrl: "./select-modbus.component.html",
-    styleUrls: ["./select-modbus.component.css"],
-    standalone: true,
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        NgFor,
-        MatCard,
-        MatCardHeader,
-        MatCardTitle,
-        MatTooltip,
-        NgIf,
-        MatIconButton,
-        MatIcon,
-        MatCardContent,
-        MatTabGroup,
-        MatTab,
-        MatFormField,
-        MatLabel,
-        MatInput,
-        MatSelect,
-        MatOption,
-    ],
+  selector: "app-select-modbus",
+  templateUrl: "./select-modbus.component.html",
+  styleUrls: ["./select-modbus.component.css"],
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    NgFor,
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatTooltip,
+    NgIf,
+    MatIconButton,
+    MatIcon,
+    MatCardContent,
+    MatTabGroup,
+    MatTab,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatSelect,
+    MatOption
+  ],
 })
 export class SelectModbusComponent implements AfterViewInit, OnDestroy {
   constructor(
     private _formBuilder: FormBuilder,
     private entityApiService: ApiService,
     private route: ActivatedRoute,
-    private routes: Router,
+    private routes: Router
   ) {}
-  displayedBusIdColumns: string[] = [
-    "select",
-    "busid",
-    "connectionData",
-    "deviceCount",
-  ];
+  displayedBusIdColumns: string[] = ["select", "busid", "connectionData", "deviceCount"];
   busname: string;
   paramSubscription: Subscription;
   serialDevices: string[] = [];
@@ -88,15 +78,10 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
   @ViewChild("selectBaudRate") selectBaudRate: MatSelectionList;
   @Input() preselectedBusId: number | undefined = undefined;
 
-  uniqueConnectionDataValidator: ValidatorFn = (
-    control: AbstractControl,
-  ): ValidationErrors | null => {
+  uniqueConnectionDataValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     {
       if (this && this.busses && this.busses.data)
-        return !this.busses.data.find(
-          (bus) =>
-            (bus.connectionData as IRTUConnection).serialport == control.value,
-        )
+        return !this.busses.data.find((bus) => (bus.connectionData as IRTUConnection).serialport == control.value)
           ? null
           : { unique: control.value };
       return null;
@@ -141,11 +126,9 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
   copyBus2Form(idx: number) {
     if (this.busses.data.length > idx && this.busses.data[idx] != null) {
       let bus = this.busses.data[idx];
-      let isRtu =
-        (bus.connectionData as IRTUConnection).serialport != undefined;
+      let isRtu = (bus.connectionData as IRTUConnection).serialport != undefined;
       let fg = this.createConnectionDataFormGroup();
-      if (this.bussesFormArray.at(idx) != undefined)
-        fg = this.bussesFormArray.at(idx) as FormGroup;
+      if (this.bussesFormArray.at(idx) != undefined) fg = this.bussesFormArray.at(idx) as FormGroup;
       else {
         this.bussesFormArray.push(fg);
         this.modbusIsRtu.push(isRtu);
@@ -175,9 +158,7 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
     }
   }
   getBusFormGroup(index: number): FormGroup {
-    let fg = (
-      this.configureModbusFormGroup.get("bussesFormArray") as FormArray
-    ).at(index) as FormGroup;
+    let fg = (this.configureModbusFormGroup.get("bussesFormArray") as FormArray).at(index) as FormGroup;
     if (fg == undefined) return this.createConnectionDataFormGroup();
     return fg;
   }
@@ -192,8 +173,7 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
   saveBus(idx: number): Promise<number> {
     return new Promise<number>((resolve) => {
       let connection = this.copyForm2Connection(idx);
-      let busid: number | undefined =
-        null != this.busses.data[idx] ? this.busses.data[idx].busId : undefined;
+      let busid: number | undefined = null != this.busses.data[idx] ? this.busses.data[idx].busId : undefined;
 
       this.entityApiService.postBus(connection, busid).subscribe((b) => {
         if (busid == undefined) {
@@ -219,14 +199,12 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
       if (
         this.modbusIsRtu[idx] &&
         undefined != (timeout = fg.get(["rtu", "timeout"]) as FormControl) &&
-        undefined !=
-          (baudrate = fg.get(["rtu", "selectBaudRate"]) as FormControl)
+        undefined != (baudrate = fg.get(["rtu", "selectBaudRate"]) as FormControl)
       ) {
         if ((connectionData as IRTUConnection).baudrate != baudrate.value) {
           (connectionData as IRTUConnection).baudrate = baudrate.value;
         }
-        (connectionData as IRTUConnection).serialport =
-          this.getSerialFromForm(idx);
+        (connectionData as IRTUConnection).serialport = this.getSerialFromForm(idx);
         if ((connectionData as IRTUConnection).timeout != timeout.value) {
           (connectionData as IRTUConnection).timeout = timeout.value;
         }
@@ -269,8 +247,7 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
           b != null &&
           (b.connectionData as IRTUConnection).serialport &&
           (b.connectionData as IRTUConnection).serialport == sd &&
-          (_bus == null ||
-            sd != (_bus.connectionData as IRTUConnection).serialport),
+          (_bus == null || sd != (_bus.connectionData as IRTUConnection).serialport)
       );
       if (idx != -1) devices.splice(didx, 1);
       else didx++;
@@ -284,21 +261,11 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
   checkConfigRTU(): boolean {
     return false; //this.config !== undefined && this.config.connectionData[0].baudrate == undefined
   }
-  private serialValidator: ValidatorFn = (
-    control: AbstractControl,
-  ): ValidationErrors | null => {
-    return this.serialDevices.length == 0 &&
-      (!control.value || control.value.length == 0)
-      ? { "not empty": control.value }
-      : null;
+  private serialValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    return this.serialDevices.length == 0 && (!control.value || control.value.length == 0) ? { "not empty": control.value } : null;
   };
-  private serialDevicesValidator: ValidatorFn = (
-    control: AbstractControl,
-  ): ValidationErrors | null => {
-    return this.serialDevices.length > 0 &&
-      (!control.value || control.value.length == 0)
-      ? { "not empty": control.value }
-      : null;
+  private serialDevicesValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    return this.serialDevices.length > 0 && (!control.value || control.value.length == 0) ? { "not empty": control.value } : null;
   };
   createConnectionDataFormGroup(): FormGroup {
     let fg = this._formBuilder.group({
@@ -323,8 +290,7 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
   addEnabled(idx: number) {
     let fg = this.bussesFormArray.at(idx);
     if (fg)
-      if (this.isRTU(idx))
-        return this.bussesFormArray.at(idx)!.get("rtu")!.valid;
+      if (this.isRTU(idx)) return this.bussesFormArray.at(idx)!.get("rtu")!.valid;
       else return this.bussesFormArray.at(idx)!.get("tcp")!.valid;
     return false;
   }
@@ -343,11 +309,7 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
   deleteBus(bus: IBus) {
     if (
       bus.slaves.length == 0 ||
-      confirm(
-        "There is/are " +
-          bus.slaves.length +
-          " slaves configured. Are you sure to delete it/them?",
-      )
+      confirm("There is/are " + bus.slaves.length + " slaves configured. Are you sure to delete it/them?")
     ) {
       this.entityApiService.deleteBus(bus.busId).subscribe(() => {
         this.readBussesFromServer();
@@ -371,13 +333,8 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
   getSerialFormControl(idx: number): FormControl<string> {
     let busFormGroup = this.getBusFormGroup(idx);
     let s: FormControl<string>;
-    if (this.serialDevices.length == 0)
-      s = busFormGroup.get(["rtu", "serial"])! as FormControl<string>;
-    else
-      s = busFormGroup.get([
-        "rtu",
-        "serialDeviceSelection",
-      ])! as FormControl<string>;
+    if (this.serialDevices.length == 0) s = busFormGroup.get(["rtu", "serial"])! as FormControl<string>;
+    else s = busFormGroup.get(["rtu", "serialDeviceSelection"])! as FormControl<string>;
     return s;
   }
 

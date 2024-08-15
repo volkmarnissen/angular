@@ -14,32 +14,33 @@ import { MatIcon } from "@angular/material/icon";
 import { MatTooltip } from "@angular/material/tooltip";
 import { MatIconButton } from "@angular/material/button";
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from "@angular/material/card";
+
 @Component({
-    selector: "app-configure",
-    templateUrl: "./configure.component.html",
-    styleUrls: ["./configure.component.css"],
-    standalone: true,
-    imports: [
-        MatCard,
-        MatCardHeader,
-        MatCardTitle,
-        MatCardContent,
-        FormsModule,
-        ReactiveFormsModule,
-        MatIconButton,
-        MatTooltip,
-        MatIcon,
-        MatStepLabel,
-        MatFormField,
-        MatLabel,
-        MatInput,
-        NgIf,
-        MatError,
-        MatSelect,
-        NgFor,
-        MatOption,
-        NgClass,
-    ],
+  selector: "app-configure",
+  templateUrl: "./configure.component.html",
+  styleUrls: ["./configure.component.css"],
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardContent,
+    FormsModule,
+    ReactiveFormsModule,
+    MatIconButton,
+    MatTooltip,
+    MatIcon,
+    MatStepLabel,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    NgIf,
+    MatError,
+    MatSelect,
+    NgFor,
+    MatOption,
+    NgClass,
+  ],
 })
 export class ConfigureComponent implements OnInit {
   config: Iconfiguration;
@@ -49,7 +50,7 @@ export class ConfigureComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private entityApiService: ApiService,
     private route: ActivatedRoute,
-    private router: Router,
+    private router: Router
   ) {
     this.ghPersonalAccessToken = _formBuilder.control([""]);
   }
@@ -75,24 +76,16 @@ export class ConfigureComponent implements OnInit {
     this.configObservable.subscribe((config) => {
       this.config = config;
       if (config.mqttconnect.mqttserverurl) {
-        this.configureMqttFormGroup
-          .get("mqttserverurl")!
-          .setValue(config.mqttconnect.mqttserverurl);
+        this.configureMqttFormGroup.get("mqttserverurl")!.setValue(config.mqttconnect.mqttserverurl);
       }
       if (config.mqttconnect.username) {
-        this.configureMqttFormGroup
-          .get("mqttuser")!
-          .setValue(config.mqttconnect.username);
+        this.configureMqttFormGroup.get("mqttuser")!.setValue(config.mqttconnect.username);
       }
       if (config.mqttconnect.password) {
-        this.configureMqttFormGroup
-          .get("mqttpassword")!
-          .setValue(config.mqttconnect.password as string);
+        this.configureMqttFormGroup.get("mqttpassword")!.setValue(config.mqttconnect.password as string);
       }
       if (config.mqttdiscoverylanguage) {
-        this.discoveryLanguageFormControl!.setValue(
-          config.mqttdiscoverylanguage,
-        );
+        this.discoveryLanguageFormControl!.setValue(config.mqttdiscoverylanguage);
       }
       this.entityApiService.getSslFiles().subscribe((rc) => {
         this.sslFiles = rc;
@@ -101,8 +94,7 @@ export class ConfigureComponent implements OnInit {
         this.toUrl = params.get("toUrl") || "";
       });
       this.mqttValidate();
-      if (config.githubPersonalToken)
-        this.ghPersonalAccessToken.setValue(config.githubPersonalToken);
+      if (config.githubPersonalToken) this.ghPersonalAccessToken.setValue(config.githubPersonalToken);
     });
   }
   form2Config(form: AbstractControl, config: Iconfiguration) {
@@ -112,33 +104,17 @@ export class ConfigureComponent implements OnInit {
     let mqttkeyfile = form.get("mqttkeyfile");
     let mqttcafile = form.get("mqttcafile");
     // Save changes to Config and Device
-    if (
-      config &&
-      mqttserverurl &&
-      mqttuser &&
-      mqttpassword &&
-      mqttserverurl.value &&
-      mqttuser.value &&
-      mqttpassword.value
-    ) {
+    if (config && mqttserverurl && mqttuser && mqttpassword && mqttserverurl.value && mqttuser.value && mqttpassword.value) {
       {
         if (!config.mqttconnect) config.mqttconnect = {};
         config.mqttconnect.mqttserverurl = mqttserverurl.value!;
         config.mqttconnect.username = mqttuser.value!;
         config.mqttconnect.password = mqttpassword.value!;
-        if (
-          this.discoveryLanguageFormControl &&
-          this.discoveryLanguageFormControl.value!
-        )
-          config.mqttdiscoverylanguage =
-            this.discoveryLanguageFormControl.value!;
-        if (mqttcafile)
-          config.mqttcaFile = mqttcafile.value ? mqttcafile.value : undefined;
+        if (this.discoveryLanguageFormControl && this.discoveryLanguageFormControl.value!)
+          config.mqttdiscoverylanguage = this.discoveryLanguageFormControl.value!;
+        if (mqttcafile) config.mqttcaFile = mqttcafile.value ? mqttcafile.value : undefined;
         else delete this.config.mqttcaFile;
-        if (mqttkeyfile)
-          config.mqttcertFile = mqttkeyfile.value
-            ? mqttkeyfile.value
-            : undefined;
+        if (mqttkeyfile) config.mqttcertFile = mqttkeyfile.value ? mqttkeyfile.value : undefined;
         else delete config.mqttcertFile;
       }
     }
@@ -155,10 +131,7 @@ export class ConfigureComponent implements OnInit {
 
   save() {
     this.form2Config(this.configureMqttFormGroup, this.config);
-    if (
-      this.ghPersonalAccessToken &&
-      this.ghPersonalAccessToken.value.length > 0
-    )
+    if (this.ghPersonalAccessToken && this.ghPersonalAccessToken.value.length > 0)
       this.config.githubPersonalToken = this.ghPersonalAccessToken.value;
     this.entityApiService.postConfiguration(this.config).subscribe(() => {
       console.log("configuration updated");
@@ -173,10 +146,7 @@ export class ConfigureComponent implements OnInit {
   }
 
   hasConfigChanges(): boolean {
-    return (
-      !this.configureMqttFormGroup.pristine ||
-      !this.configureMqttFormGroup.pristine
-    );
+    return !this.configureMqttFormGroup.pristine || !this.configureMqttFormGroup.pristine;
   }
   isMqttConfigComplete(): boolean {
     this.configureMqttFormGroup.updateValueAndValidity();
@@ -193,8 +163,7 @@ export class ConfigureComponent implements OnInit {
       } else {
         this.mqttConnectIcon = "cast";
         this.mqttConnectClass = "redIcon";
-        this.mqttConnectMessage =
-          !result || !result.message ? "error" : result.message;
+        this.mqttConnectMessage = !result || !result.message ? "error" : result.message;
       }
     });
   }

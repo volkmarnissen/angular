@@ -1,12 +1,5 @@
 import { HttpEvent, HttpEventType, HttpResponse } from "@angular/common/http";
-import {
-  OnChanges,
-  Component,
-  Input,
-  ViewChild,
-  Output,
-  EventEmitter,
-} from "@angular/core";
+import { OnChanges, Component, Input, ViewChild, Output, EventEmitter } from "@angular/core";
 import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { GalleryItem, ImageItem, GalleryComponent } from "ng-gallery";
 import {
@@ -16,7 +9,7 @@ import {
   ImodbusSpecification,
   FileLocation,
 } from "@modbus2mqtt/specification.shared";
-import { ApiService } from "../services/api-service";
+import { ApiService } from "../../services/api-service";
 import { MatIconButton } from "@angular/material/button";
 import { MatInput } from "@angular/material/input";
 import { MatFormField, MatLabel } from "@angular/material/form-field";
@@ -24,43 +17,45 @@ import { MatIcon } from "@angular/material/icon";
 import { MatTooltip } from "@angular/material/tooltip";
 import { DragndropDirective } from "../dragndrop/dragndrop.directive";
 import { NgClass, NgIf, NgFor } from "@angular/common";
-import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelDescription } from "@angular/material/expansion";
+import {
+  MatAccordion,
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+  MatExpansionPanelTitle,
+  MatExpansionPanelDescription,
+} from "@angular/material/expansion";
 
 @Component({
-    selector: "app-upload-files",
-    templateUrl: "./upload-files.component.html",
-    styleUrl: "./upload-files.component.css",
-    standalone: true,
-    imports: [
-        MatAccordion,
-        MatExpansionPanel,
-        MatExpansionPanelHeader,
-        MatExpansionPanelTitle,
-        NgClass,
-        MatExpansionPanelDescription,
-        DragndropDirective,
-        NgIf,
-        NgFor,
-        MatIconButton,
-        MatTooltip,
-        MatIcon,
-        MatFormField,
-        MatLabel,
-        MatInput,
-        FormsModule,
-        ReactiveFormsModule,
-        GalleryComponent,
-    ],
+  selector: "app-upload-files",
+  templateUrl: "./upload-files.component.html",
+  styleUrl: "./upload-files.component.css",
+  standalone: true,
+  imports: [
+    MatAccordion,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    NgClass,
+    MatExpansionPanelDescription,
+    DragndropDirective,
+    NgIf,
+    NgFor,
+    MatIconButton,
+    MatTooltip,
+    MatIcon,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    ReactiveFormsModule,
+    GalleryComponent,
+  ],
 })
 export class UploadFilesComponent implements OnChanges {
   constructor(private entityApiService: ApiService) {}
   @Input("specification") currentSpecification: ImodbusSpecification | null;
-  urlDocumentControl: FormControl<string | null> = new FormControl<
-    string | null
-  >(null);
-  urlImageControl: FormControl<string | null> = new FormControl<string | null>(
-    null,
-  );
+  urlDocumentControl: FormControl<string | null> = new FormControl<string | null>(null);
+  urlImageControl: FormControl<string | null> = new FormControl<string | null>(null);
   @Output()
   updateDocumentation = new EventEmitter<IimageAndDocumentUrl[]>();
 
@@ -78,13 +73,9 @@ export class UploadFilesComponent implements OnChanges {
     this.generateDocumentUrls();
   }
 
-  private fileBrowseHandler(
-    input: EventTarget | null,
-    usage: SpecificationFileUsage,
-  ) {
+  private fileBrowseHandler(input: EventTarget | null, usage: SpecificationFileUsage) {
     if (input && (input as HTMLInputElement).files !== null)
-      if (usage == SpecificationFileUsage.documentation)
-        this.onDocumentationDropped((input as HTMLInputElement).files!);
+      if (usage == SpecificationFileUsage.documentation) this.onDocumentationDropped((input as HTMLInputElement).files!);
       else this.onImageDropped((input as HTMLInputElement).files!);
   }
   imageBrowseHandler(input: EventTarget | null) {
@@ -94,9 +85,7 @@ export class UploadFilesComponent implements OnChanges {
     this.fileBrowseHandler(input, SpecificationFileUsage.documentation);
   }
 
-  getEventMessage(
-    event: IimageAndDocumentUrl[] | HttpEvent<IimageAndDocumentUrl[]>,
-  ): any {
+  getEventMessage(event: IimageAndDocumentUrl[] | HttpEvent<IimageAndDocumentUrl[]>): any {
     switch ((event as HttpEvent<IimageAndDocumentUrl[]>).type) {
       case HttpEventType.UploadProgress:
         break;
@@ -116,22 +105,17 @@ export class UploadFilesComponent implements OnChanges {
     if (this.currentSpecification) {
       Array.prototype.forEach.call(files, (element: File) => {
         var specFiles = this.currentSpecification!.files;
-        let found = specFiles.find(
-          (u) => u.url.endsWith(element.name) && u.usage == usage,
-        );
+        let found = specFiles.find((u) => u.url.endsWith(element.name) && u.usage == usage);
         if (!found) {
           fd.append("documents", element);
         }
       });
-      this.entityApiService
-        .postFile(this.currentSpecification.filename, usage, fd)
-        .subscribe((event) => {
-          this.currentSpecification!.files = event;
-          if (usage == SpecificationFileUsage.img)
-            this.generateImageGalleryItems();
-          else this.generateDocumentUrls();
-          this.updateDocumentation.next(event);
-        });
+      this.entityApiService.postFile(this.currentSpecification.filename, usage, fd).subscribe((event) => {
+        this.currentSpecification!.files = event;
+        if (usage == SpecificationFileUsage.img) this.generateImageGalleryItems();
+        else this.generateDocumentUrls();
+        this.updateDocumentation.next(event);
+      });
     }
   }
   onImageDropped(event: FileList) {
@@ -154,27 +138,20 @@ export class UploadFilesComponent implements OnChanges {
           })
           .subscribe((files) => {
             this.currentSpecification!.files = files as IimageAndDocumentUrl[];
-            if (usage == SpecificationFileUsage.img)
-              this.generateImageGalleryItems();
+            if (usage == SpecificationFileUsage.img) this.generateImageGalleryItems();
             else this.generateDocumentUrls();
           });
       }
     }
   }
   addDocumentUrl() {
-    this.addDocument(
-      this.urlDocumentControl,
-      SpecificationFileUsage.documentation,
-    );
+    this.addDocument(this.urlDocumentControl, SpecificationFileUsage.documentation);
   }
   addImageUrl() {
     this.addDocument(this.urlImageControl, SpecificationFileUsage.img);
   }
   enableAddButton(event: Event, btn: MatIconButton) {
-    btn.disabled =
-      !event.target ||
-      (event.target as any).value == null ||
-      (event.target as any).value == "";
+    btn.disabled = !event.target || (event.target as any).value == null || (event.target as any).value == "";
   }
 
   generateDocumentUrls() {
@@ -201,15 +178,10 @@ export class UploadFilesComponent implements OnChanges {
   deleteFile(uploadedFile: IimageAndDocumentUrl) {
     if (this.currentSpecification)
       this.entityApiService
-        .deleteUploadedFile(
-          this.currentSpecification.filename,
-          uploadedFile.url,
-          uploadedFile.usage,
-        )
+        .deleteUploadedFile(this.currentSpecification.filename, uploadedFile.url, uploadedFile.usage)
         .subscribe((files) => {
           this.currentSpecification!.files = files;
-          if (uploadedFile.usage == SpecificationFileUsage.img)
-            this.generateImageGalleryItems();
+          if (uploadedFile.usage == SpecificationFileUsage.img) this.generateImageGalleryItems();
           else this.generateDocumentUrls();
         });
   }

@@ -2,7 +2,7 @@
   <div class="flexcolumns">
     <p> <mat-slide-toggle [formControl]="showAllPublicSpecs" class="width50"
         matTooltip="Unhides unmatiching specification in the specification selection list"
-        (toggleChange)="showUnmatched($event)">Show all public
+        (toggleChange)="showUnmatched()">Show all public
         specifications</mat-slide-toggle></p>
     <div class="flexrows">
       <ng-container *ngFor="let uislave of uiSlaves; let i = index">

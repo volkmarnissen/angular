@@ -1,12 +1,13 @@
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from "@angular/core";
 import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  OnInit,
-  Output,
-  ViewChild,
-} from "@angular/core";
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, FormsModule, ReactiveFormsModule } from "@angular/forms";
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  FormsModule,
+  ReactiveFormsModule,
+} from "@angular/forms";
 import { ApiService } from "../services/api-service";
 import {
   getCurrentLanguage,
@@ -19,12 +20,7 @@ import { Observable, Subscription, map } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
 import { SessionStorage } from "../services/SessionStorage";
 import { M2mErrorStateMatcher } from "../services/M2mErrorStateMatcher";
-import {
-  Islave,
-  IidentificationSpecification,
-  IBus,
-  getConnectionName,
-} from "@modbus2mqtt/server.shared";
+import { Islave, IidentificationSpecification, IBus, getConnectionName } from "@modbus2mqtt/server.shared";
 import { MatInput } from "@angular/material/input";
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from "@angular/material/expansion";
 import { MatOption } from "@angular/material/core";
@@ -37,11 +33,6 @@ import { NgFor, NgIf, AsyncPipe } from "@angular/common";
 import { MatTooltip } from "@angular/material/tooltip";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 
-const ISELECTED_FORMNAME = "isSelected";
-const ISLAVENAME_FORMNAME = "name";
-const ISLAVENAME_FORMPOLLINTERVAL = "pollinterval";
-const SLAVE_TABLE_FORMNAME = "tableRows";
-const HIDDENSLAVEID = "hiddenSlaveId";
 interface IuiSlave {
   slave: Islave;
   label: string;
@@ -49,34 +40,34 @@ interface IuiSlave {
   slaveForm: FormGroup;
 }
 @Component({
-    selector: "app-select-slave",
-    templateUrl: "./select-slave.component.html",
-    styleUrls: ["./select-slave.component.css"],
-    standalone: true,
-    imports: [
-        MatSlideToggle,
-        MatTooltip,
-        FormsModule,
-        ReactiveFormsModule,
-        NgFor,
-        MatCard,
-        MatCardHeader,
-        MatCardTitle,
-        MatIconButton,
-        MatIcon,
-        NgIf,
-        MatCardContent,
-        MatFormField,
-        MatLabel,
-        MatSelect,
-        MatOption,
-        MatExpansionPanel,
-        MatExpansionPanelHeader,
-        MatExpansionPanelTitle,
-        MatInput,
-        MatError,
-        AsyncPipe,
-    ],
+  selector: "app-select-slave",
+  templateUrl: "./select-slave.component.html",
+  styleUrls: ["./select-slave.component.css"],
+  standalone: true,
+  imports: [
+    MatSlideToggle,
+    MatTooltip,
+    FormsModule,
+    ReactiveFormsModule,
+    NgFor,
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatIconButton,
+    MatIcon,
+    NgIf,
+    MatCardContent,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatInput,
+    MatError,
+    AsyncPipe,
+  ],
 })
 export class SelectSlaveComponent extends SessionStorage implements OnInit {
   getDetectSpecToolTip(): string {
@@ -90,7 +81,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     event.preventDefault();
   }
 
-  getSpecIcon(arg0: any) {
+  getSpecIcon() {
     throw new Error("Method not implemented.");
   }
   currentLanguage: string;
@@ -99,7 +90,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     private _formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private entityApiService: ApiService,
-    private routes: Router,
+    private routes: Router
   ) {
     super();
   }
@@ -139,7 +130,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     detectSpec: boolean | undefined,
     fg: FormGroup,
     slave: Islave,
-    spec: IidentificationSpecification[],
+    spec: IidentificationSpecification[]
   ): IidentificationSpecification[] {
     let fc: FormControl = fg.get(["ispecs"]) as FormControl;
     let slaveSpec = spec.find((s) => s.configuredSlave != undefined);
@@ -154,9 +145,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
           }
         });
         if (identifiedCount == 1 && ispec != null) {
-          slave.specificationid = (
-            ispec as IidentificationSpecification
-          ).filename;
+          slave.specificationid = (ispec as IidentificationSpecification).filename;
           this.onSelectionChange(slave);
           fc.setValue(ispec);
         }
@@ -186,11 +175,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     return {
       slave: slave,
       specs: this.entityApiService
-        .getSpecsForSlave(
-          this.bus!.busId!,
-          slave.slaveid,
-          this.showAllPublicSpecs.value!,
-        )
+        .getSpecsForSlave(this.bus!.busId!, slave.slaveid, this.showAllPublicSpecs.value!)
         .pipe(map(this.fillSpecs.bind(this, detectSpec, fg, slave))),
       label: this.getSlaveName(slave),
       slaveForm: fg,
@@ -214,20 +199,15 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   }
 
   onSelectionChange(slave: Islave) {
-    this.entityApiService
-      .postSlave(this.bus!.busId, slave)
-      .subscribe((slave) => {
-        this.updateUiSlaves(slave, false);
-      });
+    this.entityApiService.postSlave(this.bus!.busId, slave).subscribe((slave) => {
+      this.updateUiSlaves(slave, false);
+    });
   }
-  showUnmatched(event: any) {
+  showUnmatched() {
     this.showAllPublicSpecs.value;
     this.updateSlaves(this.bus, false);
   }
-  compareSpecificationIdentification(
-    o1: IidentificationSpecification,
-    o2: IidentificationSpecification,
-  ) {
+  compareSpecificationIdentification(o1: IidentificationSpecification, o2: IidentificationSpecification) {
     return o1 && o2 && o1.filename == o2.filename;
   }
   identifiedTooltip(identified: IdentifiedStates | null | undefined): string {
@@ -240,9 +220,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     if (identified == 1) return "thumb_up";
     return "thumb_down";
   }
-  toBaseSpecification(
-    spec: IidentificationSpecification | null | undefined,
-  ): IbaseSpecification | undefined {
+  toBaseSpecification(spec: IidentificationSpecification | null | undefined): IbaseSpecification | undefined {
     if (spec)
       return {
         filename: spec.filename,
@@ -252,10 +230,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       };
     return undefined;
   }
-  onSpecificationChange(
-    slave: Islave | null,
-    event: IidentificationSpecification,
-  ) {
+  onSpecificationChange(slave: Islave | null, event: IidentificationSpecification) {
     if (slave != null) {
       if (event == null) {
         delete slave.specification;
@@ -266,11 +241,9 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       }
 
       if (this.bus)
-        this.entityApiService
-          .postSlave(this.bus.busId, slave)
-          .subscribe((slave) => {
-            this.updateUiSlaves(slave, false);
-          });
+        this.entityApiService.postSlave(this.bus.busId, slave).subscribe((slave) => {
+          this.updateUiSlaves(slave, false);
+        });
     }
   }
 
@@ -278,16 +251,13 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     slaveId: number,
     defaultValue: IidentificationSpecification | null,
     slaveName?: string,
-    polinterval?: number,
+    polinterval?: number
   ): FormGroup {
     if (slaveId >= 0)
       return this._formBuilder.group({
         hiddenSlaveId: [slaveId],
         ispecs: [defaultValue],
-        name: [
-          (slaveName ? slaveName : null) as string | null,
-          this.uniqueNameValidator.bind(this, slaveId),
-        ],
+        name: [(slaveName ? slaveName : null) as string | null, this.uniqueNameValidator.bind(this, slaveId)],
         pollInterval: [polinterval ? polinterval : 1000],
       });
     else
@@ -300,79 +270,55 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   hasDuplicateName(slaveId: number, name: string): boolean {
     let rc: boolean = false;
     if (!name) {
-      let theSlave = this.uiSlaves.find(
-        (s) => s != null && s.slave.slaveid == slaveId,
-      );
-      if (theSlave && theSlave.slave.specificationid)
-        name = theSlave.slave.specificationid;
+      let theSlave = this.uiSlaves.find((s) => s != null && s.slave.slaveid == slaveId);
+      if (theSlave && theSlave.slave.specificationid) name = theSlave.slave.specificationid;
     }
 
     this.uiSlaves.forEach((uislave) => {
       if (uislave != null && uislave.slave.slaveid != slaveId) {
-        let searchName: string | undefined = uislave.slave.name
-          ? uislave.slave.name
-          : uislave.slave.specificationid;
+        let searchName: string | undefined = uislave.slave.name ? uislave.slave.name : uislave.slave.specificationid;
         if (searchName == name) rc = true;
       }
     });
     return rc;
   }
 
-  uniqueNameValidator: any = (
-    slaveId: number,
-    control: AbstractControl,
-  ): ValidationErrors | null => {
-    if (this.hasDuplicateName(slaveId, control.value))
-      return { duplicates: control.value };
+  uniqueNameValidator: any = (slaveId: number, control: AbstractControl): ValidationErrors | null => {
+    if (this.hasDuplicateName(slaveId, control.value)) return { duplicates: control.value };
     else return null;
   };
 
   deleteSlave(slave: Islave | null) {
     if (slave != null && this.bus)
-      this.entityApiService
-        .deleteSlave(this.bus.busId, slave.slaveid)
-        .subscribe(() => {
-          console.log("Device deleted");
-          let dIdx = this.uiSlaves.findIndex(
-            (uis) => uis.slave.slaveid == slave.slaveid,
-          );
-          if (dIdx >= 0) {
-            this.uiSlaves.splice(dIdx, 1);
-            this.updateSlaves(this.bus, false);
-          }
-        });
+      this.entityApiService.deleteSlave(this.bus.busId, slave.slaveid).subscribe(() => {
+        console.log("Device deleted");
+        let dIdx = this.uiSlaves.findIndex((uis) => uis.slave.slaveid == slave.slaveid);
+        if (dIdx >= 0) {
+          this.uiSlaves.splice(dIdx, 1);
+          this.updateSlaves(this.bus, false);
+        }
+      });
   }
 
   getSlaveIdFromForm(newSlaveFormGroup: FormGroup): number {
     let slaveId: string = "";
     if (newSlaveFormGroup) slaveId = newSlaveFormGroup.get("slaveId")!.value;
-    return slaveId != undefined && parseInt(slaveId) >= 0
-      ? parseInt(slaveId)
-      : -1;
+    return slaveId != undefined && parseInt(slaveId) >= 0 ? parseInt(slaveId) : -1;
   }
 
   canAddSlaveId(newSlaveFormGroup: FormGroup): boolean {
     let slaveId: number = this.getSlaveIdFromForm(newSlaveFormGroup);
     return (
-      slaveId >= 0 &&
-      null ==
-        this.uiSlaves.find(
-          (uis) =>
-            uis != null &&
-            uis.slave.slaveid != null &&
-            uis.slave.slaveid == slaveId,
-        )
+      slaveId >= 0 && null == this.uiSlaves.find((uis) => uis != null && uis.slave.slaveid != null && uis.slave.slaveid == slaveId)
     );
   }
   addSlave(newSlaveFormGroup: FormGroup): void {
     let slaveId: number = this.getSlaveIdFromForm(newSlaveFormGroup);
     let detectSpec = newSlaveFormGroup.get(["detectSpec"])?.value;
     if (this.canAddSlaveId(newSlaveFormGroup))
-      this.entityApiService
-        .postSlave(this.bus.busId, { slaveid: slaveId })
-        .subscribe((slave) => {
-          this.updateSlaves(this.bus, detectSpec);
-        });
+      this.entityApiService.postSlave(this.bus.busId, { slaveid: slaveId }).subscribe(() => {
+        this.updateSlaves(this.bus, detectSpec);
+      });
   }
 
   setSlaveName(event: Event, slave: Islave) {
@@ -388,10 +334,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     });
   }
 
-  getSpecificationI18nName(
-    spec: IbaseSpecification,
-    language: string,
-  ): string | null {
+  getSpecificationI18nName(spec: IbaseSpecification, language: string): string | null {
     return getSpecificationI18nName(spec, language);
   }
   statusTooltip(status: SpecificationStatus | undefined) {
@@ -436,12 +379,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   editSpecification(slave: Islave) {
     if (this.bus) {
       this.entityApiService.postSlave(this.bus.busId, slave).subscribe(() => {
-        this.routes.navigate([
-          "/specification",
-          this.bus!.busId,
-          slave.slaveid,
-          false,
-        ]);
+        this.routes.navigate(["/specification", this.bus!.busId, slave.slaveid, false]);
       });
     }
   }
@@ -453,12 +391,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     if (slave == null) return "New";
     if (slave.name) return slave.name + "(" + slave.slaveid + ")";
     if (slave.specification)
-      return (
-        getSpecificationI18nName(slave.specification!, this.currentLanguage!)! +
-        "(" +
-        slave.slaveid +
-        ")"
-      );
+      return getSpecificationI18nName(slave.specification!, this.currentLanguage!)! + "(" + slave.slaveid + ")";
     return "Slave " + slave.slaveid;
   }
 }

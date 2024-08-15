@@ -12,24 +12,24 @@ import { MatInput } from "@angular/material/input";
 import { MatFormField, MatLabel, MatError, MatSuffix } from "@angular/material/form-field";
 import { MatDialogTitle } from "@angular/material/dialog";
 @Component({
-    selector: "app-login",
-    templateUrl: "./login.component.html",
-    styleUrls: ["./login.component.css"],
-    standalone: true,
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        MatDialogTitle,
-        MatFormField,
-        MatLabel,
-        MatInput,
-        NgIf,
-        MatError,
-        MatIcon,
-        MatSuffix,
-        MatCardActions,
-        MatButton,
-    ],
+  selector: "app-login",
+  templateUrl: "./login.component.html",
+  styleUrls: ["./login.component.css"],
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatDialogTitle,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    NgIf,
+    MatError,
+    MatIcon,
+    MatSuffix,
+    MatCardActions,
+    MatButton,
+  ],
 })
 export class LoginComponent implements OnInit, AfterViewInit {
   hide: boolean = true;
@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     private _formBuilder: FormBuilder,
     private api: ApiService,
     private router: Router,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute
   ) {}
   ngAfterViewInit(): void {
     let posRegister = this.router.url.indexOf("register");
