@@ -56,7 +56,7 @@ export class ApiService {
     };
   }
   private getFullUri(uri: apiUri): string {
-    return uri;
+    return "." + uri;
   }
 
   loadingError$ = new Subject<boolean>();
