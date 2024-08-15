@@ -4,7 +4,7 @@ import { BrowserModule } from "@angular/platform-browser";
 import { MatDialogModule } from "@angular/material/dialog";
 
 import { AppComponent } from "./app.component";
-import { Modbus2MqttMaterialModule } from "./material-module";
+
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { AppRoutingModule } from "./app-routing.module";
 import { RouterModule } from "@angular/router";
@@ -32,8 +32,18 @@ import { EntityComponent } from "./entity/entity.component";
 import { DragDropModule } from "@angular/cdk/drag-drop";
 
 @NgModule({
-  declarations: [
-    AppComponent,
+    declarations: [AppComponent],
+    bootstrap: [AppComponent],
+    imports: [
+    BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
+    AppRoutingModule,
+    MatDialogModule,
+    GalleryModule,
+    RouterModule.forRoot([]),
+    TranslateModule.forRoot(),
+    DragDropModule,
     SpecificationComponent,
     SpecificationsComponent,
     DragndropDirective,
@@ -47,27 +57,14 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
     EntityValueControlComponent,
     EntityComponent,
     UploadFilesComponent,
-  ],
-  bootstrap: [AppComponent],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    ReactiveFormsModule,
-    Modbus2MqttMaterialModule,
-    AppRoutingModule,
-    MatDialogModule,
-    GalleryModule,
-    RouterModule.forRoot([]),
-    TranslateModule.forRoot(),
-    DragDropModule,
-  ],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthHeaderInterceptor,
-      multi: true,
-    },
-    provideHttpClient(withInterceptorsFromDi()),
-  ],
+],
+    providers: [
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AuthHeaderInterceptor,
+            multi: true,
+        },
+        provideHttpClient(withInterceptorsFromDi()),
+    ],
 })
 export class AppModules {}

@@ -15,7 +15,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from "@angular/material/form-field";
 //import { MatPaginatorGotoComponent } from './app/mat-paginator-goto/mat-paginator-goto.component';
 import { AppComponent } from "./app/app.component";
 import { AppModules } from "./app/app.module";
-import { Modbus2MqttMaterialModule } from "./app/material-module";
+
 
 // Default MatFormField appearance to 'fill' as that is the new recommended approach and the
 // `legacy` and `standard` appearances are scheduled for deprecation in version 10.
@@ -31,9 +31,8 @@ import { Modbus2MqttMaterialModule } from "./app/material-module";
     FormsModule,
     MatNativeDateModule,
     ReactiveFormsModule,
-    Modbus2MqttMaterialModule,
     AppModules,
-  ],
+],
   providers: [
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,

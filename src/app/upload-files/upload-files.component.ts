@@ -7,8 +7,8 @@ import {
   Output,
   EventEmitter,
 } from "@angular/core";
-import { FormControl } from "@angular/forms";
-import { GalleryItem, ImageItem } from "ng-gallery";
+import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { GalleryItem, ImageItem, GalleryComponent } from "ng-gallery";
 import {
   IimageAndDocumentUrl,
   IbaseSpecification,
@@ -18,11 +18,39 @@ import {
 } from "@modbus2mqtt/specification.shared";
 import { ApiService } from "../services/api-service";
 import { MatIconButton } from "@angular/material/button";
+import { MatInput } from "@angular/material/input";
+import { MatFormField, MatLabel } from "@angular/material/form-field";
+import { MatIcon } from "@angular/material/icon";
+import { MatTooltip } from "@angular/material/tooltip";
+import { DragndropDirective } from "../dragndrop/dragndrop.directive";
+import { NgClass, NgIf, NgFor } from "@angular/common";
+import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelDescription } from "@angular/material/expansion";
 
 @Component({
-  selector: "app-upload-files",
-  templateUrl: "./upload-files.component.html",
-  styleUrl: "./upload-files.component.css",
+    selector: "app-upload-files",
+    templateUrl: "./upload-files.component.html",
+    styleUrl: "./upload-files.component.css",
+    standalone: true,
+    imports: [
+        MatAccordion,
+        MatExpansionPanel,
+        MatExpansionPanelHeader,
+        MatExpansionPanelTitle,
+        NgClass,
+        MatExpansionPanelDescription,
+        DragndropDirective,
+        NgIf,
+        NgFor,
+        MatIconButton,
+        MatTooltip,
+        MatIcon,
+        MatFormField,
+        MatLabel,
+        MatInput,
+        FormsModule,
+        ReactiveFormsModule,
+        GalleryComponent,
+    ],
 })
 export class UploadFilesComponent implements OnChanges {
   constructor(private entityApiService: ApiService) {}

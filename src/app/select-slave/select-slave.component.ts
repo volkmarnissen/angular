@@ -6,13 +6,7 @@ import {
   Output,
   ViewChild,
 } from "@angular/core";
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-} from "@angular/forms";
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ApiService } from "../services/api-service";
 import {
   getCurrentLanguage,
@@ -31,6 +25,17 @@ import {
   IBus,
   getConnectionName,
 } from "@modbus2mqtt/server.shared";
+import { MatInput } from "@angular/material/input";
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from "@angular/material/expansion";
+import { MatOption } from "@angular/material/core";
+import { MatSelect } from "@angular/material/select";
+import { MatFormField, MatLabel, MatError } from "@angular/material/form-field";
+import { MatIcon } from "@angular/material/icon";
+import { MatIconButton } from "@angular/material/button";
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from "@angular/material/card";
+import { NgFor, NgIf, AsyncPipe } from "@angular/common";
+import { MatTooltip } from "@angular/material/tooltip";
+import { MatSlideToggle } from "@angular/material/slide-toggle";
 
 const ISELECTED_FORMNAME = "isSelected";
 const ISLAVENAME_FORMNAME = "name";
@@ -44,9 +49,34 @@ interface IuiSlave {
   slaveForm: FormGroup;
 }
 @Component({
-  selector: "app-select-slave",
-  templateUrl: "./select-slave.component.html",
-  styleUrls: ["./select-slave.component.css"],
+    selector: "app-select-slave",
+    templateUrl: "./select-slave.component.html",
+    styleUrls: ["./select-slave.component.css"],
+    standalone: true,
+    imports: [
+        MatSlideToggle,
+        MatTooltip,
+        FormsModule,
+        ReactiveFormsModule,
+        NgFor,
+        MatCard,
+        MatCardHeader,
+        MatCardTitle,
+        MatIconButton,
+        MatIcon,
+        NgIf,
+        MatCardContent,
+        MatFormField,
+        MatLabel,
+        MatSelect,
+        MatOption,
+        MatExpansionPanel,
+        MatExpansionPanelHeader,
+        MatExpansionPanelTitle,
+        MatInput,
+        MatError,
+        AsyncPipe,
+    ],
 })
 export class SelectSlaveComponent extends SessionStorage implements OnInit {
   getDetectSpecToolTip(): string {

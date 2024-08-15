@@ -15,15 +15,33 @@ import {
 import { SpecificationServices } from "../services/specificationServices";
 import { Iconfiguration } from "@modbus2mqtt/server.shared";
 import { GalleryItem, ImageItem } from "ng-gallery";
+import { MatIcon } from "@angular/material/icon";
+import { MatTooltip } from "@angular/material/tooltip";
+import { NgFor, NgIf } from "@angular/common";
+import { MatButton, MatIconButton } from "@angular/material/button";
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from "@angular/material/card";
 
 interface ImodbusSpecificationWithMessages extends ImodbusSpecification {
   messages: Imessage[];
 }
 
 @Component({
-  selector: "app-specifications",
-  templateUrl: "./specifications.component.html",
-  styleUrl: "./specifications.component.css",
+    selector: "app-specifications",
+    templateUrl: "./specifications.component.html",
+    styleUrl: "./specifications.component.css",
+    standalone: true,
+    imports: [
+        MatCard,
+        MatCardHeader,
+        MatCardTitle,
+        MatCardContent,
+        MatButton,
+        NgFor,
+        MatTooltip,
+        MatIcon,
+        MatIconButton,
+        NgIf,
+    ],
 })
 export class SpecificationsComponent implements OnInit {
   config: Iconfiguration;

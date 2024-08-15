@@ -7,7 +7,8 @@ import {
 } from "@angular/core";
 
 @Directive({
-  selector: "[dragndropDirective]",
+    selector: "[dragndropDirective]",
+    standalone: true,
 })
 export class DragndropDirective {
   constructor() {}

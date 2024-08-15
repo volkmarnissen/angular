@@ -1,18 +1,45 @@
 import { OnInit, Component, EventEmitter, Output } from "@angular/core";
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  Validators,
-} from "@angular/forms";
+import { AbstractControl, FormBuilder, FormControl, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ApiService } from "../services/api-service";
 import { Iconfiguration } from "@modbus2mqtt/server.shared";
 import { Observable, Subscription } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
+import { MatOption } from "@angular/material/core";
+import { MatSelect } from "@angular/material/select";
+import { NgIf, NgFor, NgClass } from "@angular/common";
+import { MatInput } from "@angular/material/input";
+import { MatFormField, MatLabel, MatError } from "@angular/material/form-field";
+import { MatStepLabel } from "@angular/material/stepper";
+import { MatIcon } from "@angular/material/icon";
+import { MatTooltip } from "@angular/material/tooltip";
+import { MatIconButton } from "@angular/material/button";
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from "@angular/material/card";
 @Component({
-  selector: "app-configure",
-  templateUrl: "./configure.component.html",
-  styleUrls: ["./configure.component.css"],
+    selector: "app-configure",
+    templateUrl: "./configure.component.html",
+    styleUrls: ["./configure.component.css"],
+    standalone: true,
+    imports: [
+        MatCard,
+        MatCardHeader,
+        MatCardTitle,
+        MatCardContent,
+        FormsModule,
+        ReactiveFormsModule,
+        MatIconButton,
+        MatTooltip,
+        MatIcon,
+        MatStepLabel,
+        MatFormField,
+        MatLabel,
+        MatInput,
+        NgIf,
+        MatError,
+        MatSelect,
+        NgFor,
+        MatOption,
+        NgClass,
+    ],
 })
 export class ConfigureComponent implements OnInit {
   config: Iconfiguration;

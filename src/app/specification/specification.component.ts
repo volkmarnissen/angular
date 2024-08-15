@@ -8,14 +8,7 @@ import {
   Output,
   ViewEncapsulation,
 } from "@angular/core";
-import {
-  AbstractControl,
-  AsyncValidatorFn,
-  FormBuilder,
-  FormGroup,
-  ValidationErrors,
-  Validators,
-} from "@angular/forms";
+import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ValidationErrors, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ApiService } from "../services/api-service";
 import {
   Observable,
@@ -48,7 +41,7 @@ import {
   Ispecification,
   getBaseFilename,
 } from "@modbus2mqtt/specification.shared";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { SessionStorage } from "../services/SessionStorage";
 import { Imessage } from "@modbus2mqtt/specification.shared";
 import { GalleryConfig } from "ng-gallery";
@@ -63,12 +56,50 @@ import {
   Iconfiguration,
   IidentificationSpecification,
 } from "@modbus2mqtt/server.shared";
+import { EntityComponent } from "../entity/entity.component";
+import { TranslationComponent } from "../translation/translation.component";
+import { MatInput } from "@angular/material/input";
+import { MatFormField, MatLabel } from "@angular/material/form-field";
+import { UploadFilesComponent } from "../upload-files/upload-files.component";
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from "@angular/material/expansion";
+import { MatList, MatListItem } from "@angular/material/list";
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from "@angular/material/card";
+import { NgIf, NgFor } from "@angular/common";
+import { MatIcon } from "@angular/material/icon";
+import { MatTooltip } from "@angular/material/tooltip";
+import { MatIconButton } from "@angular/material/button";
 
 @Component({
-  selector: "app-specification",
-  templateUrl: "./specification.component.html",
-  styleUrls: ["./specification.component.css"],
-  encapsulation: ViewEncapsulation.None,
+    selector: "app-specification",
+    templateUrl: "./specification.component.html",
+    styleUrls: ["./specification.component.css"],
+    encapsulation: ViewEncapsulation.None,
+    standalone: true,
+    imports: [
+        MatIconButton,
+        MatTooltip,
+        MatIcon,
+        NgIf,
+        MatCard,
+        MatCardHeader,
+        MatCardTitle,
+        MatCardContent,
+        NgFor,
+        MatList,
+        MatListItem,
+        RouterLink,
+        MatExpansionPanel,
+        MatExpansionPanelHeader,
+        MatExpansionPanelTitle,
+        UploadFilesComponent,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormField,
+        MatLabel,
+        MatInput,
+        TranslationComponent,
+        EntityComponent,
+    ],
 })
 export class SpecificationComponent
   extends SessionStorage

@@ -6,7 +6,7 @@ import {
   OnInit,
   SimpleChanges,
 } from "@angular/core";
-import { FormControl, Validators } from "@angular/forms";
+import { FormControl, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import {
   ImodbusData,
   Inumber,
@@ -19,10 +19,30 @@ import {
   ISpecificationMethods,
   ImodbusEntityWithName,
 } from "../services/specificationInterface";
+import { MatSlideToggle } from "@angular/material/slide-toggle";
+import { MatOption } from "@angular/material/core";
+import { MatSelect } from "@angular/material/select";
+import { MatInput } from "@angular/material/input";
+import { MatFormField, MatLabel, MatError } from "@angular/material/form-field";
+import { NgIf, NgFor } from "@angular/common";
 @Component({
-  selector: "app-entity-value-control",
-  templateUrl: "./entity-value-control.component.html",
-  styleUrl: "./entity-value-control.component.css",
+    selector: "app-entity-value-control",
+    templateUrl: "./entity-value-control.component.html",
+    styleUrl: "./entity-value-control.component.css",
+    standalone: true,
+    imports: [
+        NgIf,
+        MatFormField,
+        MatLabel,
+        MatInput,
+        FormsModule,
+        ReactiveFormsModule,
+        MatError,
+        MatSelect,
+        NgFor,
+        MatOption,
+        MatSlideToggle,
+    ],
 })
 export class EntityValueControlComponent
   implements OnInit, OnDestroy, OnChanges

@@ -20,25 +20,43 @@ import {
   validateTranslation,
 } from "@modbus2mqtt/specification.shared";
 import { ApiService } from "../services/api-service";
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from "@angular/forms";
+import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ISpecificationMethods } from "../services/specificationInterface";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { I18nService } from "../services/i18n.service";
+import { CdkTextareaAutosize } from "@angular/cdk/text-field";
+import { MatInput } from "@angular/material/input";
+import { MatFormField, MatLabel } from "@angular/material/form-field";
+import { MatButton } from "@angular/material/button";
+import { MatSlideToggle } from "@angular/material/slide-toggle";
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from "@angular/material/expansion";
+import { NgIf, NgClass, NgFor } from "@angular/common";
 
 const originalLanguageFormGroupName = "originalLanguage";
 const translationLanguageFormGroupName = "translationLanguage";
 
 @Component({
-  selector: "app-translation",
-  templateUrl: "./translation.component.html",
-  styleUrls: ["./translation.component.css"],
+    selector: "app-translation",
+    templateUrl: "./translation.component.html",
+    styleUrls: ["./translation.component.css"],
+    standalone: true,
+    imports: [
+        NgIf,
+        MatExpansionPanel,
+        MatExpansionPanelHeader,
+        MatExpansionPanelTitle,
+        NgClass,
+        MatSlideToggle,
+        FormsModule,
+        ReactiveFormsModule,
+        MatButton,
+        MatFormField,
+        MatInput,
+        CdkTextareaAutosize,
+        MatLabel,
+        NgFor,
+    ],
 })
 export class TranslationComponent implements OnInit, OnDestroy {
   @Input()

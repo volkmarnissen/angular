@@ -9,15 +9,7 @@ import {
   SimpleChanges,
 } from "@angular/core";
 import { ApiService } from "../services/api-service";
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from "@angular/forms";
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { Observable, Subject, Subscription } from "rxjs";
 import {
   EnumNumberFormat,
@@ -46,7 +38,19 @@ import {
   ImodbusEntityWithName,
   isDeviceVariable,
 } from "../services/specificationInterface";
-import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
+import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag } from "@angular/cdk/drag-drop";
+import { MatOption } from "@angular/material/core";
+import { MatSelect } from "@angular/material/select";
+import { MatSlideToggle } from "@angular/material/slide-toggle";
+import { MatInput } from "@angular/material/input";
+import { MatFormField, MatLabel, MatError } from "@angular/material/form-field";
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from "@angular/material/expansion";
+import { EntityValueControlComponent } from "../entity-value-control/entity-value-control.component";
+import { MatIcon } from "@angular/material/icon";
+import { MatTooltip } from "@angular/material/tooltip";
+import { MatIconButton } from "@angular/material/button";
+import { NgIf, NgClass, NgFor, AsyncPipe } from "@angular/common";
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from "@angular/material/card";
 
 const nameFormControlName = "name";
 
@@ -75,9 +79,38 @@ const newEntity: ImodbusEntityWithName = {
 };
 
 @Component({
-  selector: "app-entity",
-  templateUrl: "./entity.component.html",
-  styleUrl: "./entity.component.css",
+    selector: "app-entity",
+    templateUrl: "./entity.component.html",
+    styleUrl: "./entity.component.css",
+    standalone: true,
+    imports: [
+        MatCard,
+        MatCardHeader,
+        MatCardTitle,
+        NgIf,
+        MatIconButton,
+        MatTooltip,
+        MatIcon,
+        NgClass,
+        EntityValueControlComponent,
+        MatCardContent,
+        MatExpansionPanel,
+        MatExpansionPanelHeader,
+        MatExpansionPanelTitle,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormField,
+        MatLabel,
+        MatInput,
+        MatError,
+        MatSlideToggle,
+        MatSelect,
+        NgFor,
+        MatOption,
+        CdkDropList,
+        CdkDrag,
+        AsyncPipe,
+    ],
 })
 export class EntityComponent
   extends SessionStorage

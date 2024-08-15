@@ -5,16 +5,7 @@ import {
   OnDestroy,
   ViewChild,
 } from "@angular/core";
-import {
-  AbstractControl,
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from "@angular/forms";
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import {
   MatSelectionList,
   MatSelectionListChange,
@@ -29,16 +20,45 @@ import {
   getBusName,
   getConnectionName,
 } from "@modbus2mqtt/server.shared";
-import { MatSelectChange } from "@angular/material/select";
+import { MatSelectChange, MatSelect } from "@angular/material/select";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subscription } from "rxjs";
-import { MatTabChangeEvent } from "@angular/material/tabs";
+import { MatTabChangeEvent, MatTabGroup, MatTab } from "@angular/material/tabs";
 import { BUS_TIMEOUT_DEFAULT } from "@modbus2mqtt/specification.shared";
+import { MatOption } from "@angular/material/core";
+import { MatInput } from "@angular/material/input";
+import { MatFormField, MatLabel } from "@angular/material/form-field";
+import { MatIcon } from "@angular/material/icon";
+import { MatIconButton } from "@angular/material/button";
+import { MatTooltip } from "@angular/material/tooltip";
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from "@angular/material/card";
+import { NgFor, NgIf } from "@angular/common";
 
 @Component({
-  selector: "app-select-modbus",
-  templateUrl: "./select-modbus.component.html",
-  styleUrls: ["./select-modbus.component.css"],
+    selector: "app-select-modbus",
+    templateUrl: "./select-modbus.component.html",
+    styleUrls: ["./select-modbus.component.css"],
+    standalone: true,
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        NgFor,
+        MatCard,
+        MatCardHeader,
+        MatCardTitle,
+        MatTooltip,
+        NgIf,
+        MatIconButton,
+        MatIcon,
+        MatCardContent,
+        MatTabGroup,
+        MatTab,
+        MatFormField,
+        MatLabel,
+        MatInput,
+        MatSelect,
+        MatOption,
+    ],
 })
 export class SelectModbusComponent implements AfterViewInit, OnDestroy {
   constructor(
