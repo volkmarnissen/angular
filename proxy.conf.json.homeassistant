@@ -1,0 +1,27 @@
+{
+  "/api": {
+    "target": "http://homeassistant.lan:3000",
+    "secure": false
+  },
+  "/userAuthenticationStatus": {
+    "target": "http://homeassistant.lan:3000",
+    "secure": false
+  },
+  "/user/login": {
+    "target": "http://homeassistant.lan:3000",
+    "secure": false
+  },
+  "/user/register": {
+    "target": "http://homeassistant.lan:3000",
+    "secure": false
+  },
+  "/specifications/files": {
+    "target": "http://homeassistant.lan:3000",
+    "secure": false
+  },
+  "/assets": {
+    "target": "http://homeassistant.lan:3000",
+    "secure": false
+  }
+
+}
