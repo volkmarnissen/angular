@@ -429,7 +429,7 @@ export class ApiService {
       );
   }
   getSpecificationFetchPublic(): Observable<void> {
-    return this.httpClient.get<void>(apiUri.specificationFetchPublic).pipe(
+    return this.httpClient.get<void>(this.getFullUri(apiUri.specificationFetchPublic)).pipe(
       catchError((err) => {
         this.errorHandler(err);
         return new Observable<void>();
@@ -446,7 +446,7 @@ export class ApiService {
     );
   }
   deleteBus(busid: number): Observable<void> {
-    return this.httpClient.delete<void>(apiUri.bus + `?busid=${busid}`).pipe(
+    return this.httpClient.delete<void>(this.getFullUri(apiUri.bus) + `?busid=${busid}`).pipe(
       catchError((err) => {
         this.errorHandler(err);
         return new Observable<void>();
