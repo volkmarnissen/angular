@@ -327,7 +327,7 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
 
   getSerialFromForm(idx: number): string {
     let s = this.getSerialFormControl(idx);
-    return s ? s.value : "";
+    return s && s.value && s.value.length ? s.value : "New";
   }
 
   getSerialFormControl(idx: number): FormControl<string> {
