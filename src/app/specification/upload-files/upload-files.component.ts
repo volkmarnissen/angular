@@ -140,6 +140,7 @@ export class UploadFilesComponent implements OnChanges {
             this.currentSpecification!.files = files as IimageAndDocumentUrl[];
             if (usage == SpecificationFileUsage.img) this.generateImageGalleryItems();
             else this.generateDocumentUrls();
+            this.updateDocumentation.next(files);
           });
       }
     }

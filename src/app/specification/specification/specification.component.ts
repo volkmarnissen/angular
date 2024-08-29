@@ -121,6 +121,7 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
   config: Iconfiguration;
   sub: Subscription;
   validationMessages: Imessage[] = [];
+  errorMessages = new Set<string>();
   constructor(
     private entityApiService: ApiService,
     private fb: FormBuilder,
@@ -162,11 +163,14 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
                 option.name
               );
             });
+          this.setValidationMessages()
+          this.setErrorMessages()
           this.specificationSubject.next(this.currentSpecification);
         }
       },
       setEntitiesTouched: (): void => {
         this.entitiesTouched = true;
+        this.setValidationMessages()
       },
 
       getMqttLanguageName: () => {
@@ -386,7 +390,7 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
     if (!$event || !this.currentSpecification) return;
     this.currentSpecification!.files = $event; //update documents
     this.filesTouched = true;
-
+    this.setValidationMessages();
     this.copyToSpec();
   }
   updateTranslation(entity: ImodbusEntityWithName): void {
@@ -538,12 +542,12 @@ export class SpecificationComponent extends SessionStorage implements OnInit, On
         this.validationMessages = mesgs;
       });
   }
-  getErrorMessages(): Iterable<string> {
-    let messages = new Set<string>();
+  setErrorMessages(): void {
+    this.errorMessages = new Set<string>();
     this.currentSpecification?.entities.forEach((entity) => {
-      if (entity.modbusError) messages.add(entity.modbusError);
+      if (entity.modbusError) 
+        this.errorMessages.add(entity.modbusError);
     });
-    return messages;
   }
   getErrorMessageHint(message: string): string {
     switch (message) {

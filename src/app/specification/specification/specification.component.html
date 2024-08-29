@@ -21,7 +21,7 @@
               class="message">{{getValidationMessage(message)}}</a></mat-list-item>
         </mat-list>
       <p>
-        <mat-expansion-panel *ngFor="let message of getErrorMessages()">
+        <mat-expansion-panel *ngFor="let message of errorMessages">
 
           <mat-expansion-panel-header>
             <mat-panel-title>
