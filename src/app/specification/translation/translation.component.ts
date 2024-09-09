@@ -1,4 +1,12 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from "@angular/core";
 import { Observable, Subscription } from "rxjs";
 import {
   IUpdatei18nText,
@@ -12,7 +20,15 @@ import {
   validateTranslation,
 } from "@modbus2mqtt/specification.shared";
 import { ApiService } from "../../services/api-service";
-import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from "@angular/forms";
 import { ISpecificationMethods } from "../../services/specificationInterface";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Router } from "@angular/router";
@@ -22,7 +38,11 @@ import { MatInput } from "@angular/material/input";
 import { MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatButton } from "@angular/material/button";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
-import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from "@angular/material/expansion";
+import {
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+  MatExpansionPanelTitle,
+} from "@angular/material/expansion";
 import { NgIf, NgClass, NgFor } from "@angular/common";
 
 const originalLanguageFormGroupName = "originalLanguage";
@@ -48,7 +68,6 @@ const translationLanguageFormGroupName = "translationLanguage";
     CdkTextareaAutosize,
     MatLabel,
     NgFor,
-   
   ],
 })
 export class TranslationComponent implements OnInit, OnDestroy {
@@ -75,7 +94,7 @@ export class TranslationComponent implements OnInit, OnDestroy {
   constructor(
     private entityApiService: ApiService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
   ) {}
 
   translationFormGroup: FormGroup = new FormGroup({});
@@ -86,30 +105,51 @@ export class TranslationComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (this.mqttdiscoverylanguage != "en") {
-      this.specificationFormGroup.setControl("translation", this.translationFormGroup);
+      this.specificationFormGroup.setControl(
+        "translation",
+        this.translationFormGroup,
+      );
     }
 
-    this.translationFormGroup.addControl("name", new FormControl<string | null>(null));
-    this.specificationSubscription = this.specificationObservable.subscribe((_specFromParent) => {
-      if (_specFromParent) this.currentSpecification = _specFromParent;
-      if (this.mqttdiscoverylanguage != "en") {
-        let dql = this.currentSpecification.i18n.find((langStruct) => langStruct.lang == this.mqttdiscoverylanguage);
-        let en = this.currentSpecification.i18n.find((langStruct) => langStruct.lang == "en");
-        if (en) this.languageToggle = dql != undefined;
-        else this.languageToggle = true;
-      }
-      this.reloadTexts();
-    });
+    this.translationFormGroup.addControl(
+      "name",
+      new FormControl<string | null>(null),
+    );
+    this.specificationSubscription = this.specificationObservable.subscribe(
+      (_specFromParent) => {
+        if (_specFromParent) this.currentSpecification = _specFromParent;
+        if (this.mqttdiscoverylanguage != "en") {
+          let dql = this.currentSpecification.i18n.find(
+            (langStruct) => langStruct.lang == this.mqttdiscoverylanguage,
+          );
+          let en = this.currentSpecification.i18n.find(
+            (langStruct) => langStruct.lang == "en",
+          );
+          if (en) this.languageToggle = dql != undefined;
+          else this.languageToggle = true;
+        }
+        this.reloadTexts();
+      },
+    );
   }
   onLanguageToggle() {
     this.languageToggle = !this.languageToggle;
     this.reloadTexts();
   }
   private addOrUpdateControl(textId: string) {
-    let text = getSpecificationI18nText(this.currentSpecification, this.translationLanguage, textId, true);
+    let text = getSpecificationI18nText(
+      this.currentSpecification,
+      this.translationLanguage,
+      textId,
+      true,
+    );
     let control = this.translationFormGroup.get(textId);
 
-    if (!control) this.translationFormGroup.setControl(textId, new FormControl<string | null>(text, Validators.required));
+    if (!control)
+      this.translationFormGroup.setControl(
+        textId,
+        new FormControl<string | null>(text, Validators.required),
+      );
     else control.setValue(text);
   }
   reloadTexts() {
@@ -132,7 +172,8 @@ export class TranslationComponent implements OnInit, OnDestroy {
         });
         for (const field in this.translationFormGroup.controls) {
           // 'field' is a string
-          if (field.startsWith(key) && field != key && !oKeys.includes(field)) this.translationFormGroup.removeControl(field);
+          if (field.startsWith(key) && field != key && !oKeys.includes(field))
+            this.translationFormGroup.removeControl(field);
         }
       } catch (e) {
         console.log("error");
@@ -148,13 +189,24 @@ export class TranslationComponent implements OnInit, OnDestroy {
   }
   showTranslation(): boolean {
     // en should always be availabe. The discovery language is al
-    if (null == this.currentSpecification.i18n.find((l) => l.lang == "en")) return true;
+    if (null == this.currentSpecification.i18n.find((l) => l.lang == "en"))
+      return true;
     let msgs: Imessage[] = [];
 
     // If the discovery language is not available, the translation dialog should be visible.
-    if (null == this.currentSpecification.i18n.find((l) => l.lang == this.mqttdiscoverylanguage)) return true;
+    if (
+      null ==
+      this.currentSpecification.i18n.find(
+        (l) => l.lang == this.mqttdiscoverylanguage,
+      )
+    )
+      return true;
     // Check translation for completeness
-    validateTranslation(this.currentSpecification, this.mqttdiscoverylanguage, msgs);
+    validateTranslation(
+      this.currentSpecification,
+      this.mqttdiscoverylanguage,
+      msgs,
+    );
     return msgs.length > 0;
   }
   fillLanguages() {
@@ -165,31 +217,51 @@ export class TranslationComponent implements OnInit, OnDestroy {
     });
   }
   ngOnDestroy(): void {
-    if (this.specificationSubscription) this.specificationSubscription.unsubscribe();
+    if (this.specificationSubscription)
+      this.specificationSubscription.unsubscribe();
   }
   getKeyType(key: string): string {
     return key == "name" ? "Spec" : "Entity";
   }
   getOriginalText(key: string): string {
-    return getSpecificationI18nText(this.currentSpecification, this.originalLanguage, key, true)!;
+    return getSpecificationI18nText(
+      this.currentSpecification,
+      this.originalLanguage,
+      key,
+      true,
+    )!;
   }
   changeText(key: string): void {
     let textFc = this.translationFormGroup.get(key);
     if (textFc) {
       let text = textFc.value;
-      setSpecificationI18nText(this.currentSpecification, this.translationLanguage, key, text);
+      setSpecificationI18nText(
+        this.currentSpecification,
+        this.translationLanguage,
+        key,
+        text,
+      );
       this.translationFormGroup.updateValueAndValidity();
       this.updateI18n.emit({ key: key, i18n: this.currentSpecification.i18n });
     }
   }
   translatedText(key: string): string | null {
-    return getSpecificationI18nText(this.currentSpecification, this.translationLanguage, key, true);
+    return getSpecificationI18nText(
+      this.currentSpecification,
+      this.translationLanguage,
+      key,
+      true,
+    );
   }
   getAllKeys(): string[] {
     let rc: string[] = [];
     if (this.currentSpecification)
       this.currentSpecification.entities.forEach((ent) => {
-        if (!ent.variableConfiguration || ent.variableConfiguration.targetParameter <= VariableTargetParameters.deviceIdentifiers)
+        if (
+          !ent.variableConfiguration ||
+          ent.variableConfiguration.targetParameter <=
+            VariableTargetParameters.deviceIdentifiers
+        )
           rc.push("e" + ent.id);
       });
 
@@ -237,13 +309,20 @@ export class TranslationComponent implements OnInit, OnDestroy {
     this.textBuffer = [];
 
     if (this.currentSpecification && this.currentSpecification.i18n) {
-      let lang = this.currentSpecification.i18n.find((l) => l.lang == this.originalLanguage);
-      let translatedLang = this.currentSpecification.i18n.find((l) => l.lang == this.translationLanguage);
+      let lang = this.currentSpecification.i18n.find(
+        (l) => l.lang == this.originalLanguage,
+      );
+      let translatedLang = this.currentSpecification.i18n.find(
+        (l) => l.lang == this.translationLanguage,
+      );
 
       let ids: string[] = [];
       if (lang && lang.texts) {
         lang.texts.forEach((t) => {
-          if (translatedLang == null || null == translatedLang.texts.find((text) => text.textId == t.textId)) {
+          if (
+            translatedLang == null ||
+            null == translatedLang.texts.find((text) => text.textId == t.textId)
+          ) {
             this.textBuffer.push(t.text);
             this.ids.push(t.textId);
           }
@@ -256,12 +335,20 @@ export class TranslationComponent implements OnInit, OnDestroy {
     if (this.ids.length)
       if (this.supportsGoogleTranslate) {
         this.entityApiService
-          .postTranslate(this.originalLanguage, this.translationLanguage, this.textBuffer, this.errorHandler.bind(this))
+          .postTranslate(
+            this.originalLanguage,
+            this.translationLanguage,
+            this.textBuffer,
+            this.errorHandler.bind(this),
+          )
           .subscribe(this.copyTranslations2Form);
       } else {
         if (this.textBuffer.length) {
           let url = `https://translate.google.com/?sl=${this.originalLanguage}&hl=${this.translationLanguage}&text=${this.textBuffer.join("%0A")}`;
-          this.googleTranslateWindow = window.open(url, "modbus2mqttTranslation");
+          this.googleTranslateWindow = window.open(
+            url,
+            "modbus2mqttTranslation",
+          );
         }
       }
   }
@@ -269,11 +356,14 @@ export class TranslationComponent implements OnInit, OnDestroy {
     let entityId: number = parseInt(entityKey.substring(1));
     let rc: string[] = [];
     if (this.currentSpecification) {
-      let ent = this.currentSpecification.entities.find((ent) => ent.id == entityId);
+      let ent = this.currentSpecification.entities.find(
+        (ent) => ent.id == entityId,
+      );
       if (ent && getParameterType(ent.converter) == "Iselect") {
         let opt = (ent.converterParameters as Iselect).options;
         let optm = (ent.converterParameters as Iselect).optionModbusValues;
-        if (opt && opt.length) opt.forEach((opt) => rc.push("e" + ent!.id + "o." + opt.key));
+        if (opt && opt.length)
+          opt.forEach((opt) => rc.push("e" + ent!.id + "o." + opt.key));
         if (optm && optm.length)
           optm.forEach((opt) => {
             let oname = "e" + ent!.id + "o." + opt;

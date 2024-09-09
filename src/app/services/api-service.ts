@@ -37,10 +37,14 @@ export class ApiService {
   constructor(
     private httpClient: HttpClient,
     private router: Router,
-    private activeatedRoute: ActivatedRoute
+    private activeatedRoute: ActivatedRoute,
   ) {
     this.errorHandler = (err: HttpErrorResponse) => {
-      if ([HttpErrorsEnum.ErrUnauthorized, HttpErrorsEnum.ErrForbidden].includes(err.status)) {
+      if (
+        [HttpErrorsEnum.ErrUnauthorized, HttpErrorsEnum.ErrForbidden].includes(
+          err.status,
+        )
+      ) {
         new SessionStorage().removeAuthToken();
         this.router.navigate(["login"], { queryParams: { toUrl: router.url } });
       } else {
@@ -62,7 +66,9 @@ export class ApiService {
   loadingError$ = new Subject<boolean>();
 
   errorHandler: (err: HttpErrorResponse) => any;
-  getSpecification(specification: string | undefined = undefined): Observable<Ispecification> {
+  getSpecification(
+    specification: string | undefined = undefined,
+  ): Observable<Ispecification> {
     if (!specification) throw new Error("spec is a required parameter");
 
     let f: string = `/api/specification?&spec=${specification}`;
@@ -73,16 +79,18 @@ export class ApiService {
   getModbusSpecification(
     busid: number,
     slaveid: number,
-    specification: string | undefined = undefined
+    specification: string | undefined = undefined,
   ): Observable<ImodbusSpecification> {
-    let f: string = this.getFullUri(apiUri.modbusSpecification) + `?busid=${busid}&slaveid=${slaveid}`;
+    let f: string =
+      this.getFullUri(apiUri.modbusSpecification) +
+      `?busid=${busid}&slaveid=${slaveid}`;
     if (specification) f = f + `&spec=${specification}`;
     console.log(f);
     return this.httpClient.get<ImodbusSpecification>(f).pipe(
       catchError((err) => {
         this.errorHandler(err);
         return new Observable<ImodbusSpecification>();
-      })
+      }),
     );
   }
   getConverters(): Observable<Iconverter[]> {
@@ -104,17 +112,21 @@ export class ApiService {
       catchError((err) => {
         this.errorHandler(err);
         return new Observable<Iconverter[]>();
-      })
+      }),
     );
   }
-  postValidateMqtt(config: Iconfiguration): Observable<{ valid: boolean; message: string }> {
+  postValidateMqtt(
+    config: Iconfiguration,
+  ): Observable<{ valid: boolean; message: string }> {
     let url = this.getFullUri(apiUri.validateMqtt);
-    return this.httpClient.post<{ valid: boolean; message: string }>(url, config).pipe(
-      catchError((err) => {
-        this.errorHandler(err);
-        return new Observable<{ valid: boolean; message: string }>();
-      })
-    );
+    return this.httpClient
+      .post<{ valid: boolean; message: string }>(url, config)
+      .pipe(
+        catchError((err) => {
+          this.errorHandler(err);
+          return new Observable<{ valid: boolean; message: string }>();
+        }),
+      );
   }
   getSslFiles(): Observable<string[]> {
     let url = this.getFullUri(apiUri.sslFiles);
@@ -122,7 +134,7 @@ export class ApiService {
       catchError((err) => {
         this.errorHandler(err);
         return new Observable<string[]>();
-      })
+      }),
     );
   }
   getSerialDevices(): Observable<string[]> {
@@ -131,7 +143,7 @@ export class ApiService {
       catchError((err) => {
         this.errorHandler(err);
         return new Observable<string[]>();
-      })
+      }),
     );
   }
   getUserAuthenticationStatus(): Observable<IUserAuthenticationStatus> {
@@ -140,7 +152,7 @@ export class ApiService {
       catchError((err) => {
         this.errorHandler(err);
         return new Observable<IUserAuthenticationStatus>();
-      })
+      }),
     );
   }
   getBusses(): Observable<IBus[]> {
@@ -149,7 +161,7 @@ export class ApiService {
       catchError((err) => {
         this.errorHandler(err);
         return new Observable<IBus[]>();
-      })
+      }),
     );
   }
   getBus(busid: number): Observable<IBus> {
@@ -158,85 +170,110 @@ export class ApiService {
       catchError((err) => {
         this.errorHandler(err);
         return new Observable<IBus>();
-      })
+      }),
     );
   }
   getSlave(busid: number, slaveid: number): Observable<Islave> {
-    return this.httpClient.get<Islave>(this.getFullUri(apiUri.slave) + `?busid=${busid}&slaveid=${slaveid}`).pipe(
-      catchError((err) => {
-        this.errorHandler(err);
-        return new Observable<Islave>();
-      })
-    );
+    return this.httpClient
+      .get<Islave>(
+        this.getFullUri(apiUri.slave) + `?busid=${busid}&slaveid=${slaveid}`,
+      )
+      .pipe(
+        catchError((err) => {
+          this.errorHandler(err);
+          return new Observable<Islave>();
+        }),
+      );
   }
   getSlaves(busid: number): Observable<Islave[]> {
-    return this.httpClient.get<Islave[]>(this.getFullUri(apiUri.slaves) + `?busid=${busid}`).pipe(
-      catchError((err) => {
-        this.errorHandler(err);
-        return new Observable<Islave[]>();
-      })
-    );
+    return this.httpClient
+      .get<Islave[]>(this.getFullUri(apiUri.slaves) + `?busid=${busid}`)
+      .pipe(
+        catchError((err) => {
+          this.errorHandler(err);
+          return new Observable<Islave[]>();
+        }),
+      );
   }
   getUserLogin(username: string, password: string): Observable<string> {
-    return this.httpClient.get<any>(this.getFullUri(apiUri.userLogin) + `?name=${username}&password=${password}`).pipe(
-      map((value) => {
-        return value.token;
-      }),
-      catchError((err) => {
-        this.errorHandler(err);
-        return new Observable<string>();
-      })
-    );
+    return this.httpClient
+      .get<any>(
+        this.getFullUri(apiUri.userLogin) +
+          `?name=${username}&password=${password}`,
+      )
+      .pipe(
+        map((value) => {
+          return value.token;
+        }),
+        catchError((err) => {
+          this.errorHandler(err);
+          return new Observable<string>();
+        }),
+      );
   }
   getUserRegister(username: string, password: string): Observable<void> {
-    return this.httpClient.get<void>(this.getFullUri(apiUri.userRegister) + `?name=${username}&password=${password}`).pipe(
-      catchError((err) => {
-        this.errorHandler(err);
-        return new Observable<void>();
-      })
-    );
+    return this.httpClient
+      .get<void>(
+        this.getFullUri(apiUri.userRegister) +
+          `?name=${username}&password=${password}`,
+      )
+      .pipe(
+        catchError((err) => {
+          this.errorHandler(err);
+          return new Observable<void>();
+        }),
+      );
   }
 
   getSpecsForSlave(
     busid: number,
     specificSlaveId: number,
-    showAllPublicSpecs: boolean
+    showAllPublicSpecs: boolean,
   ): Observable<IidentificationSpecification[]> {
     let p1 = specificSlaveId ? "&slaveid=" + specificSlaveId : "";
     let param = "?busid=" + busid + p1;
     if (showAllPublicSpecs) param = param + "&showAllPublicSpecs=true";
-    return this.httpClient.get<IidentificationSpecification[]>(this.getFullUri(apiUri.specsForSlaveId) + `${param}`).pipe(
-      catchError((err) => {
-        this.errorHandler(err);
-        return new Observable<IidentificationSpecification[]>();
-      })
-    );
+    return this.httpClient
+      .get<
+        IidentificationSpecification[]
+      >(this.getFullUri(apiUri.specsForSlaveId) + `${param}`)
+      .pipe(
+        catchError((err) => {
+          this.errorHandler(err);
+          return new Observable<IidentificationSpecification[]>();
+        }),
+      );
   }
   getSpecifications(): Observable<ImodbusSpecification[]> {
-    return this.httpClient.get<ImodbusSpecification[]>(this.getFullUri(apiUri.specifications)).pipe(
-      catchError((err): Observable<ImodbusSpecification[]> => {
-        this.loadingError$.next(true);
-        this.errorHandler(err);
-        return new Observable<ImodbusSpecification[]>();
-      })
-    );
+    return this.httpClient
+      .get<ImodbusSpecification[]>(this.getFullUri(apiUri.specifications))
+      .pipe(
+        catchError((err): Observable<ImodbusSpecification[]> => {
+          this.loadingError$.next(true);
+          this.errorHandler(err);
+          return new Observable<ImodbusSpecification[]>();
+        }),
+      );
   }
 
-  postBus(connection: IModbusConnection, busid?: number): Observable<{ busid: number }> {
+  postBus(
+    connection: IModbusConnection,
+    busid?: number,
+  ): Observable<{ busid: number }> {
     let url = this.getFullUri(apiUri.bus);
     if (busid != undefined) url = `${url}?busid=${busid}`;
     return this.httpClient.post<{ busid: number }>(url, connection).pipe(
       catchError((err): Observable<{ busid: number }> => {
         this.errorHandler(err);
         return new Observable<{ busid: number }>();
-      })
+      }),
     );
   }
   postTranslate(
     originalLanguage: string,
     translationLanguage: string,
     text: string[],
-    errorHandler?: (err: HttpErrorResponse) => boolean
+    errorHandler?: (err: HttpErrorResponse) => boolean,
   ): Observable<string[]> {
     const httpOptions = {
       headers: {
@@ -250,19 +287,22 @@ export class ApiService {
       targetLanguageCode: translationLanguage,
     };
 
-    return this.httpClient.post<string[]>(this.getFullUri(apiUri.translate), request, httpOptions).pipe(
-      catchError((err): Observable<string[]> => {
-        if (errorHandler == undefined || !errorHandler(err)) this.errorHandler(err);
-        return new Observable<string[]>();
-      })
-    );
+    return this.httpClient
+      .post<string[]>(this.getFullUri(apiUri.translate), request, httpOptions)
+      .pipe(
+        catchError((err): Observable<string[]> => {
+          if (errorHandler == undefined || !errorHandler(err))
+            this.errorHandler(err);
+          return new Observable<string[]>();
+        }),
+      );
   }
 
   postSpecification(
     specification: ImodbusSpecification,
     busid: number,
     slaveid: number,
-    originalFilename: string | null = null
+    originalFilename: string | null = null,
   ): Observable<ImodbusSpecification> {
     const httpOptions = {
       headers: {
@@ -271,15 +311,16 @@ export class ApiService {
     };
     return this.httpClient
       .post<ImodbusSpecification>(
-        this.getFullUri(apiUri.specfication) + `?busid=${busid}&slaveid=${slaveid}&originalFilename=${originalFilename}`,
+        this.getFullUri(apiUri.specfication) +
+          `?busid=${busid}&slaveid=${slaveid}&originalFilename=${originalFilename}`,
         specification,
-        httpOptions
+        httpOptions,
       )
       .pipe(
         catchError((err): Observable<ImodbusSpecification> => {
           this.errorHandler(err);
           return new Observable<ImodbusSpecification>();
-        })
+        }),
       );
   }
 
@@ -296,52 +337,59 @@ export class ApiService {
       catchError((err) => {
         this.errorHandler(err);
         return new Observable<Islave>();
-      })
+      }),
     );
   }
   getConfiguration(): Observable<Iconfiguration> {
-    return this.httpClient.get<Iconfiguration>(this.getFullUri(apiUri.configuration)).pipe(
-      catchError((err) => {
-        this.errorHandler(err);
-        return new Observable<Iconfiguration>();
-      })
-    );
+    return this.httpClient
+      .get<Iconfiguration>(this.getFullUri(apiUri.configuration))
+      .pipe(
+        catchError((err) => {
+          this.errorHandler(err);
+          return new Observable<Iconfiguration>();
+        }),
+      );
   }
   postConfiguration(config: Iconfiguration): Observable<Iconfiguration> {
-    return this.httpClient.post<Iconfiguration>(this.getFullUri(apiUri.configuration), config).pipe(
-      catchError((err) => {
-        this.errorHandler(err);
-        return new Observable<Iconfiguration>();
-      })
-    );
+    return this.httpClient
+      .post<Iconfiguration>(this.getFullUri(apiUri.configuration), config)
+      .pipe(
+        catchError((err) => {
+          this.errorHandler(err);
+          return new Observable<Iconfiguration>();
+        }),
+      );
   }
   postModbusEntity(
     spec: ImodbusSpecification,
     changedEntity: ImodbusEntity,
     busid: number,
     slaveid: number,
-    language: string
+    language: string,
   ): Observable<ImodbusEntityWithName> {
     return this.httpClient
       .post<ImodbusEntity>(
-        this.getFullUri(apiUri.modbusEntity) + `?busid=${busid}&slaveid=${slaveid}&entityid=${changedEntity.id}`,
-        spec
+        this.getFullUri(apiUri.modbusEntity) +
+          `?busid=${busid}&slaveid=${slaveid}&entityid=${changedEntity.id}`,
+        spec,
       )
       .pipe(
         catchError((err) => {
           this.errorHandler(err);
           return new Observable<ImodbusEntityWithName>();
-        })
+        }),
       );
   }
   deleteNewSpecfiles() {
-    return this.httpClient.delete<void>(this.getFullUri(apiUri.newSpecificationfiles)).pipe(
-      catchError((err): Observable<void> => {
-        this.loadingError$.next(true);
-        this.errorHandler(err);
-        return new Observable<void>();
-      })
-    );
+    return this.httpClient
+      .delete<void>(this.getFullUri(apiUri.newSpecificationfiles))
+      .pipe(
+        catchError((err): Observable<void> => {
+          this.loadingError$.next(true);
+          this.errorHandler(err);
+          return new Observable<void>();
+        }),
+      );
   }
   postModbusWriteMqtt(
     spec: ImodbusSpecification,
@@ -349,7 +397,7 @@ export class ApiService {
     busid: number,
     slaveid: number,
     language: string,
-    mqttValue: string
+    mqttValue: string,
   ): Observable<string> {
     let lSpec: ImodbusSpecification = structuredClone(spec);
     let entity = lSpec.entities.find((e) => e.id == entityid);
@@ -361,122 +409,162 @@ export class ApiService {
             .post<string>(
               this.getFullUri(apiUri.writeEntity) +
                 `?busid=${busid}&slaveid=${slaveid}&entityid=${entityid}&mqttValue=${mqttValue}&language=${language}`,
-              lSpec
+              lSpec,
             )
             .pipe(
               catchError((err) => {
                 this.errorHandler(err);
                 return new Observable<string>();
-              })
+              }),
             );
         default:
           return this.httpClient
             .post<string>(
               this.getFullUri(apiUri.writeEntity) +
                 `?busid=${busid}&slaveid=${slaveid}&entityid=${entityid}&mqttValue=${mqttValue}&language=${language}`,
-              lSpec
+              lSpec,
             )
             .pipe(
               catchError((err) => {
                 this.errorHandler(err);
                 return new Observable<string>();
-              })
+              }),
             );
       }
     } else throw new Error("entityid " + entityid + " not found ");
   }
 
-  postFile(specification: string, usage: SpecificationFileUsage, formData: FormData): Observable<IimageAndDocumentUrl[]> {
+  postFile(
+    specification: string,
+    usage: SpecificationFileUsage,
+    formData: FormData,
+  ): Observable<IimageAndDocumentUrl[]> {
     return this.httpClient
-      .post<IimageAndDocumentUrl[]>(this.getFullUri(apiUri.upload) + `?specification=${specification}&usage=${usage}`, formData)
+      .post<
+        IimageAndDocumentUrl[]
+      >(this.getFullUri(apiUri.upload) + `?specification=${specification}&usage=${usage}`, formData)
       .pipe(
         catchError((err) => {
           this.errorHandler(err);
           return new Observable<IimageAndDocumentUrl[]>();
-        })
+        }),
       );
   }
-  postAddFilesUrl(specification: string, url: IimageAndDocumentUrl): Observable<IimageAndDocumentUrl[]> {
+  postAddFilesUrl(
+    specification: string,
+    url: IimageAndDocumentUrl,
+  ): Observable<IimageAndDocumentUrl[]> {
     return this.httpClient
-      .post<IimageAndDocumentUrl[]>(this.getFullUri(apiUri.addFilesUrl) + `?specification=${specification}`, url)
+      .post<
+        IimageAndDocumentUrl[]
+      >(this.getFullUri(apiUri.addFilesUrl) + `?specification=${specification}`, url)
       .pipe(
         catchError((err) => {
           this.errorHandler(err);
           return new Observable<IimageAndDocumentUrl[]>();
-        })
+        }),
       );
   }
-  postSpecificationContribution(spec: string, note: string): Observable<number> {
-    return this.httpClient
-      .post<number>(this.getFullUri(apiUri.specficationContribute) + `?spec=${spec}`, {
+  postSpecificationContribution(
+    spec: string,
+    note: string,
+  ): Observable<number> {
+    return this.httpClient.post<number>(
+      this.getFullUri(apiUri.specficationContribute) + `?spec=${spec}`,
+      {
         note: note,
-      })
-      .pipe(
-        catchError((err) => {
-          this.errorHandler(err);
-          return new Observable<number>();
-        })
-      );
+      },
+    );
   }
-  getForSpecificationValidation(specfilename: string, language: string): Observable<Imessage[]> {
+  getForSpecificationValidation(
+    specfilename: string,
+    language: string,
+  ): Observable<Imessage[]> {
     return this.httpClient
-      .get<Imessage[]>(this.getFullUri(apiUri.specificationValidate) + `?language=${language}&spec=${specfilename}`)
+      .get<
+        Imessage[]
+      >(this.getFullUri(apiUri.specificationValidate) + `?language=${language}&spec=${specfilename}`)
       .pipe(
         catchError((err) => {
           this.errorHandler(err);
           return new Observable<Imessage[]>();
-        })
+        }),
       );
   }
   getSpecificationFetchPublic(): Observable<void> {
-    return this.httpClient.get<void>(this.getFullUri(apiUri.specificationFetchPublic)).pipe(
-      catchError((err) => {
-        this.errorHandler(err);
-        return new Observable<void>();
-      })
-    );
+    return this.httpClient
+      .get<void>(this.getFullUri(apiUri.specificationFetchPublic))
+      .pipe(
+        catchError((err) => {
+          this.errorHandler(err);
+          return new Observable<void>();
+        }),
+      );
   }
 
-  postForSpecificationValidation(spec: ImodbusSpecification, language: string): Observable<Imessage[]> {
-    return this.httpClient.post<Imessage[]>(this.getFullUri(apiUri.specificationValidate) + `?language=${language}`, spec).pipe(
-      catchError((err) => {
-        this.errorHandler(err);
-        return new Observable<Imessage[]>();
-      })
-    );
+  postForSpecificationValidation(
+    spec: ImodbusSpecification,
+    language: string,
+  ): Observable<Imessage[]> {
+    return this.httpClient
+      .post<
+        Imessage[]
+      >(this.getFullUri(apiUri.specificationValidate) + `?language=${language}`, spec)
+      .pipe(
+        catchError((err) => {
+          this.errorHandler(err);
+          return new Observable<Imessage[]>();
+        }),
+      );
   }
   deleteBus(busid: number): Observable<void> {
-    return this.httpClient.delete<void>(this.getFullUri(apiUri.bus) + `?busid=${busid}`).pipe(
-      catchError((err) => {
-        this.errorHandler(err);
-        return new Observable<void>();
-      })
-    );
+    return this.httpClient
+      .delete<void>(this.getFullUri(apiUri.bus) + `?busid=${busid}`)
+      .pipe(
+        catchError((err) => {
+          this.errorHandler(err);
+          return new Observable<void>();
+        }),
+      );
   }
   deleteSlave(busid: number, slaveid: number): Observable<void> {
-    return this.httpClient.delete<void>(this.getFullUri(apiUri.slave) + `?busid=${busid}&slaveid=${slaveid}`).pipe(
-      catchError((err) => {
-        this.errorHandler(err);
-        return new Observable<void>();
-      })
-    );
+    return this.httpClient
+      .delete<void>(
+        this.getFullUri(apiUri.slave) + `?busid=${busid}&slaveid=${slaveid}`,
+      )
+      .pipe(
+        catchError((err) => {
+          this.errorHandler(err);
+          return new Observable<void>();
+        }),
+      );
   }
   deleteSpecification(specFilename: string): Observable<void> {
-    return this.httpClient.delete<void>(this.getFullUri(apiUri.specfication) + `?spec=${specFilename}`).pipe(
-      catchError((err) => {
-        this.errorHandler(err);
-        return new Observable<void>();
-      })
-    );
-  }
-  deleteUploadedFile(specfileName: string, url: string, usage: SpecificationFileUsage): Observable<IimageAndDocumentUrl[]> {
     return this.httpClient
-      .delete<IimageAndDocumentUrl[]>(this.getFullUri(apiUri.upload) + `?specification=${specfileName}&url=${url}&usage=${usage}`)
+      .delete<void>(
+        this.getFullUri(apiUri.specfication) + `?spec=${specFilename}`,
+      )
+      .pipe(
+        catchError((err) => {
+          this.errorHandler(err);
+          return new Observable<void>();
+        }),
+      );
+  }
+  deleteUploadedFile(
+    specfileName: string,
+    url: string,
+    usage: SpecificationFileUsage,
+  ): Observable<IimageAndDocumentUrl[]> {
+    return this.httpClient
+      .delete<
+        IimageAndDocumentUrl[]
+      >(this.getFullUri(apiUri.upload) + `?specification=${specfileName}&url=${url}&usage=${usage}`)
       .pipe(
         catchError((err) => {
           this.errorHandler(err);
           return new Observable<IimageAndDocumentUrl[]>();
-        })
+        }),
       );
   }
 }

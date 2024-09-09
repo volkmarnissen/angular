@@ -1,5 +1,11 @@
 import { AfterViewInit, Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from "@angular/forms";
 import { ApiService } from "../services/api-service";
 import { SessionStorage } from "../services/SessionStorage";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -9,7 +15,12 @@ import { MatCardActions } from "@angular/material/card";
 import { MatIcon } from "@angular/material/icon";
 import { NgIf } from "@angular/common";
 import { MatInput } from "@angular/material/input";
-import { MatFormField, MatLabel, MatError, MatSuffix } from "@angular/material/form-field";
+import {
+  MatFormField,
+  MatLabel,
+  MatError,
+  MatSuffix,
+} from "@angular/material/form-field";
 import { MatDialogTitle } from "@angular/material/dialog";
 @Component({
   selector: "app-login",
@@ -41,7 +52,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     private _formBuilder: FormBuilder,
     private api: ApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
   ngAfterViewInit(): void {
     let posRegister = this.router.url.indexOf("register");

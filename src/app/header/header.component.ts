@@ -10,7 +10,15 @@ import { MatIconButton, MatButton } from "@angular/material/button";
   templateUrl: "./header.component.html",
   styleUrls: ["./header.component.css"],
   standalone: true,
-  imports: [MatIconButton, MatTooltip, MatMenuTrigger, MatIcon, MatMenu, RouterLink, MatButton],
+  imports: [
+    MatIconButton,
+    MatTooltip,
+    MatMenuTrigger,
+    MatIcon,
+    MatMenu,
+    RouterLink,
+    MatButton,
+  ],
 })
 export class HeaderComponent {
   constructor(private router: Router) {}

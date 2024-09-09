@@ -13,7 +13,10 @@ export const APP_ROUTES: Routes = [
   { path: RoutingNames.register, component: LoginComponent },
   {
     path: RoutingNames.configure,
-    loadComponent: () => import("./configure/configure.component").then((m) => m.ConfigureComponent),
+    loadComponent: () =>
+      import("./configure/configure.component").then(
+        (m) => m.ConfigureComponent,
+      ),
     canActivate: [AuthGuardService],
   },
   {
@@ -34,8 +37,13 @@ export const APP_ROUTES: Routes = [
   {
     path: RoutingNames.specification + "/:busid/:slaveid/:disabled",
     canActivate: [AuthGuardService],
-    loadComponent: () => import("./specification/specification/specification.component").then((m) => m.SpecificationComponent),
-    canDeactivate: [(component: SpecificationComponent) => !component.canDeactivate()],
+    loadComponent: () =>
+      import("./specification/specification/specification.component").then(
+        (m) => m.SpecificationComponent,
+      ),
+    canDeactivate: [
+      (component: SpecificationComponent) => !component.canDeactivate(),
+    ],
   },
 ];
 // bootstrapApplication(AppComponent,{

@@ -1,4 +1,13 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
 import { ApiService } from "../../services/api-service";
 import {
   AbstractControl,
@@ -34,20 +43,38 @@ import {
 } from "@modbus2mqtt/specification.shared";
 import { SessionStorage } from "../../services/SessionStorage";
 import { M2mErrorStateMatcher } from "../../services/M2mErrorStateMatcher";
-import { ISpecificationMethods, ImodbusEntityWithName, isDeviceVariable } from "../../services/specificationInterface";
-import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag } from "@angular/cdk/drag-drop";
+import {
+  ISpecificationMethods,
+  ImodbusEntityWithName,
+  isDeviceVariable,
+} from "../../services/specificationInterface";
+import {
+  CdkDragDrop,
+  moveItemInArray,
+  CdkDropList,
+  CdkDrag,
+} from "@angular/cdk/drag-drop";
 import { MatOption } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { MatInput } from "@angular/material/input";
 import { MatFormField, MatLabel, MatError } from "@angular/material/form-field";
-import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from "@angular/material/expansion";
+import {
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+  MatExpansionPanelTitle,
+} from "@angular/material/expansion";
 import { EntityValueControlComponent } from "../entity-value-control/entity-value-control.component";
 import { MatIcon } from "@angular/material/icon";
 import { MatTooltip } from "@angular/material/tooltip";
 import { MatIconButton } from "@angular/material/button";
 import { NgIf, NgClass, NgFor, AsyncPipe } from "@angular/common";
-import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from "@angular/material/card";
+import {
+  MatCard,
+  MatCardHeader,
+  MatCardTitle,
+  MatCardContent,
+} from "@angular/material/card";
 
 const nameFormControlName = "name";
 
@@ -66,7 +93,10 @@ const newEntity: ImodbusEntityWithName = {
   identified: IdentifiedStates.unknown,
   converter: {
     name: "number",
-    registerTypes: [ModbusRegisterType.HoldingRegister, ModbusRegisterType.AnalogInputs],
+    registerTypes: [
+      ModbusRegisterType.HoldingRegister,
+      ModbusRegisterType.AnalogInputs,
+    ],
   },
   modbusAddress: 0,
   id: -1,
@@ -106,7 +136,10 @@ const newEntity: ImodbusEntityWithName = {
     AsyncPipe,
   ],
 })
-export class EntityComponent extends SessionStorage implements AfterViewInit, OnChanges, OnDestroy {
+export class EntityComponent
+  extends SessionStorage
+  implements AfterViewInit, OnChanges, OnDestroy
+{
   onMqttValueChange(_event: any, _entity: ImodbusEntity) {
     _event.target.value = "YYYY";
   }
@@ -138,7 +171,9 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
   mqttValues: HTMLElement;
   converters: Observable<Iconverter[]>;
   currentLanguage: string;
-  mqttValueObservable: Subject<ImodbusData | undefined> = new Subject<ImodbusData | undefined>();
+  mqttValueObservable: Subject<ImodbusData | undefined> = new Subject<
+    ImodbusData | undefined
+  >();
   specificationSavedObservable: Observable<void>;
   subSpec: Subscription;
   allFormGroups: FormGroup = this.fb.group({});
@@ -157,11 +192,17 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     { registerType: ModbusRegisterType.Coils, name: "Coils" },
   ];
 
-  entitiesDisplayedColumns = ["select", nameFormControlName, "identified", "mqttValue", "action"];
+  entitiesDisplayedColumns = [
+    "select",
+    nameFormControlName,
+    "identified",
+    "mqttValue",
+    "action",
+  ];
 
   constructor(
     private entityApiService: ApiService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {
     super();
   }
@@ -169,9 +210,19 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
   ngOnInit(): void {
     this.entityFormGroup = this.fb.group({
       name: [null as string | null, this.entityNameValidator.bind(this)],
-      mqttname: [null as string | null, this.entityMqttNameValidator.bind(this)],
+      mqttname: [
+        null as string | null,
+        this.entityMqttNameValidator.bind(this),
+      ],
       converter: [null as Iconverter | null, Validators.required],
-      modbusAddress: [null as number | null, Validators.compose([Validators.required, Validators.min(0), Validators.max(65536)])],
+      modbusAddress: [
+        null as number | null,
+        Validators.compose([
+          Validators.required,
+          Validators.min(0),
+          Validators.max(65536),
+        ]),
+      ],
       registerType: [null as IRegisterType | null, Validators.required],
       readonly: [null as boolean | null],
       entityCategory: [""],
@@ -180,7 +231,10 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     });
     this.variableFormGroup = this.fb.group({
       variableType: [null as VariableTargetParameters | null],
-      variableEntity: [null as ImodbusEntity | null, this.variableEntityValidator.bind(this)],
+      variableEntity: [
+        null as ImodbusEntity | null,
+        this.variableEntityValidator.bind(this),
+      ],
     });
     (this.numberPropertiesFormGroup = this.fb.group({
       deviceClass: [null as string | null],
@@ -196,13 +250,26 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
         stringlength: [null as number | null, Validators.required],
       })),
       (this.selectPropertiesFormGroup = this.fb.group({
-        optionModbus: [null as number | null, Validators.compose([Validators.required, this.uniqueKeyValidator.bind(this)])],
-        optionMqtt: [null as string | null, Validators.compose([Validators.required, this.uniqueNameValidator.bind(this)])],
+        optionModbus: [
+          null as number | null,
+          Validators.compose([
+            Validators.required,
+            this.uniqueKeyValidator.bind(this),
+          ]),
+        ],
+        optionMqtt: [
+          null as string | null,
+          Validators.compose([
+            Validators.required,
+            this.uniqueNameValidator.bind(this),
+          ]),
+        ],
         deviceClass: [null as string | null],
       }));
     this.generateEntityCopyToForm();
     if (this.specificationMethods) {
-      this.specificationSavedObservable = this.specificationMethods.getSaveObservable();
+      this.specificationSavedObservable =
+        this.specificationMethods.getSaveObservable();
       this.subSpec = this.specificationSavedObservable.subscribe(() => {
         this.backupEntity = null;
         this.allFormGroups.markAsPristine();
@@ -259,11 +326,17 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     }
     this.variableFormGroup
       .get(variableTypeFormControlName)!
-      .setValue(entity.variableConfiguration ? entity.variableConfiguration.targetParameter : null);
+      .setValue(
+        entity.variableConfiguration
+          ? entity.variableConfiguration.targetParameter
+          : null,
+      );
     this.variableFormGroup
       .get(variableEntityFormControlName)!
       .setValue(
-        entity.variableConfiguration && entity.variableConfiguration.entityId ? entity.variableConfiguration.entityId : null
+        entity.variableConfiguration && entity.variableConfiguration.entityId
+          ? entity.variableConfiguration.entityId
+          : null,
       );
     if (
       this.variableFormGroup.get(variableTypeFormControlName)!.value != null &&
@@ -272,18 +345,30 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
       this.entityFormGroup.get(nameFormControlName)!.disable();
       this.entityFormGroup.get(nameFormControlName)!.setValue(null);
 
-      if (isDeviceVariable(this.variableFormGroup.get(variableTypeFormControlName)!.value))
+      if (
+        isDeviceVariable(
+          this.variableFormGroup.get(variableTypeFormControlName)!.value,
+        )
+      )
         this.variableFormGroup.get(variableEntityFormControlName)!.disable();
       else this.variableFormGroup.get(variableEntityFormControlName)!.enable();
     } else {
       // This entity is no variable
-      if (!this.disabled) this.entityFormGroup.get(nameFormControlName)!.enable();
+      if (!this.disabled)
+        this.entityFormGroup.get(nameFormControlName)!.enable();
       this.entityFormGroup.get(nameFormControlName)!.setValue(entity.name);
-      if (entity.mqttname) this.entityFormGroup.get(mqttNameFormControlName)!.setValue(entity.mqttname);
+      if (entity.mqttname)
+        this.entityFormGroup
+          .get(mqttNameFormControlName)!
+          .setValue(entity.mqttname);
       else if (this.entityFormGroup.get(mqttNameFormControlName)!.value != null)
         this.entityFormGroup
           .get(mqttNameFormControlName)!
-          .setValue(getFileNameFromName(this.entityFormGroup.get(nameFormControlName)!.value));
+          .setValue(
+            getFileNameFromName(
+              this.entityFormGroup.get(nameFormControlName)!.value,
+            ),
+          );
       this.variableFormGroup.get(variableEntityFormControlName)!.disable();
       delete entity.variableConfiguration;
     }
@@ -291,13 +376,26 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     this.entityFormGroup.get("icon")!.setValue(entity.icon);
     this.entityFormGroup.get("forceUpdate")!.setValue(entity.forceUpdate);
     this.entityFormGroup.get("entityCategory")!.setValue(entity.entityCategory);
-    this.entityFormGroup.get("registerType")!.setValue(this.getFunctionCode(entity.registerType));
+    this.entityFormGroup
+      .get("registerType")!
+      .setValue(this.getFunctionCode(entity.registerType));
     converterFormControl.setValue(entity.converter);
-    modbusAddressFormControl.setValue(entity.modbusAddress != undefined ? entity.modbusAddress : null);
+    modbusAddressFormControl.setValue(
+      entity.modbusAddress != undefined ? entity.modbusAddress : null,
+    );
 
-    if (converterFormControl.value !== entity.converter || modbusAddressFormControl.value !== entity.modbusAddress) {
-      converterFormControl.setValue(entity.converter !== undefined ? entity.converter : null);
-      modbusAddressFormControl.setValue(entity.modbusAddress && entity.modbusAddress != -1 ? entity.modbusAddress : null);
+    if (
+      converterFormControl.value !== entity.converter ||
+      modbusAddressFormControl.value !== entity.modbusAddress
+    ) {
+      converterFormControl.setValue(
+        entity.converter !== undefined ? entity.converter : null,
+      );
+      modbusAddressFormControl.setValue(
+        entity.modbusAddress && entity.modbusAddress != -1
+          ? entity.modbusAddress
+          : null,
+      );
     }
 
     if (!entity.converterParameters) {
@@ -306,31 +404,64 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     let converterParameters = entity.converterParameters;
     switch (this.getParameterTypeFromConverterFormControl()) {
       case "Inumber":
-        this.allFormGroups.setControl("properties", this.numberPropertiesFormGroup);
+        this.allFormGroups.setControl(
+          "properties",
+          this.numberPropertiesFormGroup,
+        );
 
         let np = converterParameters as Inumber;
-        this.numberPropertiesFormGroup.get("multiplier")!.setValue(np.multiplier ? np.multiplier : 1);
-        this.numberPropertiesFormGroup.get("offset")!.setValue(np.offset ? np.offset : 0);
-        this.numberPropertiesFormGroup.get("deviceClass")!.setValue(np.device_class ? np.device_class : null);
-        this.numberPropertiesFormGroup.get("uom")!.setValue(np.uom ? np.uom : null);
+        this.numberPropertiesFormGroup
+          .get("multiplier")!
+          .setValue(np.multiplier ? np.multiplier : 1);
+        this.numberPropertiesFormGroup
+          .get("offset")!
+          .setValue(np.offset ? np.offset : 0);
+        this.numberPropertiesFormGroup
+          .get("deviceClass")!
+          .setValue(np.device_class ? np.device_class : null);
+        this.numberPropertiesFormGroup
+          .get("uom")!
+          .setValue(np.uom ? np.uom : null);
         this.numberPropertiesFormGroup
           .get("numberFormat")!
-          .setValue(np.numberFormat !== undefined ? np.numberFormat : EnumNumberFormat.default);
+          .setValue(
+            np.numberFormat !== undefined
+              ? np.numberFormat
+              : EnumNumberFormat.default,
+          );
         this.numberPropertiesFormGroup
           .get("min")!
-          .setValue(np.identification && np.identification.min !== undefined ? np.identification.min : null);
+          .setValue(
+            np.identification && np.identification.min !== undefined
+              ? np.identification.min
+              : null,
+          );
         this.numberPropertiesFormGroup
           .get("max")!
-          .setValue(np.identification && np.identification.max !== undefined ? np.identification.max : null);
+          .setValue(
+            np.identification && np.identification.max !== undefined
+              ? np.identification.max
+              : null,
+          );
         break;
       case "Itext":
-        this.allFormGroups.setControl("properties", this.stringPropertiesFormGroup);
+        this.allFormGroups.setControl(
+          "properties",
+          this.stringPropertiesFormGroup,
+        );
         let nt = converterParameters as Itext;
-        this.stringPropertiesFormGroup.get("stringlength")!.setValue(nt.stringlength ? nt.stringlength : 10);
-        this.stringPropertiesFormGroup.get("identExpr")!.setValue(nt.identification ? nt.identification : null);
+        this.stringPropertiesFormGroup
+          .get("stringlength")!
+          .setValue(nt.stringlength ? nt.stringlength : 10);
+        this.stringPropertiesFormGroup
+          .get("identExpr")!
+          .setValue(nt.identification ? nt.identification : null);
         break;
       case "Iselect":
-        this.allFormGroups.setControl("properties", this.selectPropertiesFormGroup);
+        this.allFormGroups.setControl(
+          "properties",
+          this.selectPropertiesFormGroup,
+        );
         //(this.selectedEntity.converterParameters as Iselect).options = (converterParameters as Iselect).options;
         switch (converterFormControl.value) {
           case "button":
@@ -341,7 +472,9 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
               { key: 0, name: "ON" },
               { key: 1, name: "OFF" },
             ];
-            this.selectPropertiesFormGroup.get("deviceClass")!.setValue(nb.device_class ? nb.device_class : null);
+            this.selectPropertiesFormGroup
+              .get("deviceClass")!
+              .setValue(nb.device_class ? nb.device_class : null);
             break;
           default:
         }
@@ -355,7 +488,11 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
   }
 
   getCurrentOptions(): IselectOption[] {
-    if (this.entity && this.entity.converterParameters && (this.entity.converterParameters as Iselect).options)
+    if (
+      this.entity &&
+      this.entity.converterParameters &&
+      (this.entity.converterParameters as Iselect).options
+    )
       return (this.entity.converterParameters as Iselect).options!;
     return [];
   }
@@ -365,8 +502,12 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     switch (this.getParameterTypeFromConverterFormControl()) {
       case "Iselect":
         if (!this.backupEntity) return true;
-        let eo = JSON.stringify((this.entity.converterParameters as Iselect).options);
-        let bo = JSON.stringify((this.backupEntity.converterParameters as Iselect).options);
+        let eo = JSON.stringify(
+          (this.entity.converterParameters as Iselect).options,
+        );
+        let bo = JSON.stringify(
+          (this.backupEntity.converterParameters as Iselect).options,
+        );
         return eo != bo;
 
       case "Itext":
@@ -378,13 +519,18 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     }
   }
   readFromModbus() {
-    this.specificationMethods.postModbusEntity(this.entity).subscribe((data) => {
-      this.mqttValueObservable.next(data);
-    });
+    this.specificationMethods
+      .postModbusEntity(this.entity)
+      .subscribe((data) => {
+        this.mqttValueObservable.next(data);
+      });
   }
   isCurrentMessage(): boolean {
     if (this.specificationMethods == undefined) return false;
-    return this.specificationMethods.getCurrentMessage()?.referencedEntity == this.entity.id;
+    return (
+      this.specificationMethods.getCurrentMessage()?.referencedEntity ==
+      this.entity.id
+    );
   }
   onEntityNameValueChange() {
     // set mqtt name in form control,
@@ -396,13 +542,18 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     let vt = this.variableFormGroup.get(variableTypeFormControlName);
     if (vt != null && vt.value != null && Number.parseInt(vt.value) != 0) {
       this.entity.variableConfiguration = {
-        targetParameter: this.variableFormGroup.get(variableTypeFormControlName)!.value,
+        targetParameter: this.variableFormGroup.get(
+          variableTypeFormControlName,
+        )!.value,
         entityId:
-          this.variableFormGroup.get(variableEntityFormControlName)!.value == null
+          this.variableFormGroup.get(variableEntityFormControlName)!.value ==
+          null
             ? undefined
-            : this.variableFormGroup.get(variableEntityFormControlName)!.value.id,
+            : this.variableFormGroup.get(variableEntityFormControlName)!.value
+                .id,
       };
-      if (!isDeviceVariable(vt.value)) this.variableFormGroup.get(variableEntityFormControlName)!.disable();
+      if (!isDeviceVariable(vt.value))
+        this.variableFormGroup.get(variableEntityFormControlName)!.disable();
       else this.variableFormGroup.get(variableEntityFormControlName)!.enable();
       this.entity.name = undefined;
       this.entityFormGroup.get(nameFormControlName)!.setValue(null);
@@ -420,11 +571,17 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
         this.entity.name = this.entityFormGroup.get(nameFormControlName)!.value;
       }
 
-      let mqttname: string | undefined | null = this.entityFormGroup.get(mqttNameFormControlName)!.value;
-      if (mqttname && mqttname.length > 0) this.entity.mqttname = mqttname.toLowerCase();
-      else if (this.entity.name) this.entity.mqttname = getFileNameFromName(this.entity.name);
+      let mqttname: string | undefined | null = this.entityFormGroup.get(
+        mqttNameFormControlName,
+      )!.value;
+      if (mqttname && mqttname.length > 0)
+        this.entity.mqttname = mqttname.toLowerCase();
+      else if (this.entity.name)
+        this.entity.mqttname = getFileNameFromName(this.entity.name);
 
-      this.entityFormGroup.get(mqttNameFormControlName)!.setValue(this.entity.mqttname != null ? this.entity.mqttname : null);
+      this.entityFormGroup
+        .get(mqttNameFormControlName)!
+        .setValue(this.entity.mqttname != null ? this.entity.mqttname : null);
     }
     this.specificationMethods.copy2Translation(this.entity);
   }
@@ -435,10 +592,15 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     let converterFormControl = this.entityFormGroup.get("converter")!;
 
     if (
-      (modbusAddressFormControl.value != null && modbusAddressFormControl.value !== this.entity.modbusAddress) ||
-      (converterFormControl.value != null && converterFormControl.value !== this.entity.converter)
+      (modbusAddressFormControl.value != null &&
+        modbusAddressFormControl.value !== this.entity.modbusAddress) ||
+      (converterFormControl.value != null &&
+        converterFormControl.value !== this.entity.converter)
     ) {
-      this.entity.modbusAddress = modbusAddressFormControl.value != null ? modbusAddressFormControl.value : undefined;
+      this.entity.modbusAddress =
+        modbusAddressFormControl.value != null
+          ? modbusAddressFormControl.value
+          : undefined;
       if (converterFormControl.value !== null) {
         this.entity.converter = converterFormControl.value as Iconverter;
       }
@@ -467,19 +629,27 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     // this.saveButton.disabled = !this.canSaveEntity(entity)
     if (!this.entity) return;
     this.specificationMethods.setEntitiesTouched();
-    if (this.entityFormGroup.get("icon")!.value != null) this.entity.icon = this.entityFormGroup.get("icon")!.value;
+    if (this.entityFormGroup.get("icon")!.value != null)
+      this.entity.icon = this.entityFormGroup.get("icon")!.value;
     if (this.entityFormGroup.get("forceUpdate")!.value != null)
       this.entity.forceUpdate = this.entityFormGroup.get("forceUpdate")!.value;
-    if (this.entityFormGroup.get("readonly")!.value != null) this.entity.readonly = this.entityFormGroup.get("readonly")!.value;
-    if (this.entityFormGroup.get("entityCategory")!.value != null && this.entityFormGroup.get("entityCategory")!.value.length > 0)
-      this.entity.entityCategory = this.entityFormGroup.get("entityCategory")!.value;
+    if (this.entityFormGroup.get("readonly")!.value != null)
+      this.entity.readonly = this.entityFormGroup.get("readonly")!.value;
+    if (
+      this.entityFormGroup.get("entityCategory")!.value != null &&
+      this.entityFormGroup.get("entityCategory")!.value.length > 0
+    )
+      this.entity.entityCategory =
+        this.entityFormGroup.get("entityCategory")!.value;
     else delete this.entity.entityCategory;
     switch (this.getParameterTypeFromConverterFormControl()) {
       case "Inumber":
         if (this.numberPropertiesFormGroup.get("deviceClass")!.value != null)
-          (this.entity.converterParameters as Inumber).device_class = this.numberPropertiesFormGroup.get("deviceClass")!.value;
+          (this.entity.converterParameters as Inumber).device_class =
+            this.numberPropertiesFormGroup.get("deviceClass")!.value;
         if (this.numberPropertiesFormGroup.get("uom")!.value != null)
-          (this.entity.converterParameters as any).uom = this.numberPropertiesFormGroup.get("uom")!.value;
+          (this.entity.converterParameters as any).uom =
+            this.numberPropertiesFormGroup.get("uom")!.value;
         break;
     }
     this.setEntitiesTouched();
@@ -504,7 +674,9 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
   updateCategory() {
     let category = this.entityFormGroup.get("entityCategory")!.value;
     if (category.length) {
-      category = this.entityFormGroup.get("readonly")!.value ? "diagnostic" : "config";
+      category = this.entityFormGroup.get("readonly")!.value
+        ? "diagnostic"
+        : "config";
       this.entityFormGroup.get("entityCategory")!.setValue(category);
     }
   }
@@ -513,17 +685,23 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     this.specificationMethods.setEntitiesTouched();
     switch (this.getParameterTypeFromConverterFormControl()) {
       case "Inumber":
-        this.allFormGroups.setControl("properties", this.numberPropertiesFormGroup);
+        this.allFormGroups.setControl(
+          "properties",
+          this.numberPropertiesFormGroup,
+        );
         this.entity.converterParameters = {};
         if (this.numberPropertiesFormGroup.get("multiplier")!.value != null)
-          (this.entity.converterParameters as any).multiplier = this.numberPropertiesFormGroup.get("multiplier")!.value;
+          (this.entity.converterParameters as any).multiplier =
+            this.numberPropertiesFormGroup.get("multiplier")!.value;
         else (this.entity.converterParameters as any).multiplier = 1;
 
         if (this.numberPropertiesFormGroup.get("offset")!.value != null)
-          (this.entity.converterParameters as any).offset = this.numberPropertiesFormGroup.get("offset")!.value;
+          (this.entity.converterParameters as any).offset =
+            this.numberPropertiesFormGroup.get("offset")!.value;
         else (this.entity.converterParameters as any).offset = 0;
         if (this.numberPropertiesFormGroup.get("numberFormat")!.value != null)
-          (this.entity.converterParameters as Inumber).numberFormat = this.numberPropertiesFormGroup.get("numberFormat")!.value;
+          (this.entity.converterParameters as Inumber).numberFormat =
+            this.numberPropertiesFormGroup.get("numberFormat")!.value;
         let min = this.numberPropertiesFormGroup.get("min")!.value;
         let max = this.numberPropertiesFormGroup.get("max")!.value;
         if (min !== null && max !== null) {
@@ -534,18 +712,28 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
         }
         break;
       case "Itext":
-        this.allFormGroups.setControl("properties", this.stringPropertiesFormGroup);
+        this.allFormGroups.setControl(
+          "properties",
+          this.stringPropertiesFormGroup,
+        );
         this.entity.converterParameters = {};
-        let strlenFormControl = this.stringPropertiesFormGroup.get("stringlength");
+        let strlenFormControl =
+          this.stringPropertiesFormGroup.get("stringlength");
         if (strlenFormControl && strlenFormControl.value != null)
-          (this.entity.converterParameters as any).stringlength = strlenFormControl.value;
+          (this.entity.converterParameters as any).stringlength =
+            strlenFormControl.value;
         if (this.stringPropertiesFormGroup.get("identExpr")! !== null) {
-          (this.entity.converterParameters as any).identification = this.stringPropertiesFormGroup.get("identExpr")!.value;
+          (this.entity.converterParameters as any).identification =
+            this.stringPropertiesFormGroup.get("identExpr")!.value;
         }
         break;
       case "Iselect":
-        this.allFormGroups.setControl("properties", this.selectPropertiesFormGroup);
-        if (!this.entity.converterParameters) this.entity.converterParameters = { options: [] };
+        this.allFormGroups.setControl(
+          "properties",
+          this.selectPropertiesFormGroup,
+        );
+        if (!this.entity.converterParameters)
+          this.entity.converterParameters = { options: [] };
         break;
     }
   }
@@ -567,8 +755,13 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
         parameterValid = this.numberPropertiesFormGroup.valid;
         break;
       case "Iselect":
-        if (this.entity && this.entity.converterParameters && (this.entity.converterParameters as Iselect).options)
-          parameterValid = (this.entity.converterParameters as Iselect)!.options!.length > 0;
+        if (
+          this.entity &&
+          this.entity.converterParameters &&
+          (this.entity.converterParameters as Iselect).options
+        )
+          parameterValid =
+            (this.entity.converterParameters as Iselect)!.options!.length > 0;
         break;
       case "Itext":
         parameterValid = this.stringPropertiesFormGroup.valid;
@@ -576,7 +769,9 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
       default:
         parameterValid = true;
     }
-    return parameterValid && entityFormGroup.valid && this.variableFormGroup.valid;
+    return (
+      parameterValid && entityFormGroup.valid && this.variableFormGroup.valid
+    );
   }
 
   restoreEntity(): void {
@@ -606,7 +801,11 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     return o1.name === o2.name;
   };
 
-  private isUniqueEntityName(cmparray: Iname[], inp: FormControl<string | null>, list?: FormControl<Iname[] | null>) {
+  private isUniqueEntityName(
+    cmparray: Iname[],
+    inp: FormControl<string | null>,
+    list?: FormControl<Iname[] | null>,
+  ) {
     let found = cmparray.find((val) => {
       return (
         val.name === inp.value &&
@@ -624,32 +823,45 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
   private createUniqueNameValidator(
     inp: FormControl<string | null>,
     fn: () => Iname[],
-    list?: FormControl<Iname[] | null>
+    list?: FormControl<Iname[] | null>,
   ): ValidatorFn {
     return (_control: AbstractControl): ValidationErrors | null => {
-      return !this.isUniqueEntityName(fn(), inp, list) ? { unique: true } : null;
+      return !this.isUniqueEntityName(fn(), inp, list)
+        ? { unique: true }
+        : null;
     };
   }
 
-  private uniqueNameValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  private uniqueNameValidator: ValidatorFn = (
+    control: AbstractControl,
+  ): ValidationErrors | null => {
     {
       return this.entity.converter.name != "select" ||
-        undefined == this.getCurrentOptions().find((opt) => opt.name == control.value)
+        undefined ==
+          this.getCurrentOptions().find((opt) => opt.name == control.value)
         ? null
         : { unique: control.value };
     }
   };
 
-  private uniqueKeyValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  private uniqueKeyValidator: ValidatorFn = (
+    control: AbstractControl,
+  ): ValidationErrors | null => {
     {
-      return undefined == this.getCurrentOptions().find((opt) => opt.key == control.value) ? null : { unique: control.value };
+      return undefined ==
+        this.getCurrentOptions().find((opt) => opt.key == control.value)
+        ? null
+        : { unique: control.value };
     }
   };
 
-  private entityNameValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  private entityNameValidator: ValidatorFn = (
+    control: AbstractControl,
+  ): ValidationErrors | null => {
     if (this.variableFormGroup) {
       let vtc = this.variableFormGroup!.get(variableTypeFormControlName);
-      return (this.entity && vtc!.value != null) || (control.value != null && control.value.length > 0)
+      return (this.entity && vtc!.value != null) ||
+        (control.value != null && control.value.length > 0)
         ? null
         : { required: control.value };
     }
@@ -657,14 +869,19 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     return { invalid: control.value };
   };
 
-  private entityMqttNameValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  private entityMqttNameValidator: ValidatorFn = (
+    control: AbstractControl,
+  ): ValidationErrors | null => {
     if (this.variableFormGroup && this.entity && this.specificationMethods) {
       let vtc = this.variableFormGroup!.get(variableTypeFormControlName);
-      let found = this.specificationMethods.getMqttNames(this.entity.id).find((mqttname) => mqttname && mqttname == control.value);
+      let found = this.specificationMethods
+        .getMqttNames(this.entity.id)
+        .find((mqttname) => mqttname && mqttname == control.value);
       if (found) {
         return { unique: control.value };
       }
-      return (this.entity && vtc!.value != null) || (control.value != null && control.value.length > 0)
+      return (this.entity && vtc!.value != null) ||
+        (control.value != null && control.value.length > 0)
         ? null
         : { required: control.value };
     }
@@ -672,7 +889,9 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     return { invalid: control.value };
   };
 
-  selectOptionsValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  selectOptionsValidator: ValidatorFn = (
+    control: AbstractControl,
+  ): ValidationErrors | null => {
     {
       return (this.entity?.converterParameters as Iselect).options &&
         (this.entity?.converterParameters as Iselect).options!.length > 0
@@ -681,15 +900,21 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     }
   };
 
-  variableEntityValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  variableEntityValidator: ValidatorFn = (
+    control: AbstractControl,
+  ): ValidationErrors | null => {
     if (!this.variableFormGroup) return null;
     let vt = this.variableFormGroup.get(variableTypeFormControlName)!;
     // variables for devices don't need entity
     if (isDeviceVariable(vt.value)) return null;
 
-    if (control == null || control.value == null || control.value.id == null) return { invalid: control.value };
+    if (control == null || control.value == null || control.value.id == null)
+      return { invalid: control.value };
 
-    return this.specificationMethods.hasDuplicateVariableConfigurations(control.value.id, vt.value)
+    return this.specificationMethods.hasDuplicateVariableConfigurations(
+      control.value.id,
+      vt.value,
+    )
       ? { unique: control.value }
       : null;
   };
@@ -735,7 +960,8 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
 
   getDeviceClasses(): string[] {
     if (this.getParameterTypeFromConverterFormControl())
-      return this.getParameterTypeFromConverterFormControl() === "Ibinary_sensor" ||
+      return this.getParameterTypeFromConverterFormControl() ===
+        "Ibinary_sensor" ||
         this.getParameterTypeFromConverterFormControl() === "Iselect"
         ? EntityComponent.deviceClasses.binary_sensor
         : EntityComponent.deviceClasses.sensor;
@@ -758,7 +984,8 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
 
   getFunctionCode(functionCode: ModbusRegisterType | undefined): IRegisterType {
     let rc: IRegisterType | undefined = undefined;
-    if (functionCode) rc = this.registerTypes.find((fc) => fc.registerType == functionCode);
+    if (functionCode)
+      rc = this.registerTypes.find((fc) => fc.registerType == functionCode);
     if (rc) return rc;
     return this.registerTypes[0];
   }
@@ -772,14 +999,23 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
           (this.entity.converterParameters as Iselect).options = [];
 
         let modbusValue: number | undefined;
-        modbusValue = selectPropertiesForm.get(optionModbusFormControlName)!.value;
+        modbusValue = selectPropertiesForm.get(
+          optionModbusFormControlName,
+        )!.value;
         if (modbusValue != undefined && modbusValue != null) {
-          let idx = (this.entity.converterParameters as Iselect).options!.findIndex((o) => o.key > modbusValue!);
+          let idx = (
+            this.entity.converterParameters as Iselect
+          ).options!.findIndex((o) => o.key > modbusValue!);
           if (idx >= 0)
-            (this.entity.converterParameters as Iselect).options!.splice(idx, 0, {
-              key: modbusValue,
-              name: selectPropertiesForm.get(optionMqttFormControlName)!.value,
-            });
+            (this.entity.converterParameters as Iselect).options!.splice(
+              idx,
+              0,
+              {
+                key: modbusValue,
+                name: selectPropertiesForm.get(optionMqttFormControlName)!
+                  .value,
+              },
+            );
           else
             (this.entity.converterParameters as Iselect).options!.push({
               key: modbusValue,
@@ -796,19 +1032,29 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
     this.specificationMethods.setEntitiesTouched();
   }
   dropOptions(event: CdkDragDrop<any, any, any>) {
-    moveItemInArray((this.entity.converterParameters as Iselect).options!, event.previousIndex, event.currentIndex);
+    moveItemInArray(
+      (this.entity.converterParameters as Iselect).options!,
+      event.previousIndex,
+      event.currentIndex,
+    );
     this.specificationMethods.setEntitiesTouched();
   }
 
   canAddOption() {
-    this.selectPropertiesFormGroup.get(["optionModbus"])?.updateValueAndValidity();
-    this.selectPropertiesFormGroup.get(["optionMqtt"])?.updateValueAndValidity();
+    this.selectPropertiesFormGroup
+      .get(["optionModbus"])
+      ?.updateValueAndValidity();
+    this.selectPropertiesFormGroup
+      .get(["optionMqtt"])
+      ?.updateValueAndValidity();
     return this.selectPropertiesFormGroup.valid;
   }
   deleteOption(option: IselectOption) {
     this.specificationMethods.setEntitiesTouched();
     // delete name
-    let idx = this.getCurrentOptions().findIndex((opt) => opt.key == option.key);
+    let idx = this.getCurrentOptions().findIndex(
+      (opt) => opt.key == option.key,
+    );
     if (idx >= 0) this.getCurrentOptions().splice(idx, 1);
     if (this.entity) {
       if (this.entity.modbusValue[0] == option.key) this.readFromModbus();
@@ -820,7 +1066,15 @@ export class EntityComponent extends SessionStorage implements AfterViewInit, On
   }
 
   static deviceClasses = {
-    binary_sensor: ["None", "connectivity", "power", "problem", "running", "safety", "update"],
+    binary_sensor: [
+      "None",
+      "connectivity",
+      "power",
+      "problem",
+      "running",
+      "safety",
+      "update",
+    ],
     sensor: [
       "None",
       "apparent_power",

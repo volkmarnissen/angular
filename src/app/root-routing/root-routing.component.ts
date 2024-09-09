@@ -4,9 +4,9 @@ import { Router } from "@angular/router";
 import { IUserAuthenticationStatus } from "@modbus2mqtt/server.shared";
 
 @Component({
-    selector: "app-root-routing",
-    template: "",
-    standalone: true,
+  selector: "app-root-routing",
+  template: "",
+  standalone: true,
 })
 export class RootRoutingComponent implements AfterViewInit {
   constructor(

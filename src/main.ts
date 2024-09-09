@@ -1,6 +1,10 @@
 /// <reference types="@angular/localize" />
 
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import {
+  HTTP_INTERCEPTORS,
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from "@angular/common/http";
 import { bootstrapApplication } from "@angular/platform-browser";
 import { provideRouter, withComponentInputBinding } from "@angular/router";
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from "@angular/material/form-field";
@@ -8,7 +12,7 @@ import { AppComponent } from "./app/app.component";
 import { AuthGuardService } from "./app/services/auth-guard.service";
 import { AuthHeaderInterceptor } from "./interceptors/auth-header.interceptor";
 import { APP_ROUTES } from "./app/app-routing.module";
-import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideAnimations } from "@angular/platform-browser/animations";
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -26,7 +30,7 @@ bootstrapApplication(AppComponent, {
       useClass: AuthHeaderInterceptor,
       multi: true,
     },
-    provideAnimations()
+    provideAnimations(),
   ],
 });
 

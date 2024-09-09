@@ -19,7 +19,12 @@ import { MatIcon } from "@angular/material/icon";
 import { MatTooltip } from "@angular/material/tooltip";
 import { NgFor, NgIf } from "@angular/common";
 import { MatButton, MatIconButton } from "@angular/material/button";
-import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from "@angular/material/card";
+import {
+  MatCard,
+  MatCardHeader,
+  MatCardTitle,
+  MatCardContent,
+} from "@angular/material/card";
 
 interface ImodbusSpecificationWithMessages extends ImodbusSpecification {
   messages: Imessage[];
@@ -30,7 +35,18 @@ interface ImodbusSpecificationWithMessages extends ImodbusSpecification {
   templateUrl: "./specifications.component.html",
   styleUrl: "./specifications.component.css",
   standalone: true,
-  imports: [MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatButton, NgFor, MatTooltip, MatIcon, MatIconButton, NgIf],
+  imports: [
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardContent,
+    MatButton,
+    NgFor,
+    MatTooltip,
+    MatIcon,
+    MatIconButton,
+    NgIf,
+  ],
 })
 export class SpecificationsComponent implements OnInit {
   config: Iconfiguration;
@@ -40,7 +56,7 @@ export class SpecificationsComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
   ) {}
 
   fillSpecifications(specs: ImodbusSpecification[]) {
@@ -51,7 +67,10 @@ export class SpecificationsComponent implements OnInit {
       // Specifications Component doesn't change a Specification
       // for validation of identification, it's better to use the Filespecification
       // This happens in getForSpecificationValidation
-      let ox = this.apiService.getForSpecificationValidation(spec.filename, this.config.mqttdiscoverylanguage);
+      let ox = this.apiService.getForSpecificationValidation(
+        spec.filename,
+        this.config.mqttdiscoverylanguage,
+      );
       a[spec.filename] = ox;
       this.generateImageGalleryItems(spec);
     });
@@ -66,8 +85,13 @@ export class SpecificationsComponent implements OnInit {
   ngOnInit(): void {
     this.apiService.getConfiguration().subscribe((config) => {
       this.config = config;
-      this.specServices = new SpecificationServices(config.mqttdiscoverylanguage, this.apiService);
-      this.apiService.getSpecifications().subscribe(this.fillSpecifications.bind(this));
+      this.specServices = new SpecificationServices(
+        config.mqttdiscoverylanguage,
+        this.apiService,
+      );
+      this.apiService
+        .getSpecifications()
+        .subscribe(this.fillSpecifications.bind(this));
     });
   }
 
@@ -78,15 +102,26 @@ export class SpecificationsComponent implements OnInit {
     throw new Error("Method not implemented.");
   }
   deleteSpecification(spec: ImodbusSpecification) {
-    if ([SpecificationStatus.added, SpecificationStatus.cloned].includes(spec.status)) {
-      if (confirm("Are you sure to delete " + this.getTranslatedSpecName(spec))) {
+    if (
+      [SpecificationStatus.added, SpecificationStatus.cloned].includes(
+        spec.status,
+      )
+    ) {
+      if (
+        confirm("Are you sure to delete " + this.getTranslatedSpecName(spec))
+      ) {
         this.apiService.deleteSpecification(spec.filename).subscribe(() => {
-          this.apiService.getSpecifications().subscribe(this.fillSpecifications.bind(this));
+          this.apiService
+            .getSpecifications()
+            .subscribe(this.fillSpecifications.bind(this));
           alert(this.getTranslatedSpecName(spec) + " has been deleted");
         });
       }
     } else {
-      alert(this.getTranslatedSpecName(spec) + " is not local. Only local specifications can be deleted");
+      alert(
+        this.getTranslatedSpecName(spec) +
+          " is not local. Only local specifications can be deleted",
+      );
     }
   }
   getTranslatedSpecName(spec: IbaseSpecification): string | null {
@@ -95,14 +130,21 @@ export class SpecificationsComponent implements OnInit {
     return null;
   }
   contributeSpecification(spec: ImodbusSpecification) {
-    this.apiService.postSpecificationContribution(spec.filename, "My test note").subscribe((_issue) => {
-      this.apiService.getSpecifications().subscribe(this.fillSpecifications.bind(this));
-      alert("Successfully contributed. Created pull Request #" + _issue);
-    });
+    this.apiService
+      .postSpecificationContribution(spec.filename, "My test note")
+      .subscribe((_issue) => {
+        this.apiService
+          .getSpecifications()
+          .subscribe(this.fillSpecifications.bind(this));
+        alert("Successfully contributed. Created pull Request #" + _issue);
+      });
   }
 
   canContribute(spec: ImodbusSpecification): Observable<boolean> {
-    let rc = ![SpecificationStatus.published, SpecificationStatus.contributed].includes(spec.status);
+    let rc = ![
+      SpecificationStatus.published,
+      SpecificationStatus.contributed,
+    ].includes(spec.status);
     if (!rc) {
       let s = new Subject<boolean>();
       setTimeout(() => {
@@ -113,11 +155,16 @@ export class SpecificationsComponent implements OnInit {
     // Specifications Component doesn't change a Specification
     // for validation of identification, it's better to use the Filespecification
     // This happens in getForSpecificationValidation
-    return this.apiService.getForSpecificationValidation(spec.filename, this.config.mqttdiscoverylanguage).pipe(
-      map((messages) => {
-        return messages.length == 0;
-      })
-    );
+    return this.apiService
+      .getForSpecificationValidation(
+        spec.filename,
+        this.config.mqttdiscoverylanguage,
+      )
+      .pipe(
+        map((messages) => {
+          return messages.length == 0;
+        }),
+      );
   }
 
   onSpecificationClick() {
@@ -125,7 +172,8 @@ export class SpecificationsComponent implements OnInit {
   }
 
   getValidationMessage(spec: IbaseSpecification, message: Imessage): string {
-    if (this.specServices) return this.specServices.getValidationMessage(spec, message);
+    if (this.specServices)
+      return this.specServices.getValidationMessage(spec, message);
     else return "unknown message";
   }
 
@@ -152,7 +200,8 @@ export class SpecificationsComponent implements OnInit {
   }
   getImage(fn: string) {
     let d = this.galleryItems.get(fn);
-    if (d && d.length > 0 && d[0].data && d[0].data.src) return d[0].data.src as string;
+    if (d && d.length > 0 && d[0].data && d[0].data.src)
+      return d[0].data.src as string;
     return "";
   }
 }
