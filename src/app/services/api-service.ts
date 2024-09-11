@@ -71,7 +71,7 @@ export class ApiService {
   ): Observable<Ispecification> {
     if (!specification) throw new Error("spec is a required parameter");
 
-    let f: string = `/api/specification?&spec=${specification}`;
+    let f: string = this.getFullUri(apiUri.specfication  )+ `?spec=${specification}`;
     console.log(f);
     return this.httpClient.get<Ispecification>(f); // No error Handling!!!
   }
