@@ -14,8 +14,9 @@
 
             </mat-card-content>
         </mat-card>
+        <div [ngClass]="{waitCursor: contributing}">
         <ng-container *ngFor="let spec of specifications ">
-            <mat-card class="width350pt card" *ngClass="{waitCursor: contributing}">
+            <mat-card class="width350pt card" >
                 <mat-card-header>
                     <mat-card-title matTooltip="Contribute Specification" class=" width200pt"><mat-icon
                             [matTooltip]="getStatusText(spec.status)">{{getStatusIcon(spec.status)}}</mat-icon>{{getTranslatedSpecName(spec)
@@ -54,6 +55,6 @@
                 </mat-card-content>
             </mat-card>
         </ng-container>
-
+    </div>
     </div>
 </div>

@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { ApiService } from "../services/api-service";
 import { FormBuilder } from "@angular/forms";
 import { Router } from "@angular/router";
-import { Observable, Subject, first, forkJoin, map } from "rxjs";
+import { Observable, Subject, catchError, first, forkJoin, map } from "rxjs";
 import {
   IbaseSpecification,
   IimageAndDocumentUrl,
@@ -17,7 +17,7 @@ import { Iconfiguration } from "@modbus2mqtt/server.shared";
 import { GalleryItem, ImageItem } from "ng-gallery";
 import { MatIcon } from "@angular/material/icon";
 import { MatTooltip } from "@angular/material/tooltip";
-import { NgFor, NgIf } from "@angular/common";
+import { NgClass, NgFor, NgIf } from "@angular/common";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import {
   MatCard,
@@ -46,6 +46,7 @@ interface ImodbusSpecificationWithMessages extends ImodbusSpecification {
     MatIcon,
     MatIconButton,
     NgIf,
+    NgClass,
   ],
 })
 export class SpecificationsComponent implements OnInit {
@@ -58,7 +59,7 @@ export class SpecificationsComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
   ) {}
-
+  contributing: boolean = false;
   fillSpecifications(specs: ImodbusSpecification[]) {
     let a: any = {};
     this.galleryItems = new Map<string, GalleryItem[]>();
@@ -130,13 +131,22 @@ export class SpecificationsComponent implements OnInit {
     return null;
   }
   contributeSpecification(spec: ImodbusSpecification) {
+    this.contributing = true;
     this.apiService
       .postSpecificationContribution(spec.filename, "My test note")
+      .pipe(
+        catchError((err) => {
+          this.contributing = false;
+          this.apiService.errorHandler(err);
+          return new Observable<number>();
+        }),
+      )
       .subscribe((_issue) => {
         this.apiService
           .getSpecifications()
           .subscribe(this.fillSpecifications.bind(this));
         alert("Successfully contributed. Created pull Request #" + _issue);
+        this.contributing = false;
       });
   }
 
