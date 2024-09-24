@@ -17,6 +17,7 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from "@angular/forms";
+import { Clipboard } from "@angular/cdk/clipboard";
 import {
   MatSelectionList,
   MatSelectionListChange,
@@ -82,6 +83,7 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
     private entityApiService: ApiService,
     private route: ActivatedRoute,
     private routes: Router,
+    private clipBoard: Clipboard,
   ) {}
   displayedBusIdColumns: string[] = [
     "select",

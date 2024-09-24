@@ -6,7 +6,7 @@
         specifications</mat-slide-toggle></p>
     <div class="flexrows">
       <ng-container *ngFor="let uislave of uiSlaves; let i = index">
-        <mat-card class="width250pt card">
+        <mat-card class="width350pt card">
           <form (keydown.enter)="keyDown($event, uislave.slaveForm)" [formGroup]="uislave.slaveForm">
             <mat-card-header><mat-card-title matTooltip="Edit Specification" (click)="editSpecification(uislave.slave)"
                 class="clickable">{{uislave.label }}</mat-card-title>
@@ -34,7 +34,8 @@
                   (valueChange)="onSpecificationChange(uislave.slave, $event)"
                   (selectionChange)="onSelectionChange( uislave.slave)"
                   [compareWith]="compareSpecificationIdentification">
-                  <ng-container *ngFor="let i = index; let ispec of uislave.specs|async ">
+                  <ng-container *ngIf="uislave.specs|async  as uiSlaves">
+                    <ng-container *ngFor="let i = index; let ispec of uiSlaves">
                     <mat-option [value]="ispec">
                       <mat-icon
                         [matTooltip]="statusTooltip(ispec?ispec.status:3)">{{statusIcon(ispec?ispec.status:3)}}</mat-icon>
@@ -42,6 +43,7 @@
                         [matTooltip]="identifiedTooltip(ispec.identified)">{{identifiedIcon(ispec.identified)}}</mat-icon>
                       {{ ispec!== null?getSpecificationI18nName(ispec, currentLanguage):'' }}
                     </mat-option>
+                    </ng-container>
                   </ng-container>
                 </mat-select>
               </mat-form-field>
@@ -70,6 +72,41 @@
                   <input matInput formControlName="pollInterval" type="number" placeholder="1000"
                     (change)="setPolInterval($event, uislave.slave)" />
                 </mat-form-field>
+              </mat-expansion-panel>
+              <mat-expansion-panel *ngIf="uislave.slave.specificationid as specid">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    MQTT Topics
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                  <ng-container *ngIf="uislave.specs|async as iident">
+                  <ng-container *ngIf="getTopicAndPayloadForUiSlave( specid, iident) as tAndP">
+                    <h2>State Topic</h2>
+                    <div>
+                      {{tAndP.stateTopic }}<button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
+                      matTooltip="Copy to Clipboard" (click)="copy2Clipboard(tAndP.stateTopic!)" color="primary">
+                      <mat-icon>content_copy</mat-icon>
+                    </button>
+                    </div>
+                    <h2>State Payload Example</h2>
+                    <textarea id="w3review" name="w3review" rows="10" cols="20">
+                      {{tAndP.statePayload ?tAndP.statePayload:""}}
+                    </textarea>
+                    <h2>Command Topics</h2>
+                    <dl>
+                      <ng-container *ngFor="let commandEntity of tAndP.commandEntities">
+                        <dt> {{getSpecEntityName(uislave.slave, commandEntity.id)}}</dt>
+                        <dd>{{ commandEntity.commandTopic}}
+                          <button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
+                          matTooltip="Copy to Clipboard" (click)="copyTopic2Clipboard(commandEntity.commandTopic!)" color="primary">
+                          <mat-icon>content_copy</mat-icon>
+                      </button></dd>
+                      </ng-container>
+                        
+                    </dl>
+                      </ng-container>
+                  </ng-container>
+  
               </mat-expansion-panel>
             </mat-card-content>
           </form>

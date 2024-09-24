@@ -8,6 +8,7 @@ import {
   Output,
   SimpleChanges,
 } from "@angular/core";
+
 import { ApiService } from "../../services/api-service";
 import {
   AbstractControl,
@@ -376,6 +377,7 @@ export class EntityComponent
     this.entityFormGroup.get("icon")!.setValue(entity.icon);
     this.entityFormGroup.get("forceUpdate")!.setValue(entity.forceUpdate);
     this.entityFormGroup.get("entityCategory")!.setValue(entity.entityCategory);
+    this.entityFormGroup.get("readonly")!.setValue(entity.readonly);
     this.entityFormGroup
       .get("registerType")!
       .setValue(this.getFunctionCode(entity.registerType));
@@ -673,7 +675,7 @@ export class EntityComponent
   }
   updateCategory() {
     let category = this.entityFormGroup.get("entityCategory")!.value;
-    if (category.length) {
+    if (category && category.length) {
       category = this.entityFormGroup.get("readonly")!.value
         ? "diagnostic"
         : "config";
@@ -1064,7 +1066,6 @@ export class EntityComponent
       this.allFormGroups.markAsDirty();
     }
   }
-
   static deviceClasses = {
     binary_sensor: [
       "None",

@@ -835,4 +835,11 @@ export class SpecificationComponent
   getStatusText(status: SpecificationStatus | null): string {
     return SpecificationServices.getStatusText(status);
   }
+  getMqttSubscriptionTopic(): string | undefined {
+    let hasWritableEntities = this.currentSpecification?.entities.find(
+      (e) => !e.readonly,
+    );
+    if (!this.currentSpecification || !hasWritableEntities) return undefined;
+    else return this.currentSpecification.stateTopic;
+  }
 }

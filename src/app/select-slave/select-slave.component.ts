@@ -22,11 +22,18 @@ import {
   getSpecificationI18nName,
   SpecificationStatus,
   IdentifiedStates,
+  ImodbusEntityIdentification,
+  getSpecificationI18nEntityName,
 } from "@modbus2mqtt/specification.shared";
+import { Clipboard } from '@angular/cdk/clipboard';
 import { Observable, Subscription, map } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
 import { SessionStorage } from "../services/SessionStorage";
 import { M2mErrorStateMatcher } from "../services/M2mErrorStateMatcher";
+import { MatTreeModule } from "@angular/material/tree";
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
+
 import {
   Islave,
   IidentificationSpecification,
@@ -50,6 +57,8 @@ import {
   MatCardTitle,
   MatCardContent,
 } from "@angular/material/card";
+import { MatIconButtonSizesModule } from 'mat-icon-button-sizes';
+
 import { NgFor, NgIf, AsyncPipe } from "@angular/common";
 import { MatTooltip } from "@angular/material/tooltip";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
@@ -59,7 +68,11 @@ interface IuiSlave {
   label: string;
   specs: Observable<IidentificationSpecification[]>;
   slaveForm: FormGroup;
+  commandEntities?: ImodbusEntityIdentification[];
+  stateTopic?: string;
+  statePayload?: string;
 }
+
 @Component({
   selector: "app-select-slave",
   templateUrl: "./select-slave.component.html",
@@ -75,6 +88,10 @@ interface IuiSlave {
     MatCardHeader,
     MatCardTitle,
     MatIconButton,
+    MatTreeModule,
+    MatIconModule,
+    MatIconButtonSizesModule,
+    MatButtonModule,
     MatIcon,
     NgIf,
     MatCardContent,
@@ -112,11 +129,13 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     private route: ActivatedRoute,
     private entityApiService: ApiService,
     private routes: Router,
+    private clipboard:Clipboard
   ) {
     super();
   }
   showAllPublicSpecs = new FormControl<boolean>(false);
   uiSlaves: IuiSlave[] = [];
+
   slaves: Islave[] = [];
   // label:string;
   // slaveForms: FormGroup[]
@@ -129,7 +148,11 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   paramsSubscription: Subscription;
   errorStateMatcher = new M2mErrorStateMatcher();
 
-  preselectedBusId: number;
+  entitiesAccessor = (node: IidentificationSpecification) =>
+    node.entities ?? [];
+  hasChild = (_: number, node: IidentificationSpecification) =>
+    !!node.entities && node.entities.length > 0;
+
   bus: IBus;
   preselectedSlaveId: number | undefined = undefined;
   @ViewChild("slavesBody") slavesBody: ElementRef;
@@ -193,6 +216,27 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       this.slaves.push(uis.slave);
     });
   }
+
+  getTopicAndPayloadForUiSlave(
+    specid: string | undefined,
+    iident: IidentificationSpecification[],
+  ): any {
+    let o: any = {};
+
+    if (specid) {
+      o.commandEntities = [];
+      let s = iident.find((id) => id.filename == specid);
+      if (s) {
+        o.stateTopic = s.stateTopic;
+        o.statePayload = s.statePayload;
+        s.entities.forEach((ent) => {
+          if (ent.commandTopic) o.commandEntities!.push(ent);
+        });
+      }
+    }
+    return o;
+  }
+
   getUiSlave(slave: Islave, detectSpec: boolean | undefined): IuiSlave {
     let fg = this.initiateSlaveControl(slave.slaveid, null, slave.name);
     return {
@@ -203,7 +247,11 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
           slave.slaveid,
           this.showAllPublicSpecs.value!,
         )
-        .pipe(map(this.fillSpecs.bind(this, detectSpec, fg, slave))),
+        .pipe(
+          map((iident) => {
+            return this.fillSpecs.bind(this)(detectSpec, fg, slave, iident);
+          }),
+        ),
       label: this.getSlaveName(slave),
       slaveForm: fg,
     };
@@ -472,5 +520,18 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
         ")"
       );
     return "Slave " + slave.slaveid;
+  }
+  getSpecEntityName(slave: Islave, entityId: number) {
+    let rc: string | null = "--";
+    if (slave != null && slave.specification)
+      rc = getSpecificationI18nEntityName(
+        slave.specification!,
+        this.currentLanguage!,
+        entityId,
+      );
+    return rc;
+  }
+  copy2Clipboard(text:string){
+    this.clipboard.copy(text)
   }
 }

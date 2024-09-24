@@ -1,6 +1,6 @@
 {
   "name": "@modbus2mqtt/angular",
-  "version": "0.12.4",
+  "version": "0.12.5",
   "sshserver": "odroid@homeassistant.lan",
   "credits": "multiple choice by Studio 365 from <a href='https://thenounproject.com/browse/icons/term/multiple-choice/' target='_blank' title='multiple choice Icons'>Noun Project</a> (CC BY 3.0)",
   "scripts": {
@@ -48,5 +48,8 @@
     "typescript-map": "^0.1.0",
     "url-parse": "^1.5.10",
     "yaml": "^2.4.5"
+  },
+  "dependencies": {
+    "mat-icon-button-sizes": "^1.0.6"
   }
 }

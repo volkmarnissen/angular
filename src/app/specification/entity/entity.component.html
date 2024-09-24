@@ -298,7 +298,7 @@
         <mat-expansion-panel *ngIf="! ['binary_sensor', 'button'] .includes(entity.converter.name)">
             <mat-expansion-panel-header>
                 <mat-panel-title [matTooltip]="variableFormGroup.valid?'':'This panel has errors'">
-                    <p [ngClass]="{'errorText': !variableFormGroup.valid}"> Properties & others</p>
+                    <p [ngClass]="{'errorText': !variableFormGroup.valid}"> Variable Properties {{!entity.readonly?" and MQTT topic":"" }}</p>
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <form [formGroup]="variableFormGroup">
@@ -333,10 +333,10 @@
                             Referenced Entity and Set Value must be unique
                         </mat-error>
                     </mat-form-field>
+                    </div>
 
-                </div>
             </form>
 
         </mat-expansion-panel>
-    </mat-card-content>
+   </mat-card-content>
 </mat-card>
