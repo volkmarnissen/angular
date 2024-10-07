@@ -5,7 +5,7 @@
       <ng-container *ngFor="let bus of busses.data;let i = index">
         <mat-card [formGroup]="getBusFormGroup(i)">
           <mat-card-header><mat-card-title matTooltip="List or Add Slaves" (click)="listSlaves(i)"
-              class="clickable">{{getSerialFromForm(i)}}</mat-card-title>
+              class="clickable">{{getConnectionTitle(i)}}</mat-card-title>
             <div class="card-header-buttons">
               <ng-container *ngIf="bus != null">
                 <ng-container *ngIf="needsSaving(i)">
@@ -46,14 +46,13 @@
                   <div> <ng-container *ngIf="getSerialDevices().length == 0 else supervisor">
                       <mat-form-field>
                         <mat-label>Modbus Serial Device</mat-label>
-                        <input #serial matInput formControlName="serial" (change)="copy2SerialDevices(i, $event)" />
+                        <input #serial matInput formControlName="serial" />
                       </mat-form-field>
                     </ng-container>
                     <ng-template #supervisor>
                       <mat-form-field>
                         <mat-label>Serial Port</mat-label>
-                        <mat-select matInput formControlName="serialDeviceSelection"
-                          (selectionChange)="copy2Serial(i,$event)">
+                        <mat-select matInput formControlName="serial">
                           <mat-option *ngFor="let device of getSerialDevices(bus)"
                             [value]="device">{{device}}</mat-option>
                         </mat-select>

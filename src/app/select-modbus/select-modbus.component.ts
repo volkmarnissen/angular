@@ -149,7 +149,8 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
           this.bussesFormArray.clear();
           this.modbusIsRtu = [];
         }
-        for (let idx = 0; idx < results.length; idx++) this.copyBus2Form(idx);
+        for (let idx = 0; idx < results.length; idx++) 
+          this.copyBus2Form(idx);
         this.modbusIsRtu.push(true);
         this.bussesFormArray.push(this.createConnectionDataFormGroup());
         resolve();
@@ -172,7 +173,7 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
         let serialport = (bus.connectionData as IRTUConnection).serialport;
         let baudRate = (bus.connectionData as IRTUConnection).baudrate;
         let timeout = (bus.connectionData as IRTUConnection).timeout;
-        let sd = this.getSerialFormControl(idx);
+        let sd = this.getBusFormGroup(idx).get(["rtu", "serial"]) as FormControl<string>;
         sd.setValue(serialport);
 
         let br = fg.get(["rtu", "selectBaudRate"]);
@@ -182,12 +183,12 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
       } else {
         let host = (bus.connectionData as ITCPConnection).host;
         let port = (bus.connectionData as ITCPConnection).port;
-        let timeout = (bus.connectionData as IRTUConnection).timeout;
+        let timeout = (bus.connectionData as ITCPConnection).timeout;
         let sd = fg.get(["tcp", "host"]);
         if (sd) sd.setValue(host);
         let br = fg.get(["tcp", "port"]);
         if (br) br.setValue(port);
-        let to = fg.get(["rtu", "timeout"]);
+        let to = fg.get(["tcp", "timeout"]);
         if (to) to.setValue(timeout);
       }
     }
@@ -229,45 +230,37 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
     let baudrate: FormControl | null = null;
     let host: FormControl | null = null;
     let port: FormControl | null = null;
+    let serial: FormControl | null = null;
     let fg: FormGroup = this.bussesFormArray.at(idx)! as FormGroup;
     let connectionData: IModbusConnection = this.busses.data[idx]
       ? this.busses.data[idx].connectionData
       : ({} as IModbusConnection);
     if (fg) {
-      if (
-        this.modbusIsRtu[idx] &&
-        undefined != (timeout = fg.get(["rtu", "timeout"]) as FormControl) &&
-        undefined !=
-          (baudrate = fg.get(["rtu", "selectBaudRate"]) as FormControl)
-      ) {
-        if ((connectionData as IRTUConnection).baudrate != baudrate.value) {
-          (connectionData as IRTUConnection).baudrate = baudrate.value;
-        }
-        (connectionData as IRTUConnection).serialport =
-          this.getSerialFromForm(idx);
-        if ((connectionData as IRTUConnection).timeout != timeout.value) {
-          (connectionData as IRTUConnection).timeout = timeout.value;
-        }
-        delete (connectionData as any).host;
-        delete (connectionData as any).port;
-      } else {
+      if (this.modbusIsRtu[idx] ){
+        if(
+          null != (timeout = fg.get(["rtu", "timeout"]) as FormControl) &&
+          null != (baudrate = fg.get(["rtu", "selectBaudRate"]) as FormControl) &&
+          null != (serial = fg.get(["rtu", "serial"])as FormControl) 
+        ) {
+            (connectionData as IRTUConnection).baudrate = baudrate.value;
+            (connectionData as IRTUConnection).serialport = serial.value;
+            (connectionData as IRTUConnection).timeout = timeout.value;
+          }
+          delete (connectionData as any).host;
+          delete (connectionData as any).port;
+      }  
+      else {
         if (
           undefined != (host = fg.get(["tcp", "host"]) as FormControl) &&
           undefined != (timeout = fg.get(["tcp", "timeout"]) as FormControl) &&
           undefined != (port = fg.get(["tcp", "port"]) as FormControl)
         ) {
-          if ((connectionData as ITCPConnection).host != host.value) {
             (connectionData as ITCPConnection).host = host.value;
-          }
-          if ((connectionData as ITCPConnection).port != port.value) {
             (connectionData as ITCPConnection).port = port.value;
-          }
-          if ((connectionData as ITCPConnection).timeout != timeout.value) {
             (connectionData as ITCPConnection).timeout = timeout.value;
           }
           delete (connectionData as any).serialport;
           delete (connectionData as any).baudrate;
-        }
       }
     }
     return connectionData;
@@ -323,7 +316,6 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
       selectedBusTab: this._formBuilder.control(0),
       rtu: this._formBuilder.group({
         serial: [null, this.serialValidator],
-        serialDeviceSelection: [null, this.serialDevicesValidator],
         selectBaudRate: [9600, Validators.required],
         timeout: [BUS_TIMEOUT_DEFAULT, Validators.required],
       }),
@@ -342,18 +334,15 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
     let fg = this.bussesFormArray.at(idx);
     if (fg)
       if (this.isRTU(idx))
-        return this.bussesFormArray.at(idx)!.get("rtu")!.valid;
-      else return this.bussesFormArray.at(idx)!.get("tcp")!.valid;
+        return fg.get("rtu")!.valid;
+      else return fg.get("tcp")!.valid;
     return false;
   }
   copy2Serial(idx: number, event: MatSelectChange) {
     let fg = this.getBusFormGroup(idx);
     fg.get("serial")!.setValue(event.value);
   }
-  copy2SerialDevices(idx: number) {
-    let fg = this.getBusFormGroup(idx);
-    fg.get("serialDeviceSelection")?.setValue(fg.get("serial")?.value);
-  }
+
   getBusName(bus: IBus): string {
     if (bus == null) return "New";
     return getBusName(bus);
@@ -381,22 +370,26 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
     this.modbusIsRtu[index] = $event.index == 0;
   }
 
-  getSerialFromForm(idx: number): string {
-    let s = this.getSerialFormControl(idx);
-    return s && s.value && s.value.length ? s.value : "New";
-  }
-
   getSerialFormControl(idx: number): FormControl<string> {
     let busFormGroup = this.getBusFormGroup(idx);
-    let s: FormControl<string>;
-    if (this.serialDevices.length == 0)
-      s = busFormGroup.get(["rtu", "serial"])! as FormControl<string>;
-    else
+    let s: FormControl<string> = busFormGroup.get(["rtu", "serial"])! as FormControl<string>;
+    if (s == null)
       s = busFormGroup.get([
         "rtu",
         "serialDeviceSelection",
       ])! as FormControl<string>;
     return s;
+  }
+
+  getConnectionTitle(idx: number): string {
+    let busFormGroup = this.getBusFormGroup(idx);
+    this.busses.data
+    let s:FormControl<string>| undefined = undefined
+    if( this.modbusIsRtu[idx] )
+      s = this.getSerialFormControl(idx)
+    else 
+      s =  busFormGroup.get(["tcp", "host"] )! as FormControl<string>;
+    return s != undefined && s.value? s.value : "New";
   }
 
   isSelectedBaudRate(br: number): boolean {
