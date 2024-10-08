@@ -15,3 +15,12 @@
 dt{
     font-weight: bold; 
 }
+dd{
+    margin-inline-start: 10px;
+    margin-block-start: 0px;
+    margin-block-end: 0px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    padding-top:  2px;
+    padding-bottom: 2px;
+}
