@@ -13,6 +13,7 @@ import {
   SpecificationFileUsage,
   editableConverters,
   Imessage,
+  IimportMessages,
 } from "@modbus2mqtt/specification.shared";
 import { SessionStorage } from "./SessionStorage";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -434,7 +435,16 @@ export class ApiService {
       }
     } else throw new Error("entityid " + entityid + " not found ");
   }
-
+  postZip(formData: FormData):Observable<IimportMessages>{
+    return this.httpClient
+      .post<IimportMessages>(this.getFullUri(apiUri.uploadSpec), formData)
+      .pipe(
+        catchError((err) => {
+          this.errorHandler(err);
+          return new Observable<IimportMessages>();
+        }),
+      );
+  }
   postFile(
     specification: string,
     usage: SpecificationFileUsage,

@@ -98,10 +98,16 @@
                         <dt> {{getSpecEntityName(uislave.slave, commandEntity.id)}}</dt>
                         <dd>{{ commandEntity.commandTopic}}
                           <button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
-                          matTooltip="Copy to Clipboard" (click)="copyTopic2Clipboard(commandEntity.commandTopic!)" color="primary">
+                          matTooltip="Copy to Clipboard" (click)="copy2Clipboard(commandEntity.commandTopic!)" color="primary">
                           <mat-icon>content_copy</mat-icon>
-                      </button></dd>
-                      </ng-container>
+                      </button>
+                     </dd>
+                      <dd *ngIf="commandEntity.commandTopicModbus">.../modbusValues
+                        <button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
+                        matTooltip="Copy to Clipboard" (click)="copy2Clipboard(commandEntity.commandTopicModbus!)" color="primary">
+                        <mat-icon>content_copy</mat-icon>
+                    </button></dd>                      
+                  </ng-container>
                         
                     </dl>
                       </ng-container>

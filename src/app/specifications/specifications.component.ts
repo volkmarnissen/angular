@@ -25,6 +25,7 @@ import {
   MatCardTitle,
   MatCardContent,
 } from "@angular/material/card";
+import { SessionStorage } from "../services/SessionStorage";
 
 interface ImodbusSpecificationWithMessages extends ImodbusSpecification {
   messages: Imessage[];
@@ -58,7 +59,7 @@ export class SpecificationsComponent implements OnInit {
     private apiService: ApiService,
     private fb: FormBuilder,
     private router: Router,
-  ) {}
+    ) {}
   contributing: boolean = false;
   fillSpecifications(specs: ImodbusSpecification[]) {
     let a: any = {};
@@ -213,5 +214,30 @@ export class SpecificationsComponent implements OnInit {
     if (d && d.length > 0 && d[0].data && d[0].data.src)
       return d[0].data.src as string;
     return "";
+  }
+  onZipDropped(files: FileList) {
+    var fd = new FormData();
+      Array.prototype.forEach.call(files, (element: File) => {
+          fd.append("zips", element, element.name);
+        });
+      this.apiService
+        .postZip(fd)
+        .subscribe((errors) => {
+          let msg ="Specification imported";
+          if( errors.warnings)
+            msg = msg + "\n\n" + errors.warnings
+          alert(msg)
+        });
+  }
+  zipBrowseHandler( input: EventTarget | null ) {
+    if (input && (input as HTMLInputElement).files !== null)  
+        this.onZipDropped((input as HTMLInputElement).files!);
+  }
+  generateDownloadLink(what:string):string{
+    let url = "download/" + what
+    let authToken = new SessionStorage().getAuthToken()
+    if( authToken)
+      return authToken +"/" + url
+    return url
   }
 }

@@ -5,13 +5,18 @@
                 <mat-card-title>Functions</mat-card-title>
             </mat-card-header>
             <mat-card-content>
-                <button mat-button class=" width200pt" (click)="importSpecification()">
-                    Import Specification
-                </button>
+                <div class="border" dragndropDirective (fileDropped)="onZipDropped($event )">
+                  <input type="file" #zipFiles id="zipFiles" multiple matTooltip="Test"
+                    (change)="zipBrowseHandler($event.target)" hidden class="downloadLabel" />
+                    <label class="downloadLabel" for="zipFiles" i18n dragndropDirective
+                    (fileDropped)="onZipDropped($event )">Browse for Document Files</label>
+                </div>
+               
                 <button mat-button class=" width200pt" (click)="fetchPublic()">
                     Update Public Specifications
                 </button>
-
+                <a [href]="generateDownloadLink('local')" download>Download Local Settings</a>
+                 
             </mat-card-content>
         </mat-card>
         <div [ngClass]="{waitCursor: contributing}">
@@ -40,9 +45,7 @@
                             Contribute
                         </button>
                     </div>
-                    <button mat-button class=" width200pt" (click)="exportSpecification(spec)">
-                        Downbload as .zip File
-                    </button>
+                    <a [href]="generateDownloadLink( spec.filename)" download>Download</a>
                     <p>
                         <a *ngIf="spec.pullUrl != undefined" [href]="spec.pullUrl" target="_blank">View Pull Request on
                             Github</a>
