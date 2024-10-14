@@ -67,10 +67,18 @@
                     Must be unique
                   </mat-error>
                 </mat-form-field>
-                <mat-form-field class="width150pt">
+                <mat-form-field class="width150pt" *ngIf="[0,2].includes(uislave.slave.pollMode)">
                   <mat-label>Poll Interval [ms]</mat-label>
                   <input matInput formControlName="pollInterval" type="number" placeholder="1000"
                     (change)="setPolInterval($event, uislave.slave)" />
+                </mat-form-field>
+                <mat-form-field class="width150pt">
+                  <mat-label>Poll Interval [ms]</mat-label>
+                  <mat-select matInput formControlName="pollMode"  (selectionChange)="setPollMode($event, uislave.slave)" >
+                    <mat-option [value]="0">Interval</mat-option>
+                    <mat-option [value]="2">Interval and Triggger</mat-option>
+                    <mat-option [value]="1">Trigger only</mat-option>
+                  </mat-select>
                 </mat-form-field>
               </mat-expansion-panel>
               <mat-expansion-panel *ngIf="uislave.slave.specificationid as specid">
@@ -92,6 +100,13 @@
                     <textarea id="w3review" name="w3review" rows="10" cols="20">
                       {{tAndP.statePayload ?tAndP.statePayload:""}}
                     </textarea>
+                    <h2 *ngIf="[1,2].includes(uislave.slave.pollMode)">Trigger Poll Topic</h2>
+                    <div *ngIf="[1,2].includes(uislave.slave.pollMode)">
+                      {{tAndP.triggerPollTopic }}<button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
+                      matTooltip="Copy to Clipboard" (click)="copy2Clipboard(tAndP.triggerPollTopic)" color="primary">
+                      <mat-icon>content_copy</mat-icon>
+                    </button>
+                    </div>
                     <h2>Command Topics</h2>
                     <dl>
                       <ng-container *ngFor="let commandEntity of tAndP.commandEntities">

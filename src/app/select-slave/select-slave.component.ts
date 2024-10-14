@@ -39,6 +39,7 @@ import {
   IidentificationSpecification,
   IBus,
   getConnectionName,
+  PollModes,
 } from "@modbus2mqtt/server.shared";
 import { MatInput } from "@angular/material/input";
 import {
@@ -229,6 +230,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       if (s) {
         o.stateTopic = s.stateTopic;
         o.statePayload = s.statePayload;
+        o.triggerPollTopic = s.triggerPollTopic
         s.entities.forEach((ent) => {
           if (ent.commandTopic) o.commandEntities!.push(ent);
         });
@@ -238,7 +240,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   }
 
   getUiSlave(slave: Islave, detectSpec: boolean | undefined): IuiSlave {
-    let fg = this.initiateSlaveControl(slave.slaveid, null, slave.name);
+    let fg = this.initiateSlaveControl(slave, null);
     return {
       slave: slave,
       specs: this.entityApiService
@@ -335,20 +337,20 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   }
 
   initiateSlaveControl(
-    slaveId: number,
+    slave: Islave,
     defaultValue: IidentificationSpecification | null,
-    slaveName?: string,
-    polinterval?: number,
+   
   ): FormGroup {
-    if (slaveId >= 0)
+    if (slave.slaveid >= 0)
       return this._formBuilder.group({
-        hiddenSlaveId: [slaveId],
+        hiddenSlaveId: [slave.slaveid],
         ispecs: [defaultValue],
         name: [
-          (slaveName ? slaveName : null) as string | null,
-          this.uniqueNameValidator.bind(this, slaveId),
+          (slave.name ? slave.name : null) as string | null,
+          this.uniqueNameValidator.bind(this, slave.slaveid),
         ],
-        pollInterval: [polinterval ? polinterval : 1000],
+        pollInterval: [slave.polInterval ? slave.polInterval : 1000],
+        pollMode:[slave.pollMode == undefined ? PollModes.intervall : slave.pollMode]
       });
     else
       return this._formBuilder.group({
@@ -445,6 +447,12 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     slave.polInterval = parseInt((event.target as HTMLInputElement).value);
     this.entityApiService.postSlave(this.bus!.busId, slave).subscribe(() => {
       this.updateUiSlaveData(slave);
+    });
+  }
+  setPollMode(event: any, slave: Islave) {
+    slave.pollMode =event.value;
+    this.entityApiService.postSlave(this.bus!.busId, slave).subscribe(() => {
+      this.updateSlaves(this.bus!,false);
     });
   }
 
