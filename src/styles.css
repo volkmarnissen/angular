@@ -174,10 +174,26 @@ body {
 }
 
 .border {
-  border-style: solid;
-  border-color: lightgrey;
-}
 
+  margin:10pt;
+  height: 23pt;
+  width: 150pt;
+}
+.downloadLabel {
+  color: white;
+  width: 180pt;
+  height: 44px;
+  text-align: left;
+  border-radius: 21.5px;
+  background-color: #db202f;
+  padding: 8px 16px;
+  cursor: pointer;
+  text-align: center;
+  align-items: center;
+}
+.downloadLink{
+  margin:10pt;
+}
 .backButton {
   position: fixed;
   bottom: 5pt;
@@ -255,3 +271,5 @@ body {
 .tooltip-class {
   white-space: pre-line;
 }
+
+

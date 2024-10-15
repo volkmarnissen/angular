@@ -1,4 +1,5 @@
 <div>
+    <app-infobox [message]="message"></app-infobox>
     <div class="flexrows">
         <mat-card class="width250pt card">
             <mat-card-header>
@@ -9,13 +10,14 @@
                   <input type="file" #zipFiles id="zipFiles" multiple matTooltip="Test"
                     (change)="zipBrowseHandler($event.target)" hidden class="downloadLabel" />
                     <label class="downloadLabel" for="zipFiles" i18n dragndropDirective
-                    (fileDropped)="onZipDropped($event )">Browse for Document Files</label>
+                    (fileDropped)="onZipDropped($event )">Specification Files</label>
                 </div>
                
-                <button mat-button class=" width200pt" (click)="fetchPublic()">
+                <button mat-button class=" width150pt  downloadLink" (click)="fetchPublic()">
                     Update Public Specifications
                 </button>
-                <a [href]="generateDownloadLink('local')" download>Download Local Settings</a>
+
+                <a [href]="generateDownloadLink('local')" download class="downloadLink">Download Local Settings</a>
                  
             </mat-card-content>
         </mat-card>

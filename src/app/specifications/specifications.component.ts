@@ -26,6 +26,9 @@ import {
   MatCardContent,
 } from "@angular/material/card";
 import { SessionStorage } from "../services/SessionStorage";
+import { InfoboxComponent } from "../infobox/infobox.component";
+import { BrowserModule } from "@angular/platform-browser";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 interface ImodbusSpecificationWithMessages extends ImodbusSpecification {
   messages: Imessage[];
@@ -48,6 +51,7 @@ interface ImodbusSpecificationWithMessages extends ImodbusSpecification {
     MatIconButton,
     NgIf,
     NgClass,
+    InfoboxComponent,
   ],
 })
 export class SpecificationsComponent implements OnInit {
@@ -55,6 +59,7 @@ export class SpecificationsComponent implements OnInit {
   private specServices: SpecificationServices | undefined;
   specifications: ImodbusSpecificationWithMessages[];
   galleryItems: Map<string, GalleryItem[]>;
+  message:Subject<string> = new Subject<string>()
   constructor(
     private apiService: ApiService,
     private fb: FormBuilder,
@@ -146,7 +151,7 @@ export class SpecificationsComponent implements OnInit {
         this.apiService
           .getSpecifications()
           .subscribe(this.fillSpecifications.bind(this));
-        alert("Successfully contributed. Created pull Request #" + _issue);
+        this.message.next("Successfully contributed. Created pull Request #" + _issue)
         this.contributing = false;
       });
   }
@@ -197,7 +202,7 @@ export class SpecificationsComponent implements OnInit {
   fetchPublic() {
     this.apiService.getSpecificationFetchPublic().subscribe(() => {
       this.ngOnInit();
-      alert("Public directory updated");
+      this.message.next("Public directory updated");
     });
   }
   generateImageGalleryItems(spec: ImodbusSpecification): void {
@@ -226,7 +231,7 @@ export class SpecificationsComponent implements OnInit {
           let msg ="Specification imported";
           if( errors.warnings)
             msg = msg + "\n\n" + errors.warnings
-          alert(msg)
+          this.message.next(msg)
         });
   }
   zipBrowseHandler( input: EventTarget | null ) {
