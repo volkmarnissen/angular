@@ -74,7 +74,7 @@
                 </mat-form-field>
                 <mat-form-field class="width150pt">
                   <mat-label>Poll Interval [ms]</mat-label>
-                  <mat-select matInput formControlName="pollMode"  (selectionChange)="setPollMode($event, uislave.slave)" >
+                  <mat-select matInput formControlName="pollMode"  (selectionChange)="setPollMode($event, uislave)" >
                     <mat-option [value]="0">Interval</mat-option>
                     <mat-option [value]="2">Interval and Triggger</mat-option>
                     <mat-option [value]="1">Trigger only</mat-option>

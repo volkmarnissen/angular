@@ -59,12 +59,12 @@ export class SpecificationsComponent implements OnInit {
   private specServices: SpecificationServices | undefined;
   specifications: ImodbusSpecificationWithMessages[];
   galleryItems: Map<string, GalleryItem[]>;
-  message:Subject<string> = new Subject<string>()
+  message: Subject<string> = new Subject<string>();
   constructor(
     private apiService: ApiService,
     private fb: FormBuilder,
     private router: Router,
-    ) {}
+  ) {}
   contributing: boolean = false;
   fillSpecifications(specs: ImodbusSpecification[]) {
     let a: any = {};
@@ -151,7 +151,9 @@ export class SpecificationsComponent implements OnInit {
         this.apiService
           .getSpecifications()
           .subscribe(this.fillSpecifications.bind(this));
-        this.message.next("Successfully contributed. Created pull Request #" + _issue)
+        this.message.next(
+          "Successfully contributed. Created pull Request #" + _issue,
+        );
         this.contributing = false;
       });
   }
@@ -222,27 +224,23 @@ export class SpecificationsComponent implements OnInit {
   }
   onZipDropped(files: FileList) {
     var fd = new FormData();
-      Array.prototype.forEach.call(files, (element: File) => {
-          fd.append("zips", element, element.name);
-        });
-      this.apiService
-        .postZip(fd)
-        .subscribe((errors) => {
-          let msg ="Specification imported";
-          if( errors.warnings)
-            msg = msg + "\n\n" + errors.warnings
-          this.message.next(msg)
-        });
+    Array.prototype.forEach.call(files, (element: File) => {
+      fd.append("zips", element, element.name);
+    });
+    this.apiService.postZip(fd).subscribe((errors) => {
+      let msg = "Specification imported";
+      if (errors.warnings) msg = msg + "\n\n" + errors.warnings;
+      this.message.next(msg);
+    });
   }
-  zipBrowseHandler( input: EventTarget | null ) {
-    if (input && (input as HTMLInputElement).files !== null)  
-        this.onZipDropped((input as HTMLInputElement).files!);
+  zipBrowseHandler(input: EventTarget | null) {
+    if (input && (input as HTMLInputElement).files !== null)
+      this.onZipDropped((input as HTMLInputElement).files!);
   }
-  generateDownloadLink(what:string):string{
-    let url = "download/" + what
-    let authToken = new SessionStorage().getAuthToken()
-    if( authToken)
-      return authToken +"/" + url
-    return url
+  generateDownloadLink(what: string): string {
+    let url = "download/" + what;
+    let authToken = new SessionStorage().getAuthToken();
+    if (authToken) return authToken + "/" + url;
+    return url;
   }
 }

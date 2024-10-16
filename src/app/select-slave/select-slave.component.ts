@@ -25,7 +25,7 @@ import {
   ImodbusEntityIdentification,
   getSpecificationI18nEntityName,
 } from "@modbus2mqtt/specification.shared";
-import { Clipboard } from '@angular/cdk/clipboard';
+import { Clipboard } from "@angular/cdk/clipboard";
 import { Observable, Subscription, map } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
 import { SessionStorage } from "../services/SessionStorage";
@@ -58,7 +58,7 @@ import {
   MatCardTitle,
   MatCardContent,
 } from "@angular/material/card";
-import { MatIconButtonSizesModule } from 'mat-icon-button-sizes';
+import { MatIconButtonSizesModule } from "mat-icon-button-sizes";
 
 import { NgFor, NgIf, AsyncPipe } from "@angular/common";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -130,7 +130,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     private route: ActivatedRoute,
     private entityApiService: ApiService,
     private routes: Router,
-    private clipboard:Clipboard
+    private clipboard: Clipboard,
   ) {
     super();
   }
@@ -230,7 +230,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       if (s) {
         o.stateTopic = s.stateTopic;
         o.statePayload = s.statePayload;
-        o.triggerPollTopic = s.triggerPollTopic
+        o.triggerPollTopic = s.triggerPollTopic;
         s.entities.forEach((ent) => {
           if (ent.commandTopic) o.commandEntities!.push(ent);
         });
@@ -339,7 +339,6 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   initiateSlaveControl(
     slave: Islave,
     defaultValue: IidentificationSpecification | null,
-   
   ): FormGroup {
     if (slave.slaveid >= 0)
       return this._formBuilder.group({
@@ -350,7 +349,9 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
           this.uniqueNameValidator.bind(this, slave.slaveid),
         ],
         pollInterval: [slave.polInterval ? slave.polInterval : 1000],
-        pollMode:[slave.pollMode == undefined ? PollModes.intervall : slave.pollMode]
+        pollMode: [
+          slave.pollMode == undefined ? PollModes.intervall : slave.pollMode,
+        ],
       });
     else
       return this._formBuilder.group({
@@ -449,11 +450,13 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       this.updateUiSlaveData(slave);
     });
   }
-  setPollMode(event: any, slave: Islave) {
-    slave.pollMode =event.value;
-    this.entityApiService.postSlave(this.bus!.busId, slave).subscribe(() => {
-      this.updateSlaves(this.bus!,false);
-    });
+  setPollMode(event: any, uislave: IuiSlave) {
+    uislave.slave.pollMode = event.value;
+    this.entityApiService
+      .postSlave(this.bus!.busId, uislave.slave)
+      .subscribe(() => {
+        uislave.slaveForm.updateValueAndValidity();
+      });
   }
 
   getSpecificationI18nName(
@@ -539,7 +542,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       );
     return rc;
   }
-  copy2Clipboard(text:string){
-    this.clipboard.copy(text)
+  copy2Clipboard(text: string) {
+    this.clipboard.copy(text);
   }
 }

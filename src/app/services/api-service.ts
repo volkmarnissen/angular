@@ -435,7 +435,7 @@ export class ApiService {
       }
     } else throw new Error("entityid " + entityid + " not found ");
   }
-  postZip(formData: FormData):Observable<IimportMessages>{
+  postZip(formData: FormData): Observable<IimportMessages> {
     return this.httpClient
       .post<IimportMessages>(this.getFullUri(apiUri.uploadSpec), formData)
       .pipe(
