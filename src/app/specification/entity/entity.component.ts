@@ -245,6 +245,9 @@ export class EntityComponent
       uom: [null as string | null],
       min: [null as string | null],
       max: [null as string | null],
+      step: [null as string| null, Validators.compose([ Validators.min(0.001),
+        Validators.max(10000),
+      ])],
     })),
       (this.stringPropertiesFormGroup = this.fb.group({
         identExpr: [null as string | null],
@@ -436,6 +439,14 @@ export class EntityComponent
           .setValue(
             np.identification && np.identification.min !== undefined
               ? np.identification.min
+              : null,
+          );
+          if( !entity.readonly)
+          this.numberPropertiesFormGroup
+          .get("step")!
+          .setValue(
+            np.step && np.step !== undefined
+              ? np.step
               : null,
           );
         this.numberPropertiesFormGroup
@@ -706,6 +717,11 @@ export class EntityComponent
             this.numberPropertiesFormGroup.get("numberFormat")!.value;
         let min = this.numberPropertiesFormGroup.get("min")!.value;
         let max = this.numberPropertiesFormGroup.get("max")!.value;
+        if(!this.entity.readonly ){
+          let val = this.numberPropertiesFormGroup.get("step")!.value
+          if( val )
+            (this.entity.converterParameters as Inumber).step  = Number.parseFloat(val)
+        }
         if (min !== null && max !== null) {
           (this.entity.converterParameters as Inumber).identification = {
             min: min,

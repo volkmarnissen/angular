@@ -194,19 +194,26 @@
                         </mat-form-field>
 
                     </div>
-                    <h3 class="smallfield width150pt"> Identification</h3>
+                    <h3 class="smallfield width150pt"> Identification{{entity.readonly?"":"/step"}}</h3>
                     <div class="flexrows">
-                        <mat-form-field class="smallfield  width150pt">
+                        <mat-form-field class="smallfield  width100pt">
                             <mat-label>Min</mat-label>
                             <input matInput type="number"
                                 matTooltip="Optional: The entity is identified if the mqttvalue is between min and max."
                                 formControlName="min" (change)="onConverterValueChange()">
                         </mat-form-field>
-                        <mat-form-field appearance="fill" class="smallfield  width150pt">
+                        <mat-form-field appearance="fill" class="smallfield  width100pt">
                             <mat-label>Max</mat-label>
                             <input matInput type="number"
                                 matTooltip="Optional: The entity is identified if the mqttvalue is between min and max."
                                 formControlName="max" (change)="onConverterValueChange()">
+                        </mat-form-field>
+                        
+                        <mat-form-field appearance="fill" class="smallfield  width100pt" *ngIf="!entity.readonly">
+                            <mat-label>Step</mat-label>
+                            <input matInput type="number"
+                                matTooltip="Optional: increase/decrease step of input field for Discovery."
+                                formControlName="step" (change)="onConverterValueChange()">
                         </mat-form-field>
                     </div>
                 </div>
