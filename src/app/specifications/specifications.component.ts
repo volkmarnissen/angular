@@ -239,8 +239,12 @@ export class SpecificationsComponent implements OnInit {
   }
   generateDownloadLink(what: string): string {
     let url = "download/" + what;
-    let authToken = new SessionStorage().getAuthToken();
-    if (authToken) return authToken + "/" + url;
+    if(this.config.hassiotoken == undefined )
+    {
+      let authToken = new SessionStorage().getAuthToken();
+      if (authToken) 
+        return authToken + "/" + url;  
+    }
     return url;
   }
 }
