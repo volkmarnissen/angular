@@ -81,12 +81,15 @@ export class LoginComponent implements OnInit, AfterViewInit {
       });
     });
   }
-  onSubmit() {
+  onSubmit(event:SubmitEvent) {
     let username = this.form.get("username")!.value;
     let password = this.form.get("password")!.value;
     if (this.isRegisterMode) {
-      this.api.getUserRegister(username, password).subscribe(() => {
-        this.login(username, password);
+      let noAuthentication = (event.submitter as HTMLButtonElement).value == 'noAuthentication'
+      this.api.postUserRegister(username, password, noAuthentication) .subscribe(() => {
+        if(!noAuthentication)
+          this.login(username, password);
+        else  this.router.navigate(['/'], {});
       });
     } else this.login(username, password);
   }

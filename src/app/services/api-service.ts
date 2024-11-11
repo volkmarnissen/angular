@@ -213,11 +213,15 @@ export class ApiService {
         }),
       );
   }
-  getUserRegister(username: string, password: string): Observable<void> {
+  postUserRegister(username: string| undefined, password: string| undefined, noAuthentication:boolean): Observable<void> {
     return this.httpClient
-      .get<void>(
-        this.getFullUri(apiUri.userRegister) +
-          `?name=${username}&password=${password}`,
+      .post<void>(
+        this.getFullUri(apiUri.userRegister) ,
+        {
+            username: username,
+            password:password,
+            noAuthentication:noAuthentication
+        }          
       )
       .pipe(
         catchError((err) => {

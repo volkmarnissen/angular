@@ -2,7 +2,7 @@
     <mat-form-field  class="width100pt">
         <mat-label>MQTT Value</mat-label>
         <input matInput (change)="onNumberChange()" type="number" [formControl]="numberFormControl"
-            (keyup.enter)="onNumberChange()" />
+            (keyup.enter)="onNumberChange()" [step]="step"  [min]="min"  [max]="max"/>
         <mat-error *ngIf="numberFormControl.hasError('min')">
             The value is lower than the minimum
         </mat-error>

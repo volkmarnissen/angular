@@ -44,7 +44,7 @@ export class AuthGuardService {
   canActivate(_route: ActivatedRouteSnapshot): Observable<boolean> {
     return this.api.getUserAuthenticationStatus().pipe(
       map((userAuthStatus) => {
-        if (userAuthStatus.hassiotoken)
+        if (userAuthStatus.hassiotoken || userAuthStatus.noAuthentication)
           return true; // NO authentication needed
         else if (!userAuthStatus.registered) {
           this.router.navigate(["register"]);

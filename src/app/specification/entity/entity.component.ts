@@ -24,6 +24,7 @@ import {
 import { Observable, Subject, Subscription } from "rxjs";
 import {
   EnumNumberFormat,
+  EnumStateClasses,
   IFunctionCode as IRegisterType,
   Iconverter,
   IdentifiedStates,
@@ -239,6 +240,7 @@ export class EntityComponent
     });
     (this.numberPropertiesFormGroup = this.fb.group({
       deviceClass: [null as string | null],
+      stateClass: [null as EnumStateClasses | null],
       multiplier: [1, Validators.required],
       offset: [0, Validators.required],
       numberFormat: [EnumNumberFormat.default, Validators.required],
@@ -424,6 +426,9 @@ export class EntityComponent
         this.numberPropertiesFormGroup
           .get("deviceClass")!
           .setValue(np.device_class ? np.device_class : null);
+          this.numberPropertiesFormGroup
+          .get("stateClass")!
+          .setValue(np.state_class ? np.state_class : null);
         this.numberPropertiesFormGroup
           .get("uom")!
           .setValue(np.uom ? np.uom : null);
@@ -660,6 +665,9 @@ export class EntityComponent
         if (this.numberPropertiesFormGroup.get("deviceClass")!.value != null)
           (this.entity.converterParameters as Inumber).device_class =
             this.numberPropertiesFormGroup.get("deviceClass")!.value;
+        if (this.numberPropertiesFormGroup.get("stateClass")!.value != null)
+           (this.entity.converterParameters as Inumber).state_class =
+            this.numberPropertiesFormGroup.get("stateClass")!.value;
         if (this.numberPropertiesFormGroup.get("uom")!.value != null)
           (this.entity.converterParameters as any).uom =
             this.numberPropertiesFormGroup.get("uom")!.value;

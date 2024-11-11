@@ -60,7 +60,10 @@ export class EntityValueControlComponent
   entityName: string;
   sub: Subscription | undefined;
   constructor() {}
-
+  step:number| undefined = undefined
+  min:number| undefined = undefined
+  max:number| undefined = undefined
+  
   optionsFormControl: FormControl<number | null> = new FormControl(null);
   numberFormControl: FormControl<number | null> = new FormControl(null);
   textFormControl: FormControl<string | null> = new FormControl(null);
@@ -142,6 +145,8 @@ export class EntityValueControlComponent
           if (this.entity.mqttValue != undefined)
             this.numberFormControl.setValue(this.getMqttValue() as number);
           let num = this.entity.converterParameters as Inumber;
+          if(num.step)
+            this.step = num.step
           fc = this.numberFormControl;
           fc.clearValidators();
           if (num.identification != undefined && num.identification.min)

@@ -159,9 +159,19 @@
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
-                        <mat-form-field class="smallfield ">
+                        <mat-form-field class="smallfield width50pt">
                             <mat-label>UOM</mat-label>
                             <input #propUom matInput type="text" formControlName="uom" (change)="form2Entity()">
+                        </mat-form-field>
+                        <mat-form-field class="smallfield width150pt">
+                            <mat-label>State Class</mat-label>
+                            <mat-select matInput formControlName="stateClass" [errorStateMatcher]="errorStateMatcher"
+                            (selectionChange)="onConverterValueChange()" [compareWith]="compareNumber">
+                            <mat-option [value]="0">None</mat-option>
+                            <mat-option [value]="1">Measurement</mat-option>
+                            <mat-option [value]="2">Total</mat-option>
+                            <mat-option [value]="3">Total increasing</mat-option>
+                        </mat-select>
                         </mat-form-field>
                     </div>
                     <div class="flexrows">
@@ -185,7 +195,8 @@
                             <mat-label>Number Format</mat-label>
                             <mat-select matInput formControlName="numberFormat" [errorStateMatcher]="errorStateMatcher"
                                 (selectionChange)="onConverterValueChange()" [compareWith]="compareNumber">
-                                <mat-option [value]="0">Int 16</mat-option>
+                                <mat-option [value]="0">Unsigned Int 16</mat-option>
+                                <mat-option [value]="2">Signed Int 16</mat-option>
                                 <mat-option [value]="1">Float 32</mat-option>
                             </mat-select>
                             <mat-error *ngIf="numberPropertiesFormGroup.get('numberFormat')!.hasError('required')">

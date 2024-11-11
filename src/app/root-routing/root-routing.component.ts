@@ -19,7 +19,7 @@ export class RootRoutingComponent implements AfterViewInit {
     });
   }
   private redirect(userAuthStatus: IUserAuthenticationStatus) {
-    if (!userAuthStatus.mqttConfigured && !userAuthStatus.hassiotoken) {
+    if (!userAuthStatus.mqttConfigured && !userAuthStatus.hassiotoken ) {
       this.router.navigate(["/configure"]);
       return;
     }

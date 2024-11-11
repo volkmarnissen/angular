@@ -1,4 +1,4 @@
-<form [formGroup]="form" (submit)="onSubmit()" class="flexcolumns">
+<form [formGroup]="form" (submit)="onSubmit($event)" class="flexcolumns">
     <div  class="width250pt, center">
         <h3 mat-dialog-title>{{ (isRegisterMode?'Register User':'Login') }}</h3>
     </div>
@@ -21,5 +21,6 @@
     </mat-form-field>
     <mat-card-actions   class="width250pt, center">
         <button mat-raised-button type="submit" color="primary">{{ (isRegisterMode?'REGISTER and LOGIN':'LOGIN') }}</button>
+        <button *ngIf="isRegisterMode" mat-raised-button type="submit" value="noAuthentication" color="primary">No Authorization required</button>
  </mat-card-actions>
 </form>
