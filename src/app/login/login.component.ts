@@ -5,6 +5,9 @@ import {
   Validators,
   FormsModule,
   ReactiveFormsModule,
+  ValidatorFn,
+  AbstractControl,
+  ValidationErrors,
 } from "@angular/forms";
 import { ApiService } from "../services/api-service";
 import { SessionStorage } from "../services/SessionStorage";
@@ -55,28 +58,24 @@ export class LoginComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
   ) {}
   ngAfterViewInit(): void {
-    let posRegister = this.router.url.indexOf("register");
-    // If the url part of the URL and not the parameter contains register, we are in register mode
-    this.isRegisterMode = posRegister >= 0;
     this.sub = this.route.paramMap.subscribe((params) => {
       this.toUrl = params.get("toUrl") || "";
     });
   }
 
   ngOnInit(): void {
-    this.form = this._formBuilder.group({
-      username: ["", Validators.required],
-      password: ["", Validators.required],
-    });
+    let posRegister = this.router.url.indexOf("register");
+    // If the url part of the URL and not the parameter contains register, we are in register mode
+    this.isRegisterMode = posRegister >= 0;
+      this.form = this._formBuilder.group({
+        username: ["", this.usernamePasswordRequired],
+        password: ["", this.usernamePasswordRequired],
+      });
   }
-  private login(username: string, password: string) {
+  private login(username: string, password: string, toUrl:string) {
     this.api.getUserLogin(username, password).subscribe((token) => {
       new SessionStorage().setAuthToken(token);
-      var u = new URLSearchParams(this.router.url.replace(/^[^?]*\?/, ""));
-      var toUrl = u.get("toUrl");
-      if (u && toUrl) this.toUrl = toUrl;
-      else this.toUrl = "";
-      this.router.navigate([this.toUrl], {
+      this.router.navigate([toUrl], {
         queryParams: { tokenWasExpired: true },
       });
     });
@@ -86,11 +85,26 @@ export class LoginComponent implements OnInit, AfterViewInit {
     let password = this.form.get("password")!.value;
     if (this.isRegisterMode) {
       let noAuthentication = (event.submitter as HTMLButtonElement).value == 'noAuthentication'
+      if(!noAuthentication && !username)
+          alert("Please enter a username")
+      else if(!noAuthentication && !password)
+        alert("Please enter a password")
+      else
       this.api.postUserRegister(username, password, noAuthentication) .subscribe(() => {
         if(!noAuthentication)
-          this.login(username, password);
+          this.login(username, password, '/');
         else  this.router.navigate(['/'], {});
       });
-    } else this.login(username, password);
+    } else this.login(username, password, '/');
   }
+  usernamePasswordRequired(): ValidatorFn {
+    return (control:AbstractControl) : ValidationErrors | null => {
+        if( !this.isRegisterMode)
+          return Validators.required(control)
+        else{
+          return null;
+        }
+    }
+}
+
 }

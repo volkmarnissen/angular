@@ -69,15 +69,14 @@ export class ConfigureComponent implements OnInit {
   configObservable = this.entityApiService.getConfiguration();
   sslFiles: string[] = [];
   sub: Subscription;
-  toUrl: string | undefined = undefined;
   mqttConnectIcon: string = "cast";
   mqttConnectClass: string = "redIcon";
   mqttConnectMessage: string = "unknown";
 
   configureMqttFormGroup = this._formBuilder.group({
     mqttserverurl: [null as string | null, Validators.required],
-    mqttuser: [null as string | null, Validators.required],
-    mqttpassword: [null as string | null, Validators.required],
+    mqttuser: [null as string | null],
+    mqttpassword: [null as string | null],
     mqttkeyfile: [null as string | null],
     mqttcafile: [null as string | null],
   });
@@ -110,9 +109,7 @@ export class ConfigureComponent implements OnInit {
       this.entityApiService.getSslFiles().subscribe((rc) => {
         this.sslFiles = rc;
       });
-      this.sub = this.route.paramMap.subscribe((params) => {
-        this.toUrl = params.get("toUrl") || "";
-      });
+
       this.mqttValidate();
       if (config.githubPersonalToken)
         this.ghPersonalAccessToken.setValue(config.githubPersonalToken);
@@ -130,9 +127,7 @@ export class ConfigureComponent implements OnInit {
       mqttserverurl &&
       mqttuser &&
       mqttpassword &&
-      mqttserverurl.value &&
-      mqttuser.value &&
-      mqttpassword.value
+      mqttserverurl.value
     ) {
       {
         if (!config.mqttconnect) config.mqttconnect = {};
@@ -158,9 +153,7 @@ export class ConfigureComponent implements OnInit {
   }
 
   onChangekMqttConfig() {
-    if (this.configureMqttFormGroup.touched) {
       this.mqttValidate();
-    }
   }
   getSslFiles(): Observable<string[]> {
     return this.entityApiService.getSslFiles();
@@ -181,8 +174,7 @@ export class ConfigureComponent implements OnInit {
   }
 
   close() {
-    if (this.toUrl && this.toUrl.length > 0) this.router.navigate([this.toUrl]);
-    else this.router.navigate(["/"]);
+     this.router.navigate(["/"]);
   }
 
   hasConfigChanges(): boolean {
@@ -202,7 +194,7 @@ export class ConfigureComponent implements OnInit {
       if (result && result.valid) {
         this.mqttConnectIcon = "cast_connected";
         this.mqttConnectClass = "greenIcon";
-        this.mqttConnectMessage = "connected";
+            this.mqttConnectMessage = "connected";
       } else {
         this.mqttConnectIcon = "cast";
         this.mqttConnectClass = "redIcon";
