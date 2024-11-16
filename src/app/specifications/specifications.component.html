@@ -30,9 +30,9 @@
                         }}</mat-card-title>
                     <div class="card-header-buttons">
                         <button mat-icon-button class="material-icons app-toolbar-menu delete-button"
-                            matTooltip="Delete" color="warn" [disabled]="[0,1].includes(spec.status)"
+                            [matTooltip]="spec.status == 1?'Restore public version':'Delete'" color="warn" [disabled]="[0,4].includes(spec.status)"
                             (click)="deleteSpecification(spec)">
-                            <mat-icon matTooltip="Delete">delete</mat-icon>
+                            <mat-icon>delete</mat-icon>
                         </button>
                     </div>
                 </mat-card-header>

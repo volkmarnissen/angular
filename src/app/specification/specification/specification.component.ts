@@ -244,6 +244,7 @@ export class SpecificationComponent
             )
             .pipe(
               map((e) => {
+                this.setValidationMessages()
                 return {
                   id: e.id,
                   modbusValue: e.modbusValue,
@@ -267,7 +268,7 @@ export class SpecificationComponent
           this.slaveid,
           this.config.mqttdiscoverylanguage,
           value,
-        );
+        ).pipe(map((v)=>{ this.setValidationMessages() ;return v}));
       },
       getNonVariableNumberEntities: () => {
         let rc: ImodbusEntity[] = [];

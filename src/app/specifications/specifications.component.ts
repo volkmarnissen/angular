@@ -110,7 +110,7 @@ export class SpecificationsComponent implements OnInit {
   }
   deleteSpecification(spec: ImodbusSpecification) {
     if (
-      [SpecificationStatus.added, SpecificationStatus.cloned].includes(
+      [SpecificationStatus.added, SpecificationStatus.new, SpecificationStatus.cloned].includes(
         spec.status,
       )
     ) {
