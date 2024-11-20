@@ -6,6 +6,8 @@ import {
   Validators,
   FormsModule,
   ReactiveFormsModule,
+  ValidatorFn,
+  ValidationErrors,
 } from "@angular/forms";
 import { ApiService } from "../services/api-service";
 import { Iconfiguration } from "@modbus2mqtt/server.shared";
@@ -66,6 +68,25 @@ export class ConfigureComponent implements OnInit {
   ) {
     this.ghPersonalAccessToken = _formBuilder.control([""]);
   }
+  private requiredInNonAddonScenario: ValidatorFn = (
+    control: AbstractControl,
+  ): ValidationErrors | null => {
+    {
+        if(this.config && !this.config.hassiotoken )
+          return Validators.required(control)
+        else
+          return null
+    }
+  };
+  saveDisabled(){
+    // connected or empty serverurl value
+
+    return (this.mqttConnectIcon != 'cast_connected' &&
+            !this.configureMqttFormGroup.get('mqttserverurl')!.value &&
+            this.config && 
+            !this.config.hassiotoken)
+            || (this.discoveryLanguageFormControl.pristine && this.ghPersonalAccessToken.pristine)
+  }
   configObservable = this.entityApiService.getConfiguration();
   sslFiles: string[] = [];
   sub: Subscription;
@@ -74,7 +95,7 @@ export class ConfigureComponent implements OnInit {
   mqttConnectMessage: string = "unknown";
 
   configureMqttFormGroup = this._formBuilder.group({
-    mqttserverurl: [null as string | null, Validators.required],
+    mqttserverurl: [null as string | null, this.requiredInNonAddonScenario],
     mqttuser: [null as string | null],
     mqttpassword: [null as string | null],
     mqttkeyfile: [null as string | null],
@@ -154,6 +175,9 @@ export class ConfigureComponent implements OnInit {
 
   onChangekMqttConfig() {
       this.mqttValidate();
+  }
+  onChangeGithubToken(){
+
   }
   getSslFiles(): Observable<string[]> {
     return this.entityApiService.getSslFiles();
