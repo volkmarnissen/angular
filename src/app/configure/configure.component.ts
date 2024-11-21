@@ -82,10 +82,9 @@ export class ConfigureComponent implements OnInit {
     // connected or empty serverurl value
 
     return (this.mqttConnectIcon != 'cast_connected' &&
-            !this.configureMqttFormGroup.get('mqttserverurl')!.value &&
-            this.config && 
-            !this.config.hassiotoken)
-            || (this.discoveryLanguageFormControl.pristine && this.ghPersonalAccessToken.pristine)
+       this.config && 
+      !this.config.hassiotoken)
+    || (this.configureMqttFormGroup.pristine && this.ghPersonalAccessToken.pristine)
   }
   configObservable = this.entityApiService.getConfiguration();
   sslFiles: string[] = [];
