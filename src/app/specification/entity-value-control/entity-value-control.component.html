@@ -1,4 +1,4 @@
-<ng-container *ngIf="getConverterName() =='number'|| getConverterName()=='sensor'">
+<ng-container *ngIf="getConverterName() =='number'" >
     <mat-form-field  class="width100pt">
         <mat-label>MQTT Value</mat-label>
         <input matInput (change)="onNumberChange()" type="number" [formControl]="numberFormControl"
@@ -11,13 +11,13 @@
         </mat-error>
     </mat-form-field>
 </ng-container>
-<ng-container *ngIf="getConverterName().indexOf('text') >=0 ">
+<ng-container *ngIf="getConverterName().indexOf('text') >=0 && !entity!.readonly ">
     <mat-form-field class="width150pt">
         <mat-label>MQTT Value</mat-label>
         <input matInput (change)="onTextChange($event)" [formControl]="textFormControl"  />
     </mat-form-field>
 </ng-container>
-<ng-container *ngIf="getConverterName()=='select'">
+<ng-container *ngIf="getConverterName()=='select' && ! entity!.readonly">
     <mat-form-field class="width150pt">
         <mat-label>Options</mat-label>
         <mat-select matInput [formControl]="optionsFormControl" (selectionChange)="onOptionChange()" >
@@ -27,13 +27,13 @@
         </mat-select>
     </mat-form-field>
 </ng-container>
-<ng-container *ngIf="['button', 'binary_sensor'].includes(getConverterName())">
+<ng-container *ngIf="['button', 'binary'].includes(getConverterName())">
     <mat-slide-toggle  [formControl]="toggleFormControl" (toggleChange)="onButton()"></mat-slide-toggle>
 </ng-container>
-<ng-container *ngIf="isSensor() && !['text_sensor','sensor','binary_sensor'].includes(getConverterName())">
+<ng-container *ngIf="entity!.readonly && !['number', 'binary'].includes(getConverterName())" >
     <mat-form-field class="width100pt">
         <mat-label>MQTT Value</mat-label>
-        <input matInput [formControl]="textFormControl" />
+        <input matInput [formControl]="textFormControl" disabled="true"/>
     </mat-form-field>
 
 </ng-container>

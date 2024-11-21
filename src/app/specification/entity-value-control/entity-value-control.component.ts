@@ -119,7 +119,7 @@ export class EntityValueControlComponent
   }
 
   isSensor(): boolean {
-    return !editableConverters.includes(this.getConverterName());
+    return !this.entity|| this.entity.readonly;
   }
   getConverterName(): string {
     return this.entity && this.entity.converter && this.entity.converter.name
@@ -156,7 +156,7 @@ export class EntityValueControlComponent
           break;
         case "select":
           if (this.entity.modbusValue)
-            if (this.entity.readonly) {
+            if (!this.entity.readonly) {
               this.optionsFormControl.setValue(this.entity.modbusValue[0]);
               fc = this.optionsFormControl;
             } else {
@@ -179,7 +179,7 @@ export class EntityValueControlComponent
         case "value":
       }
       if (fc)
-        if (this.getConverterName().indexOf("sensor") >= 0) fc.disable();
+        if (this.entity.readonly) fc.disable();
         else fc.enable();
     }
   }
