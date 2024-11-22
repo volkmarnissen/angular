@@ -739,7 +739,7 @@ export class SpecificationComponent
   }
 
   isValid(): boolean {
-    if (this.currentSpecification && this.validationMessages.length == 0) {
+    if (this.currentSpecification ) {
       return this.validationForms.valid;
     }
     return false;
