@@ -88,36 +88,36 @@ import { MatTooltip } from "@angular/material/tooltip";
 import { MatIconButton } from "@angular/material/button";
 
 @Component({
-  selector: "app-specification",
-  templateUrl: "./specification.component.html",
-  styleUrls: ["./specification.component.css"],
-  encapsulation: ViewEncapsulation.None,
-  standalone: true,
-  imports: [
-    MatIconButton,
-    MatTooltip,
-    MatIcon,
-    NgIf,
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    MatCardContent,
-    NgFor,
-    MatList,
-    MatListItem,
-    RouterLink,
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
-    UploadFilesComponent,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    TranslationComponent,
-    EntityComponent,
-  ],
+    selector: "app-specification",
+    templateUrl: "./specification.component.html",
+    styleUrls: ["./specification.component.css"],
+    encapsulation: ViewEncapsulation.None,
+    standalone: true,
+    imports: [
+        MatIconButton,
+        MatTooltip,
+        MatIcon,
+        NgIf,
+        MatCard,
+        MatCardHeader,
+        MatCardTitle,
+        MatCardContent,
+        NgFor,
+        MatList,
+        MatListItem,
+        RouterLink,
+        MatExpansionPanel,
+        MatExpansionPanelHeader,
+        MatExpansionPanelTitle,
+        UploadFilesComponent,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormField,
+        MatLabel,
+        MatInput,
+        TranslationComponent,
+        EntityComponent,
+    ]
 })
 export class SpecificationComponent
   extends SessionStorage
@@ -134,7 +134,7 @@ export class SpecificationComponent
   currentSpecification: ImodbusSpecification | null;
   originalSpecification: ImodbusSpecification | null;
   uploadModbusDocumentationFormGroup: FormGroup<any>;
-  galleryConfig: GalleryConfig = { thumb: false };
+  galleryConfig: GalleryConfig = { thumbs: false };
   private entitiesTouched: boolean = false;
   private saveSubject = new Subject<void>();
   private i18nTouched: boolean = false;
@@ -835,12 +835,5 @@ export class SpecificationComponent
   }
   getStatusText(status: SpecificationStatus | null): string {
     return SpecificationServices.getStatusText(status);
-  }
-  getMqttSubscriptionTopic(): string | undefined {
-    let hasWritableEntities = this.currentSpecification?.entities.find(
-      (e) => !e.readonly,
-    );
-    if (!this.currentSpecification || !hasWritableEntities) return undefined;
-    else return this.currentSpecification.stateTopic;
   }
 }

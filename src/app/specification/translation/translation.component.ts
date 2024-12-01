@@ -49,26 +49,26 @@ const originalLanguageFormGroupName = "originalLanguage";
 const translationLanguageFormGroupName = "translationLanguage";
 
 @Component({
-  selector: "app-translation",
-  templateUrl: "./translation.component.html",
-  styleUrls: ["./translation.component.css"],
-  standalone: true,
-  imports: [
-    NgIf,
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
-    NgClass,
-    MatSlideToggle,
-    FormsModule,
-    ReactiveFormsModule,
-    MatButton,
-    MatFormField,
-    MatInput,
-    CdkTextareaAutosize,
-    MatLabel,
-    NgFor,
-  ],
+    selector: "app-translation",
+    templateUrl: "./translation.component.html",
+    styleUrls: ["./translation.component.css"],
+    standalone: true,
+    imports: [
+        NgIf,
+        MatExpansionPanel,
+        MatExpansionPanelHeader,
+        MatExpansionPanelTitle,
+        NgClass,
+        MatSlideToggle,
+        FormsModule,
+        ReactiveFormsModule,
+        MatButton,
+        MatFormField,
+        MatInput,
+        CdkTextareaAutosize,
+        MatLabel,
+        NgFor,
+    ]
 })
 export class TranslationComponent implements OnInit, OnDestroy {
   @Input()

@@ -22,8 +22,9 @@ import {
   getSpecificationI18nName,
   SpecificationStatus,
   IdentifiedStates,
-  ImodbusEntityIdentification,
   getSpecificationI18nEntityName,
+  ImodbusEntity,
+  ImodbusSpecification,
 } from "@modbus2mqtt/specification.shared";
 import { Clipboard } from "@angular/cdk/clipboard";
 import { Observable, Subscription, map } from "rxjs";
@@ -40,6 +41,9 @@ import {
   IBus,
   getConnectionName,
   PollModes,
+  Slave,
+  Iconfiguration,
+  IEntityCommandTopics,
 } from "@modbus2mqtt/server.shared";
 import { MatInput } from "@angular/material/input";
 import {
@@ -64,12 +68,13 @@ import { NgFor, NgIf, AsyncPipe } from "@angular/common";
 import { MatTooltip } from "@angular/material/tooltip";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 
+
 interface IuiSlave {
   slave: Islave;
   label: string;
   specs: Observable<IidentificationSpecification[]>;
   slaveForm: FormGroup;
-  commandEntities?: ImodbusEntityIdentification[];
+  commandEntities?: ImodbusEntity[];
   stateTopic?: string;
   statePayload?: string;
 }
@@ -136,7 +141,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   }
   showAllPublicSpecs = new FormControl<boolean>(false);
   uiSlaves: IuiSlave[] = [];
-
+  config:Iconfiguration;
   slaves: Islave[] = [];
   // label:string;
   // slaveForms: FormGroup[]
@@ -159,16 +164,19 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   @ViewChild("slavesBody") slavesBody: ElementRef;
   @Output() slaveidEventEmitter = new EventEmitter<number | undefined>();
   ngOnInit(): void {
-    this.currentLanguage = getCurrentLanguage(navigator.language);
-    this.paramsSubscription = this.route.params.subscribe((params) => {
-      let busId = +params["busid"];
-      this.entityApiService.getBus(busId).subscribe((bus) => {
-        this.bus = bus;
-        if (this.bus) {
-          this.busname = getConnectionName(this.bus.connectionData);
-          this.updateSlaves(bus);
-        }
-      });
+    this.entityApiService.getConfiguration().subscribe(config =>{
+      this.config = config
+      this.currentLanguage = getCurrentLanguage(navigator.language);
+      this.paramsSubscription = this.route.params.subscribe((params) => {
+        let busId = +params["busid"];
+        this.entityApiService.getBus(busId).subscribe((bus) => {
+          this.bus = bus;
+          if (this.bus) {
+            this.busname = getConnectionName(this.bus.connectionData);
+            this.updateSlaves(bus);          
+          }
+        });
+      })
     });
   }
   private fillSpecs(
@@ -219,23 +227,30 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   }
 
   getTopicAndPayloadForUiSlave(
-    specid: string | undefined,
+    uiSlave:IuiSlave,
     iident: IidentificationSpecification[],
   ): any {
     let o: any = {};
 
-    if (specid) {
-      o.commandEntities = [];
-      let s = iident.find((id) => id.filename == specid);
+      o.commandTopics = [];
+      if(!uiSlave.slave || (uiSlave.slave as Islave).specification == undefined)
+        return {};
+      let slave = uiSlave.slave;
+      let s = iident.find(i=>i.filename == slave.specificationid)
+      // No specification
+      if( !s)
+        return{}
       if (s) {
-        o.stateTopic = s.stateTopic;
-        o.statePayload = s.statePayload;
-        o.triggerPollTopic = s.triggerPollTopic;
+        let sl = new Slave(this.bus.busId,uiSlave.slave,this.config.mqttbasetopic)
+        o.stateTopic = sl.getStateTopic();
+        o.statePayload = sl.getStatePayload(s.entities);
+        o.triggerPollTopic = sl.getTriggerPollTopic();
         s.entities.forEach((ent) => {
-          if (ent.commandTopic) o.commandEntities!.push(ent);
+          let cmdTopic:IEntityCommandTopics = sl.getEntityCommandTopic(ent)!
+          if( cmdTopic )
+              o.commandTopics!.push(cmdTopic);
         });
       }
-    }
     return o;
   }
 
@@ -352,6 +367,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
         pollMode: [
           slave.pollMode == undefined ? PollModes.intervall : slave.pollMode,
         ],
+        rootTopic: [ slave.rootTopic],
       });
     else
       return this._formBuilder.group({
@@ -440,6 +456,12 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
 
   setSlaveName(event: Event, slave: Islave) {
     slave.name = (event.target as HTMLInputElement).value;
+    this.entityApiService.postSlave(this.bus!.busId, slave).subscribe(() => {
+      this.updateUiSlaveData(slave);
+    });
+  }
+  setSlaveRootTopic(event: Event, slave: Islave) {
+    slave.rootTopic = (event.target as HTMLInputElement).value;
     this.entityApiService.postSlave(this.bus!.busId, slave).subscribe(() => {
       this.updateUiSlaveData(slave);
     });
@@ -540,9 +562,10 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
         this.currentLanguage!,
         entityId,
       );
-    return rc;
+    return rc?rc:"";
   }
   copy2Clipboard(text: string) {
     this.clipboard.copy(text);
+    console.log("copy" + text)
   }
 }

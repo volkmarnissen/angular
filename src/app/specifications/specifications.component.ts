@@ -35,24 +35,23 @@ interface ImodbusSpecificationWithMessages extends ImodbusSpecification {
 }
 
 @Component({
-  selector: "app-specifications",
-  templateUrl: "./specifications.component.html",
-  styleUrl: "./specifications.component.css",
-  standalone: true,
-  imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    MatCardContent,
-    MatButton,
-    NgFor,
-    MatTooltip,
-    MatIcon,
-    MatIconButton,
-    NgIf,
-    NgClass,
-    InfoboxComponent,
-  ],
+    selector: "app-specifications",
+    templateUrl: "./specifications.component.html",
+    styleUrl: "./specifications.component.css",
+    imports: [
+        MatCard,
+        MatCardHeader,
+        MatCardTitle,
+        MatCardContent,
+        MatButton,
+        NgFor,
+        MatTooltip,
+        MatIcon,
+        MatIconButton,
+        NgIf,
+        NgClass,
+        InfoboxComponent,
+    ]
 })
 export class SpecificationsComponent implements OnInit {
   config: Iconfiguration;

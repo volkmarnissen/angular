@@ -88,7 +88,20 @@
                   </mat-panel-title>
                 </mat-expansion-panel-header>
                   <ng-container *ngIf="uislave.specs|async as iident">
-                  <ng-container *ngIf="getTopicAndPayloadForUiSlave( specid, iident) as tAndP">
+                  <ng-container *ngIf="getTopicAndPayloadForUiSlave( uislave,iident) as tAndP">
+                    <h2>Root Topic</h2>
+                    <mat-form-field class="width150pt">
+                      <mat-label>Root Topic Name</mat-label>
+                      <input matInput matTooltipClass="tooltip-class"  formControlName="rootTopic" matTooltip='Optional: 
+                      
+                      Sets the first part of the MQTT state and command topics. 
+                      
+                      E.g. a root topic "heatpump" will generate a state topic "heatpump/state" all command topics will be named "heatpump/set/<mqtt name of entity>"
+                      command topics for modbus values will be name "heatpump/modbus/<mqttname>"
+                        
+                      It is in the responsibility of the user to make sure, that there are no duplicates in MQTT topic names'
+                         (change)="setSlaveRootTopic($event, uislave.slave)" />
+                    </mat-form-field>                    
                     <h2>State Topic</h2>
                     <div>
                       {{tAndP.stateTopic }}<button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
@@ -109,17 +122,17 @@
                     </div>
                     <h2>Command Topics</h2>
                     <dl>
-                      <ng-container *ngFor="let commandEntity of tAndP.commandEntities">
-                        <dt> {{getSpecEntityName(uislave.slave, commandEntity.id)}}</dt>
+                      <ng-container *ngFor="let commandEntity of tAndP.commandTopics">
+                        <dt> {{getSpecEntityName(uislave.slave, commandEntity.entityId)}}</dt>
                         <dd>{{ commandEntity.commandTopic}}
                           <button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
-                          matTooltip="Copy to Clipboard" (click)="copy2Clipboard(commandEntity.commandTopic!)" color="primary">
+                           (click)="copy2Clipboard(commandEntity.commandTopic)" color="primary">
                           <mat-icon>content_copy</mat-icon>
                       </button>
                      </dd>
-                      <dd *ngIf="commandEntity.commandTopicModbus">.../modbusValues
+                      <dd *ngIf="commandEntity.modbusCommandTopic">.../modbusValues
                         <button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
-                        matTooltip="Copy to Clipboard" (click)="copy2Clipboard(commandEntity.commandTopicModbus!)" color="primary">
+                         (click)="copy2Clipboard(commandEntity.modbusCommandTopic)" color="primary">
                         <mat-icon>content_copy</mat-icon>
                     </button></dd>                      
                   </ng-container>
@@ -127,7 +140,7 @@
                     </dl>
                       </ng-container>
                   </ng-container>
-  
+                
               </mat-expansion-panel>
             </mat-card-content>
           </form>

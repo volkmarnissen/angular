@@ -26,24 +26,23 @@ import {
 } from "@angular/material/form-field";
 import { MatDialogTitle } from "@angular/material/dialog";
 @Component({
-  selector: "app-login",
-  templateUrl: "./login.component.html",
-  styleUrls: ["./login.component.css"],
-  standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatDialogTitle,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    NgIf,
-    MatError,
-    MatIcon,
-    MatSuffix,
-    MatCardActions,
-    MatButton,
-  ],
+    selector: "app-login",
+    templateUrl: "./login.component.html",
+    styleUrls: ["./login.component.css"],
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatDialogTitle,
+        MatFormField,
+        MatLabel,
+        MatInput,
+        NgIf,
+        MatError,
+        MatIcon,
+        MatSuffix,
+        MatCardActions,
+        MatButton,
+    ]
 })
 export class LoginComponent implements OnInit, AfterViewInit {
   hide: boolean = true;

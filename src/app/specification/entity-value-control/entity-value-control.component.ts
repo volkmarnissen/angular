@@ -32,23 +32,23 @@ import { MatFormField, MatLabel, MatError } from "@angular/material/form-field";
 import { NgIf, NgFor } from "@angular/common";
 
 @Component({
-  selector: "app-entity-value-control",
-  templateUrl: "./entity-value-control.component.html",
-  styleUrl: "./entity-value-control.component.css",
-  standalone: true,
-  imports: [
-    NgIf,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    FormsModule,
-    ReactiveFormsModule,
-    MatError,
-    MatSelect,
-    NgFor,
-    MatOption,
-    MatSlideToggle,
-  ],
+    selector: "app-entity-value-control",
+    templateUrl: "./entity-value-control.component.html",
+    styleUrl: "./entity-value-control.component.css",
+    standalone: true,
+    imports: [
+        NgIf,
+        MatFormField,
+        MatLabel,
+        MatInput,
+        FormsModule,
+        ReactiveFormsModule,
+        MatError,
+        MatSelect,
+        NgFor,
+        MatOption,
+        MatSlideToggle,
+    ]
 })
 export class EntityValueControlComponent
   implements OnInit, OnDestroy, OnChanges
