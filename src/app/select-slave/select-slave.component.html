@@ -89,6 +89,21 @@
                 </mat-expansion-panel-header>
                   <ng-container *ngIf="uislave.specs|async as iident">
                   <ng-container *ngIf="getTopicAndPayloadForUiSlave( uislave,iident) as tAndP">
+                    <h2>Quality of Service</h2>
+                    <mat-form-field class="width200pt">
+                      <mat-label>Quality of Service</mat-label>
+                      <mat-select matTooltipClass="tooltip-class"  formControlName="qos" matTooltip='Optional: 
+                      
+                      Auto: If the slave has only read only entities, Quality of Service is not set
+                      
+                      1 - at least once: Every publication of states or subscription to this slave will at be transfered at least one time
+                      
+                      2 - exactly once:Every publication of states or subscription to this slave will at be transfered exactly one time' (selectionChange)="setSlaveQos(uislave.slave, $event)" >
+                      <mat-option [value]="-1">Auto</mat-option>
+                      <mat-option [value]="1">1 - at least once</mat-option>
+                      <mat-option [value]="2">2 - exactly once</mat-option>                      
+                      </mat-select>
+                    </mat-form-field>                    
                     <h2>Root Topic</h2>
                     <mat-form-field class="width150pt">
                       <mat-label>Root Topic Name</mat-label>
@@ -131,8 +146,8 @@
                       </button>
                      </dd>
                       <dd *ngIf="commandEntity.modbusCommandTopic">.../modbusValues
-                        <button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
-                         (click)="copy2Clipboard(commandEntity.modbusCommandTopic)" color="primary">
+                        <button mat-icon-button matTooltipClass="tooltip-class" mat-small-icon-button class="material-icons app-toolbar-menu save-button"
+                         (click)="copy2Clipboard(commandEntity.modbusCommandTopic)" color="primary" matTooltip="Copy to clipboard">
                         <mat-icon>content_copy</mat-icon>
                     </button></dd>                      
                   </ng-container>

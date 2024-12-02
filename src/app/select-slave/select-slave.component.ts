@@ -52,7 +52,7 @@ import {
   MatExpansionPanelTitle,
 } from "@angular/material/expansion";
 import { MatOption } from "@angular/material/core";
-import { MatSelect } from "@angular/material/select";
+import { MatSelect, MatSelectChange } from "@angular/material/select";
 import { MatFormField, MatLabel, MatError } from "@angular/material/form-field";
 import { MatIcon } from "@angular/material/icon";
 import { MatIconButton } from "@angular/material/button";
@@ -367,6 +367,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
         pollMode: [
           slave.pollMode == undefined ? PollModes.intervall : slave.pollMode,
         ],
+        qos: [ slave.qos ?slave.qos:-1],
         rootTopic: [ slave.rootTopic],
       });
     else
@@ -462,6 +463,16 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   }
   setSlaveRootTopic(event: Event, slave: Islave) {
     slave.rootTopic = (event.target as HTMLInputElement).value;
+    this.entityApiService.postSlave(this.bus!.busId, slave).subscribe(() => {
+      this.updateUiSlaveData(slave);
+    });
+  }
+  setSlaveQos( slave: Islave, event: MatSelectChange) {
+  let qos = event.value
+    if( !qos || qos == -1)
+      delete slave.qos
+    else
+      slave.qos = qos
     this.entityApiService.postSlave(this.bus!.busId, slave).subscribe(() => {
       this.updateUiSlaveData(slave);
     });
