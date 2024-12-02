@@ -33,7 +33,7 @@
 <ng-container *ngIf="entity!.readonly && !['number', 'binary'].includes(getConverterName())" >
     <mat-form-field class="width100pt">
         <mat-label>MQTT Value</mat-label>
-        <input matInput [formControl]="textFormControl" disabled="true"/>
+        <input matInput [formControl]="textFormControl"/>
     </mat-form-field>
 
 </ng-container>

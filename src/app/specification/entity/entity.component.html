@@ -153,15 +153,23 @@
                     <div class="flexrows">
                         <mat-form-field class="smallfield width150pt">
                             <mat-label>Device Class</mat-label>
-                            <mat-select matInput formControlName="deviceClass" (selectionChange)="form2Entity()">
+                            <mat-select matInput formControlName="deviceClass" (selectionChange)="onConverterValueChange()" [compareWith]="compareName">
                                 <mat-option *ngFor="let c of getDeviceClasses()" [value]="c">
-                                    {{ c }}
+                                    {{ c.name }}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
-                        <mat-form-field class="smallfield width50pt">
+                        <mat-form-field class="smallfield width100pt">
                             <mat-label>UOM</mat-label>
-                            <input #propUom matInput type="text" formControlName="uom" (change)="form2Entity()">
+                            
+                            <input *ngIf="!deviceClassHasUoms()"  matInput type="text" formControlName="uom" (change)="form2Entity()">
+                            <mat-select *ngIf="deviceClassHasUoms()" matInput formControlName="uom" 
+                            (selectionChange)="onConverterValueChange()">
+                            <mat-option *ngFor="let c of numberPropertiesFormGroup.get('deviceClass')!.value.uom" [value]="c">
+                                {{ c }}
+                            </mat-option>
+    
+                            </mat-select>
                         </mat-form-field>
                         <mat-form-field class="smallfield width150pt">
                             <mat-label>State Class</mat-label>
@@ -175,7 +183,7 @@
                         </mat-form-field>
                     </div>
                     <div class="flexrows">
-                        <mat-form-field class="smallfield width100pt">
+                        <mat-form-field class="smallfield width150pt">
                             <mat-label>Multiplier</mat-label>
                             <input #propMultiplier matInput type="number" formControlName="multiplier"
                                 (change)="onConverterValueChange()">
@@ -307,7 +315,7 @@
                     <mat-label>Device Class</mat-label>
                     <mat-select matInput formControlName="deviceClass">
                         <mat-option *ngFor="let c of getDeviceClasses()" [value]="c">
-                            {{ c }}
+                            {{ c.name }}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
