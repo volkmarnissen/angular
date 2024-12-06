@@ -13,7 +13,7 @@ import {
   getSpecificationI18nName,
 } from "@modbus2mqtt/specification.shared";
 import { SpecificationServices } from "../services/specificationServices";
-import { Iconfiguration } from "@modbus2mqtt/server.shared";
+import { Iconfiguration, IUserAuthenticationStatus } from "@modbus2mqtt/server.shared";
 import { GalleryItem, ImageItem } from "ng-gallery";
 import { MatIcon } from "@angular/material/icon";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -56,6 +56,7 @@ interface ImodbusSpecificationWithMessages extends ImodbusSpecification {
 export class SpecificationsComponent implements OnInit {
   config: Iconfiguration;
   private specServices: SpecificationServices | undefined;
+  private authStatus:IUserAuthenticationStatus| undefined = undefined
   specifications: ImodbusSpecificationWithMessages[];
   galleryItems: Map<string, GalleryItem[]>;
   message: Subject<string> = new Subject<string>();
@@ -91,13 +92,17 @@ export class SpecificationsComponent implements OnInit {
   ngOnInit(): void {
     this.apiService.getConfiguration().subscribe((config) => {
       this.config = config;
-      this.specServices = new SpecificationServices(
-        config.mqttdiscoverylanguage,
-        this.apiService,
-      );
-      this.apiService
-        .getSpecifications()
-        .subscribe(this.fillSpecifications.bind(this));
+      this.apiService.getUserAuthenticationStatus().subscribe(authStatus=>{
+        this.authStatus = authStatus
+        this.specServices = new SpecificationServices(
+          config.mqttdiscoverylanguage,
+          this.apiService,
+        );
+        this.apiService
+          .getSpecifications()
+          .subscribe(this.fillSpecifications.bind(this));
+  
+      })
     });
   }
 
@@ -238,7 +243,7 @@ export class SpecificationsComponent implements OnInit {
   }
   generateDownloadLink(what: string): string {
     let url = "download/" + what;
-    if(this.config.hassiotoken == undefined )
+    if(!this.authStatus || this.authStatus.hassiotoken == undefined )
     {
       let authToken = new SessionStorage().getAuthToken();
       if (authToken) 

@@ -10,7 +10,7 @@ import {
   ValidationErrors,
 } from "@angular/forms";
 import { ApiService } from "../services/api-service";
-import { Iconfiguration } from "@modbus2mqtt/server.shared";
+import { Iconfiguration, IUserAuthenticationStatus } from "@modbus2mqtt/server.shared";
 import { Observable, Subscription } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatOption } from "@angular/material/core";
@@ -72,7 +72,7 @@ export class ConfigureComponent implements OnInit {
     control: AbstractControl,
   ): ValidationErrors | null => {
     {
-        if(this.config && !this.config.hassiotoken )
+        if(this.authStatus && !this.authStatus.hassiotoken )
           return Validators.required(control)
         else
           return null
@@ -82,8 +82,8 @@ export class ConfigureComponent implements OnInit {
     // connected or empty serverurl value
 
     return (this.mqttConnectIcon != 'cast_connected' &&
-       this.config && 
-      !this.config.hassiotoken)
+       this.authStatus && 
+      !this.authStatus.hassiotoken)
     || (this.configureMqttFormGroup.pristine && 
         this.ghPersonalAccessToken.pristine && 
         this.discoveryLanguageFormControl.pristine)
@@ -94,7 +94,7 @@ export class ConfigureComponent implements OnInit {
   mqttConnectIcon: string = "cast";
   mqttConnectClass: string = "redIcon";
   mqttConnectMessage: string = "unknown";
-
+  authStatus: IUserAuthenticationStatus| undefined = undefined
   configureMqttFormGroup = this._formBuilder.group({
     mqttserverurl: [null as string | null, this.requiredInNonAddonScenario],
     mqttuser: [null as string | null],
@@ -131,7 +131,9 @@ export class ConfigureComponent implements OnInit {
       this.entityApiService.getSslFiles().subscribe((rc) => {
         this.sslFiles = rc;
       });
-
+      this.entityApiService.getUserAuthenticationStatus().subscribe(authStatus => {
+        this.authStatus = authStatus
+      })
       this.mqttValidate();
       if (config.githubPersonalToken)
         this.ghPersonalAccessToken.setValue(config.githubPersonalToken);
