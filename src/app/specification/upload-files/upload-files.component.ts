@@ -6,8 +6,9 @@ import {
   ViewChild,
   Output,
   EventEmitter,
+  OnInit,
 } from "@angular/core";
-import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { GalleryItem, ImageItem, GalleryComponent } from "ng-gallery";
 import {
   IimageAndDocumentUrl,
@@ -58,15 +59,12 @@ import {
         GalleryComponent,
     ]
 })
-export class UploadFilesComponent implements OnChanges {
-  constructor(private entityApiService: ApiService) {}
+export class UploadFilesComponent implements OnInit,OnChanges {
+  constructor(private entityApiService: ApiService, private fb:FormBuilder) {}
   @Input("specification") currentSpecification: ImodbusSpecification | null;
-  urlDocumentControl: FormControl<string | null> = new FormControl<
-    string | null
-  >(null);
-  urlImageControl: FormControl<string | null> = new FormControl<string | null>(
-    null,
-  );
+  uploadFilesForm: FormGroup
+  urlDocumentControl: FormControl<string | null> ;
+  urlImageControl: FormControl<string | null> ;
   @Output()
   updateDocumentation = new EventEmitter<IimageAndDocumentUrl[]>();
 
@@ -80,10 +78,15 @@ export class UploadFilesComponent implements OnChanges {
   ngOnChanges(): void {
     if (this.addImageUrlButton) this.addImageUrlButton.disabled = true;
     if (this.addDocumentUrlButton) this.addDocumentUrlButton.disabled = true;
-    this.generateImageGalleryItems();
-    this.generateDocumentUrls();
   }
-
+  ngOnInit(): void {
+    this.uploadFilesForm = this.fb.group({
+      urlDocument: [null as string | null],
+      urlImage: [null as string | null],
+    })
+  this.urlDocumentControl = this.uploadFilesForm.get("urlDocument") as FormControl
+  this.urlImageControl = this.uploadFilesForm.get("urlImage") as FormControl
+  }
   private fileBrowseHandler(
     input: EventTarget | null,
     usage: SpecificationFileUsage,
@@ -193,7 +196,8 @@ export class UploadFilesComponent implements OnChanges {
         let doc = this.currentSpecification.files[i];
         if (doc.usage == SpecificationFileUsage.documentation) rc.push(doc);
       }
-    this.documentUrls = rc;
+    if( rc.length != this.documentUrls.length )
+      this.documentUrls = rc;
   }
   generateImageGalleryItems(): void {
     let rc: GalleryItem[] = [];

@@ -46,7 +46,7 @@
       <div class="margins">
         <app-upload-files [specification]="currentSpecification" (updateDocumentation)="updateDocuments($event)" />
       </div>
-      <form [formGroup]="enterSpecNameFormGroup" class="flexcolumns">
+      <form id="specForm" [formGroup]="enterSpecNameFormGroup" class="flexcolumns">
         <mat-form-field class="width250pt">
           <mat-label>Specification
             Name({{specificationMethods?specificationMethods.getMqttLanguageName():""}})</mat-label>

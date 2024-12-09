@@ -179,6 +179,9 @@ body {
   height: 23pt;
   width: 150pt;
 }
+.bordervisible{
+  border-color: lightgray;
+}
 .downloadLabel {
   color: white;
   width: 180pt;

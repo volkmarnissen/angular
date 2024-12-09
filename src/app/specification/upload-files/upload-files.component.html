@@ -1,3 +1,6 @@
+<form [formGroup]="uploadFilesForm">
+  <!--Angular sometime presses some button if no submit button is available  -->
+  <button type="submit" hidden="hidden">Hiden submit</button>
 <mat-accordion>
   <mat-expansion-panel>
     <mat-expansion-panel-header>
@@ -33,7 +36,7 @@
     </div>
     <mat-form-field class="width250pt">
         <mat-label>URL for Documents</mat-label>
-        <input matInput [formControl]="urlDocumentControl" (keydown.enter)="addDocumentUrl()" />
+        <input matInput formControlName="urlDocument" (keydown.enter)="addDocumentUrl()" />
     </mat-form-field>
     <button mat-icon-button class="material-icons app-toolbar-menu delete-button"
         matTooltip="Add Url" color="primary" (click)="addDocumentUrl()" [disabled]="urlDocumentControl.value == null">
@@ -76,7 +79,7 @@
     <div>
       <mat-form-field class="width250pt">
         <mat-label>Add URL for New Image</mat-label>
-        <input matInput [formControl]="urlImageControl" (change)="enableAddButton($event,addImageUrlButton)" (keydown.enter)="addImageUrl()" />
+        <input matInput formControlName="urlImage" (change)="enableAddButton($event,addImageUrlButton)" (keydown.enter)="addImageUrl()" />
       </mat-form-field>
       <button mat-icon-button class="material-icons app-toolbar-menu delete-button"
         matTooltip="Add Url" color="primary" (click)="addImageUrl()">
@@ -89,3 +92,4 @@
 
 <div>
 </div>
+</form>
