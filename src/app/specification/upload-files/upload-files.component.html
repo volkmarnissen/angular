@@ -6,18 +6,16 @@
       </mat-panel-title>
       <mat-panel-description>
         <div class="flexcolumns" dragndropDirective (fileDropped)="onDocumentationDropped($event )">
-          <div class="nodistance" dragndropDirective (fileDropped)="onDocumentationDropped($event )">
             <a *ngIf="documentUrls.length >0;else noElements" class="nodistance clickable" target="_blank"
               rel="noopener noreferrer" [href]="documentUrls[0].url">{{getBaseFilename( documentUrls[0].url)}}</a>
             <ng-template #noElements>
               No Documenation available
             </ng-template>
-          </div>
         </div>
       </mat-panel-description>
     </mat-expansion-panel-header>
-    <div class="border" dragndropDirective (fileDropped)="onDocumentationDropped($event )">
-      <div class="nodistance" *ngFor="let doc of documentUrls" dragndropDirective
+    <div  dragndropDirective (fileDropped)="onDocumentationDropped($event )">
+      <div class="bordervisible" *ngFor="let doc of documentUrls" dragndropDirective
         (fileDropped)="onDocumentationDropped($event )">
         <a class="nodistance clickable" target="_blank" rel="noopener noreferrer"
           [href]="doc.url">{{getBaseFilename(doc.url)}}</a>
@@ -27,22 +25,21 @@
         </button>
       </div>
     </div>
-
-    <input type="file" #documents id="documents" multiple matTooltip="Test"
-      (change)="documenationBrowseHandler($event.target)" hidden class="downloadLabel" />
-    <label class="downloadLabel" for="documents" i18n dragndropDirective
-      (fileDropped)="onDocumentationDropped($event )">Browse for Document Files</label>
-    <div>
-      <mat-form-field class="width250pt">
+    <div class="margins">
+      <input type="file" #documents id="documents" multiple matTooltip="Test"
+        (change)="documenationBrowseHandler($event.target)" hidden class="downloadLabel" />
+      <label class="downloadLabel" for="documents" i18n dragndropDirective
+        (fileDropped)="onDocumentationDropped($event )">Browse for Document Files</label>
+    </div>
+    <mat-form-field class="width250pt">
         <mat-label>URL for Documents</mat-label>
         <input matInput [formControl]="urlDocumentControl" (keydown.enter)="addDocumentUrl()" />
-      </mat-form-field>
-      <button #addDocumentUrlButton mat-icon-button class="material-icons app-toolbar-menu delete-button"
+    </mat-form-field>
+    <button mat-icon-button class="material-icons app-toolbar-menu delete-button"
         matTooltip="Add Url" color="primary" (click)="addDocumentUrl()" [disabled]="urlDocumentControl.value == null">
         <mat-icon>add</mat-icon>
-      </button>
+    </button>
 
-    </div>
   </mat-expansion-panel>
 </mat-accordion>
 <div class="margins">
@@ -58,7 +55,7 @@
         <p [ngClass]="{'errorText': imageUrls.length == 0 }">Modify Image List</p>
       </mat-panel-title>
     </mat-expansion-panel-header>
-    <div class="border" dragndropDirective (fileDropped)="onImageDropped($event )">
+    <div class="bordervisible" dragndropDirective (fileDropped)="onImageDropped($event )">
       <div class="nodistance" *ngFor="let image of imageUrls" dragndropDirective
         (fileDropped)="onImageDropped($event )">
         <a class="nodistance clickable" target="_blank" rel="noopener noreferrer"
@@ -71,7 +68,7 @@
       </div>
     </div>
     <div class="margins">
-      <input type="file" #images id="images" multiple matTooltip="Test" (change)="imageBrowseHandler($event.target)"
+      <input type="file" id="images" multiple matTooltip="Test" (change)="imageBrowseHandler($event.target)"
         hidden class="downloadLabel" />
       <label class="downloadLabel" for="images" i18n dragndropDirective (fileDropped)="onImageDropped($event )">Browse
         for Image Files</label>
@@ -81,7 +78,7 @@
         <mat-label>Add URL for New Image</mat-label>
         <input matInput [formControl]="urlImageControl" (change)="enableAddButton($event,addImageUrlButton)" (keydown.enter)="addImageUrl()" />
       </mat-form-field>
-      <button #addImageUrlButton mat-icon-button class="material-icons app-toolbar-menu delete-button"
+      <button mat-icon-button class="material-icons app-toolbar-menu delete-button"
         matTooltip="Add Url" color="primary" (click)="addImageUrl()">
         <mat-icon>add</mat-icon>
       </button>

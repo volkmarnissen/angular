@@ -169,12 +169,14 @@ export class UploadFilesComponent implements OnChanges {
     }
   }
   addDocumentUrl() {
+    this.urlDocumentControl.updateValueAndValidity()
     this.addDocument(
       this.urlDocumentControl,
       SpecificationFileUsage.documentation,
     );
   }
   addImageUrl() {
+    this.urlImageControl.updateValueAndValidity()
     this.addDocument(this.urlImageControl, SpecificationFileUsage.img);
   }
   enableAddButton(event: Event, btn: MatIconButton) {
