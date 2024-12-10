@@ -36,9 +36,9 @@
     </div>
     <mat-form-field class="width250pt">
         <mat-label>URL for Documents</mat-label>
-        <input matInput formControlName="urlDocument" (keydown.enter)="addDocumentUrl()" />
+        <input matInput formControlName="urlDocument" (change)="enableAddButton($event,addDocumentUrlButton)" (keydown.enter)="addDocumentUrl()" />
     </mat-form-field>
-    <button mat-icon-button class="material-icons app-toolbar-menu delete-button"
+    <button #addDocumentUrlButton mat-icon-button class="material-icons app-toolbar-menu delete-button"
         matTooltip="Add Url" color="primary" (click)="addDocumentUrl()" [disabled]="urlDocumentControl.value == null">
         <mat-icon>add</mat-icon>
     </button>
@@ -81,7 +81,7 @@
         <mat-label>Add URL for New Image</mat-label>
         <input matInput formControlName="urlImage" (change)="enableAddButton($event,addImageUrlButton)" (keydown.enter)="addImageUrl()" />
       </mat-form-field>
-      <button mat-icon-button class="material-icons app-toolbar-menu delete-button"
+      <button #addImageUrlButton mat-icon-button class="material-icons app-toolbar-menu delete-button"
         matTooltip="Add Url" color="primary" (click)="addImageUrl()">
         <mat-icon>add</mat-icon>
       </button>

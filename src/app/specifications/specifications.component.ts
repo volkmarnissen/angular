@@ -189,10 +189,6 @@ export class SpecificationsComponent implements OnInit {
       );
   }
 
-  onSpecificationClick() {
-    console.log("click");
-  }
-
   getValidationMessage(spec: IbaseSpecification, message: Imessage): string {
     if (this.specServices)
       return this.specServices.getValidationMessage(spec, message);

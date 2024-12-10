@@ -74,8 +74,7 @@ export class ApiService {
 
     let f: string =
       this.getFullUri(apiUri.specfication) + `?spec=${specification}`;
-    console.log(f);
-    return this.httpClient.get<Ispecification>(f); // No error Handling!!!
+     return this.httpClient.get<Ispecification>(f); // No error Handling!!!
   }
 
   getModbusSpecification(
@@ -337,7 +336,6 @@ export class ApiService {
       },
     };
     let f = this.getFullUri(apiUri.slave) + `?busid=${busid}`;
-    console.log(f);
     console.log(JSON.stringify(device));
     return this.httpClient.post<Islave>(f, device, httpOptions).pipe(
       catchError((err) => {
@@ -521,6 +519,7 @@ export class ApiService {
     spec: ImodbusSpecification,
     language: string,
   ): Observable<Imessage[]> {
+    console.log( "Validate: " + JSON.stringify(spec, null, "\t"))
     return this.httpClient
       .post<
         Imessage[]
