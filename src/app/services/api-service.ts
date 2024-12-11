@@ -56,7 +56,6 @@ export class ApiService {
         msg += err.statusText;
         if (!err.error && !err.statusText && err.message) msg = err.message;
         alert(msg);
-        console.log(JSON.stringify(err));
       }
     };
   }
@@ -86,7 +85,6 @@ export class ApiService {
       this.getFullUri(apiUri.modbusSpecification) +
       `?busid=${busid}&slaveid=${slaveid}`;
     if (specification) f = f + `&spec=${specification}`;
-    console.log(f);
     return this.httpClient.get<ImodbusSpecification>(f).pipe(
       catchError((err) => {
         this.errorHandler(err);
@@ -336,7 +334,6 @@ export class ApiService {
       },
     };
     let f = this.getFullUri(apiUri.slave) + `?busid=${busid}`;
-    console.log(JSON.stringify(device));
     return this.httpClient.post<Islave>(f, device, httpOptions).pipe(
       catchError((err) => {
         this.errorHandler(err);
@@ -519,7 +516,6 @@ export class ApiService {
     spec: ImodbusSpecification,
     language: string,
   ): Observable<Imessage[]> {
-    console.log( "Validate: " + JSON.stringify(spec, null, "\t"))
     return this.httpClient
       .post<
         Imessage[]

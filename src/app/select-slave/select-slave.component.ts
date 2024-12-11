@@ -412,7 +412,6 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       this.entityApiService
         .deleteSlave(this.bus.busId, slave.slaveid)
         .subscribe(() => {
-          console.log("Device deleted");
           let dIdx = this.uiSlaves.findIndex(
             (uis) => uis.slave.slaveid == slave.slaveid,
           );
@@ -577,6 +576,5 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   }
   copy2Clipboard(text: string) {
     this.clipboard.copy(text);
-    console.log("copy" + text)
   }
 }

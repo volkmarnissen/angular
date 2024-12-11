@@ -83,7 +83,6 @@ export class InfoboxComponent implements OnInit, OnDestroy {
               this.messages.forEach((msg) => {
                 this.currentDisplay = this.currentDisplay + msg.message + "\n";
               });
-              console.log(this.currentDisplay);
             }
           }, 100);
         }

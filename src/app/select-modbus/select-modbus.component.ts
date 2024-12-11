@@ -126,7 +126,6 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
       this.readBussesFromServer();
     });
     this.paramSubscription = this.route.queryParams.subscribe((params) => {
-      console.log(params);
       if (params["busid"] != undefined) {
         this.preselectedBusId = params["busid"];
       }
@@ -397,11 +396,6 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
     return this.selectedBaudRate !== undefined && br == this.selectedBaudRate;
   }
 
-  onSelectBaudRateChange(newValue: MatSelectChange | undefined | null) {
-    if (newValue) {
-      console.log("nothing to do?");
-    }
-  }
   listSlaves(idx: number) {
     this.saveBus(idx).then((busid) => {
       this.readBussesFromServer().then(() => {

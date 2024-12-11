@@ -139,7 +139,6 @@ export class UploadFilesComponent implements OnInit,OnChanges {
       this.entityApiService
         .postFile(this.currentSpecification.filename, usage, fd)
         .subscribe((event) => {
-          console.log( "dropped file " + files.length)
           this.currentSpecification!.files = event;
           if (usage == SpecificationFileUsage.img)
             this.generateImageGalleryItems();
@@ -167,7 +166,6 @@ export class UploadFilesComponent implements OnInit,OnChanges {
             usage: usage,
           })
           .subscribe((files) => {
-            console.log( "add file " + files.length)
 
             this.currentSpecification!.files = files as IimageAndDocumentUrl[];
             if (usage == SpecificationFileUsage.img)
@@ -227,7 +225,6 @@ export class UploadFilesComponent implements OnInit,OnChanges {
           uploadedFile.usage,
         )
         .subscribe((files) => {
-          console.log( "delete file " + files.length)
           this.currentSpecification!.files = files;
           if (uploadedFile.usage == SpecificationFileUsage.img)
             this.generateImageGalleryItems();

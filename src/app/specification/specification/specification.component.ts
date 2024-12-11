@@ -589,7 +589,6 @@ export class SpecificationComponent
             : null,
         )
         .subscribe((spec) => {
-          console.log("posted " + spec.filename);
           this.entityApiService
             .getModbusSpecification(this.busId, this.slaveid, spec.filename)
             .subscribe((spec) => {

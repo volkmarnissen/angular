@@ -159,9 +159,6 @@ export class EntityComponent
     return true;
   }
 
-  onChangeSelectOption() {
-    if (this.selectPropertiesFormGroup.valid) console.log("OK");
-  }
   @Input({ required: true })
   specificationMethods: ISpecificationMethods;
 

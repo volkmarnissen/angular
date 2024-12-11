@@ -194,7 +194,6 @@ export class ConfigureComponent implements OnInit {
     )
       this.config.githubPersonalToken = this.ghPersonalAccessToken.value;
     this.entityApiService.postConfiguration(this.config).subscribe(() => {
-      console.log("configuration updated");
       this.close();
     });
     this.close();

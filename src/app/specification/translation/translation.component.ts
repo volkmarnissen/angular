@@ -176,7 +176,6 @@ export class TranslationComponent implements OnInit, OnDestroy {
             this.translationFormGroup.removeControl(field);
         }
       } catch (e) {
-        console.log("error");
       }
       this.translationFormGroup.updateValueAndValidity();
 
