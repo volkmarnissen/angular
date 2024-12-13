@@ -229,6 +229,7 @@ export class EntityComponent
       entityCategory: [""],
       icon: [null as string | null],
       forceUpdate: [false],
+      value_template: [null as string | null],
     });
     this.variableFormGroup = this.fb.group({
       variableType: [null as VariableTargetParameters | null],
@@ -397,6 +398,7 @@ export class EntityComponent
 
     this.entityFormGroup.get("icon")!.setValue(entity.icon);
     this.entityFormGroup.get("forceUpdate")!.setValue(entity.forceUpdate);
+    this.entityFormGroup.get("value_template")!.setValue(entity.value_template);
     this.entityFormGroup.get("entityCategory")!.setValue(entity.entityCategory);
     this.entityFormGroup.get("readonly")!.setValue(entity.readonly);
     this.entityFormGroup
@@ -535,6 +537,9 @@ export class EntityComponent
       return (this.entity.converterParameters as Iselect).options!;
     return [];
   }
+  getValueTemplate():string{
+    return this.entity.value_template ? this.entity.value_template: "{{ value_json." + this.entity.mqttname + "}}"
+  }
   isTouched(): boolean {
     if (!this.entityFormGroup.pristine) return true;
     if (!this.variableFormGroup!.pristine) return true;
@@ -672,6 +677,8 @@ export class EntityComponent
       this.entity.icon = this.entityFormGroup.get("icon")!.value;
     if (this.entityFormGroup.get("forceUpdate")!.value != null)
       this.entity.forceUpdate = this.entityFormGroup.get("forceUpdate")!.value;
+    if (this.entityFormGroup.get("value_template")!.value != null)
+      this.entity.value_template = this.entityFormGroup.get("value_template")!.value;
     if (this.entityFormGroup.get("readonly")!.value != null)
       this.entity.readonly = this.entityFormGroup.get("readonly")!.value;
     if (

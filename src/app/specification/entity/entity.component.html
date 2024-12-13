@@ -138,6 +138,15 @@
                     </mat-form-field>
 
                 </div>
+                <div class="flexcols">
+                    <mat-form-field class="smallfield">
+                        <mat-label>Value Template</mat-label>
+                        <input matInput  formControlName="value_template" [placeholder]="getValueTemplate()"
+                            (change)="form2Entity()"/>
+                    </mat-form-field>
+
+                </div>
+
         </form>
         </mat-expansion-panel>
 
