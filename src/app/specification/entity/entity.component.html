@@ -183,7 +183,7 @@
                         </mat-form-field>
                     </div>
                     <div class="flexrows">
-                        <mat-form-field class="smallfield width150pt">
+                        <mat-form-field class="smallfield width100pt">
                             <mat-label>Multiplier</mat-label>
                             <input #propMultiplier matInput type="number" formControlName="multiplier"
                                 (change)="onConverterValueChange()">
@@ -191,7 +191,7 @@
                                 This field is required
                             </mat-error>
                         </mat-form-field>
-                        <mat-form-field class="smallfield width100pt">
+                        <mat-form-field class="smallfield width80pt">
                             <mat-label>Offset</mat-label>
                             <input #propOffset matInput type="number" formControlName="offset"
                                 (change)="onConverterValueChange()">
@@ -199,7 +199,7 @@
                                 This field is required
                             </mat-error>
                         </mat-form-field>
-                        <mat-form-field class="smallfield width150pt">
+                        <mat-form-field class="smallfield width130pt">
                             <mat-label>Number Format</mat-label>
                             <mat-select matInput formControlName="numberFormat" [errorStateMatcher]="errorStateMatcher"
                                 (selectionChange)="onConverterValueChange()" [compareWith]="compareNumber">
@@ -210,6 +210,18 @@
                             <mat-error *ngIf="numberPropertiesFormGroup.get('numberFormat')!.hasError('required')">
                                 This field is required
                             </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="smallfield width100pt">
+                            <mat-label>Decimals</mat-label>
+                            <mat-select matInput formControlName="decimals" 
+                                (selectionChange)="onConverterValueChange()" [compareWith]="compareNumber">
+                                <mat-option [value]="-1"></mat-option>
+                                <mat-option [value]="0">0</mat-option>
+                                <mat-option [value]="1">1</mat-option>
+                                <mat-option [value]="2">2</mat-option>
+                                <mat-option [value]="3">3</mat-option>
+                                <mat-option [value]="4">4</mat-option>
+                            </mat-select>
                         </mat-form-field>
 
                     </div>

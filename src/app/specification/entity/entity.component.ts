@@ -242,6 +242,7 @@ export class EntityComponent
       stateClass: [null as EnumStateClasses | null],
       multiplier: [1, Validators.required],
       offset: [0, Validators.required],
+      decimals:[2],
       numberFormat: [EnumNumberFormat.default, Validators.required],
       uom: [null as string | null],
       min: [null as string | null],
@@ -438,6 +439,9 @@ export class EntityComponent
         this.numberPropertiesFormGroup
           .get("offset")!
           .setValue(np.offset ? np.offset : 0);
+          this.numberPropertiesFormGroup
+          .get("decimals")!
+          .setValue(np.decimals != undefined ? np.decimals : -1);
         let dc = this.getDeviceClass(np.device_class)
         this.numberPropertiesFormGroup
           .get("deviceClass")!
@@ -730,6 +734,10 @@ export class EntityComponent
           enumber.offset =
             this.numberPropertiesFormGroup.get("offset")!.value;
         else enumber.offset = 0;
+        if (this.numberPropertiesFormGroup.get("decimals")!.value != null)
+          enumber.decimals =
+            this.numberPropertiesFormGroup.get("decimals")!.value;
+        else enumber.decimals = 2;        
         if (this.numberPropertiesFormGroup.get("numberFormat")!.value != null)
           enumber.numberFormat =
             this.numberPropertiesFormGroup.get("numberFormat")!.value;
@@ -998,7 +1006,7 @@ export class EntityComponent
   }
   getMqttValue(rc: ImodbusEntity): string {
     if (rc)
-      if (rc.converter.name === "number" && rc.mqttValue) {
+      if (rc.converter.name === "number" && rc.mqttValue!= undefined) {
         return (rc.mqttValue as number).toString();
       } else return rc.mqttValue as string;
     return "N/A";
