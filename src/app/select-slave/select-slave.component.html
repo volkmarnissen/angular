@@ -6,7 +6,7 @@
         specifications</mat-slide-toggle></p>
     <div class="flexrows">
       <ng-container *ngFor="let uislave of uiSlaves; let i = index">
-        <mat-card class="width350pt card">
+        <mat-card class="width550pt card">
           <form (keydown.enter)="keyDown($event, uislave.slaveForm)" [formGroup]="uislave.slaveForm">
             <mat-card-header><mat-card-title matTooltip="Edit Specification" (click)="editSpecification(uislave.slave)"
                 class="clickable">{{uislave.label }}</mat-card-title>
@@ -119,6 +119,10 @@
                          (change)="setSlaveRootTopic($event, uislave.slave)" />
                     </mat-form-field>                    
                     <h2>State Topic</h2>
+                    
+                    <div *ngIf="config.rootUrl != undefined" matTooltip="Use this URL inside of Home Assistant Addons (E.g.Nodered)">Web Service Root: <strong>{{config.rootUrl}}</strong></div>
+                    <mat-slide-toggle *ngIf="config.rootUrl != undefined" class="width50" formControlName="showUrl" matTooltip="Use this URL inside of Home Assistant Addons (E.g.Nodered)">Show REST API Url instead of MQTT Topics</mat-slide-toggle>
+        
                     <div>
                       {{tAndP.stateTopic }}<button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
                       matTooltip="Copy to Clipboard" (click)="copy2Clipboard(tAndP.stateTopic!)" color="primary">
@@ -140,17 +144,17 @@
                     <dl>
                       <ng-container *ngFor="let commandEntity of tAndP.commandTopics">
                         <dt> {{getSpecEntityName(uislave.slave, commandEntity.entityId)}}</dt>
-                        <dd>{{ commandEntity.commandTopic}}
+                        <dd>{{  commandEntity.commandTopic}}
                           <button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
                            (click)="copy2Clipboard(commandEntity.commandTopic)" color="primary">
                           <mat-icon>content_copy</mat-icon>
                       </button>
                      </dd>
-                      <dd *ngIf="commandEntity.modbusCommandTopic">.../modbusValues
-                        <button mat-icon-button matTooltipClass="tooltip-class" mat-small-icon-button class="material-icons app-toolbar-menu save-button"
-                         (click)="copy2Clipboard(commandEntity.modbusCommandTopic)" color="primary" matTooltip="Copy to clipboard">
+                      <dd *ngIf="commandEntity.modbusCommandTopic">.../set/modbus/
+                        <!--<button mat-icon-button matTooltipClass="tooltip-class" mat-small-icon-button class="material-icons app-toolbar-menu save-button"
+                         (click)="copy2Clipboard(commandEntity.modbusCommandTopic)" color="primary">
                         <mat-icon>content_copy</mat-icon>
-                    </button></dd>                      
+                    </button> does not work seems to be an angular bug --> </dd>                      
                   </ng-container>
                         
                     </dl>

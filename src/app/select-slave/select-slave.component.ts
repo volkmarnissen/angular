@@ -143,6 +143,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   uiSlaves: IuiSlave[] = [];
   config:Iconfiguration;
   slaves: Islave[] = [];
+  
   // label:string;
   // slaveForms: FormGroup[]
   // specs:Observable<IidentificationSpecification[]> []=[]
@@ -242,13 +243,17 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
         return{}
       if (s) {
         let sl = new Slave(this.bus.busId,uiSlave.slave,this.config.mqttbasetopic)
-        o.stateTopic = sl.getStateTopic();
+        o.stateTopic = this.getRootUrl(uiSlave.slaveForm) + sl.getStateTopic();
+        o.commandTopic = this.getRootUrl(uiSlave.slaveForm) + sl.getCommandTopic();
         o.statePayload = sl.getStatePayload(s.entities);
         o.triggerPollTopic = sl.getTriggerPollTopic();
         s.entities.forEach((ent) => {
           let cmdTopic:IEntityCommandTopics = sl.getEntityCommandTopic(ent)!
           if( cmdTopic )
-              o.commandTopics!.push(cmdTopic);
+          {
+            cmdTopic.commandTopic = this.getRootUrl(uiSlave.slaveForm) + cmdTopic.commandTopic
+            o.commandTopics!.push(cmdTopic);
+          }
         });
       }
     return o;
@@ -369,6 +374,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
         ],
         qos: [ slave.qos ?slave.qos:-1],
         rootTopic: [ slave.rootTopic],
+        showUrl:[false],
       });
     else
       return this._formBuilder.group({
@@ -396,6 +402,14 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       }
     });
     return rc;
+  }
+  getRootUrl(fg:FormGroup):string{
+    if( this.config.rootUrl  &&fg.get("showUrl")!.value as boolean )
+      return this.config.rootUrl
+    return ""
+  }
+  getCommandTopic(){
+
   }
 
   uniqueNameValidator: any = (

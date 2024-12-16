@@ -133,11 +133,11 @@ export class ConfigureComponent implements OnInit {
       });
       this.entityApiService.getUserAuthenticationStatus().subscribe(authStatus => {
         this.authStatus = authStatus
-      })
-      this.mqttValidate();
-      if (config.githubPersonalToken)
-        this.ghPersonalAccessToken.setValue(config.githubPersonalToken);
-    });
+        this.mqttValidate();
+        if (config.githubPersonalToken)
+          this.ghPersonalAccessToken.setValue(config.githubPersonalToken);
+      });
+        })
   }
   form2Config(form: AbstractControl, config: Iconfiguration) {
     let mqttserverurl = form.get("mqttserverurl");
@@ -217,15 +217,19 @@ export class ConfigureComponent implements OnInit {
     let config: Iconfiguration = {} as unknown as Iconfiguration;
     this.form2Config(this.configureMqttFormGroup, config);
     this.entityApiService.postValidateMqtt(config).subscribe((result) => {
+      let hassio = (this.authStatus != undefined && this.authStatus.hassiotoken )
       if (result && result.valid) {
         this.mqttConnectIcon = "cast_connected";
         this.mqttConnectClass = "greenIcon";
             this.mqttConnectMessage = "connected";
       } else {
         this.mqttConnectIcon = "cast";
-        this.mqttConnectClass = "redIcon";
-        this.mqttConnectMessage =
-          !result || !result.message ? "error" : result.message;
+        this.mqttConnectClass = (hassio? "greenIcon" : "redIcon");
+        let  message = result.message
+        if( hassio)
+          message = message + "\nModbus <=> MQTT uses Home Assistants MQTT connection parameters" 
+        this.mqttConnectMessage = 
+          !result || !result.message ? "error" : message ;
       }
     });
   }
