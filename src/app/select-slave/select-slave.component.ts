@@ -654,9 +654,9 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   }
   disableDiscoverEntitiesList(uiSlave:IuiSlave, disable:boolean){
     if( uiSlave.slaveForm.get("noDiscovery")!.value)
-      uiSlave.slaveForm.get("discoverEntitiesList")!.disable()
-    else
       uiSlave.slaveForm.get("discoverEntitiesList")!.enable()
+    else
+    uiSlave.slaveForm.get("discoverEntitiesList")!.disable()
 
   }
 }
