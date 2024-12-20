@@ -80,6 +80,9 @@ interface IuiSlave {
   specs?:IidentificationSpecification[];
   slaveForm: FormGroup;
   commandEntities?: ImodbusEntity[];
+  commandTopics?:IEntityCommandTopics[];
+  commandTopic:string;
+  triggerPollTopic?:string;
   stateTopic?: string;
   statePayload?: string;
   selectedEntitites?:any; 
@@ -231,38 +234,53 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       this.slaves.push(uis.slave);
     });
   }
-
-  getTopicAndPayloadForUiSlave(
-    uiSlave:IuiSlave,
-    iident: IidentificationSpecification[],
+  onRootTopicChange(
+    uiSlave:IuiSlave
   ): any {
     let o: any = {};
-      if( !iident)
+      if( !uiSlave.specs)
         return o;
-      o.commandTopics = [];
+      uiSlave.commandTopics = [];
       if(!uiSlave.slave || (uiSlave.slave as Islave).specification == undefined)
         return {};
       let slave = uiSlave.slave;
-      let s = iident.find(i=>i.filename == slave.specificationid)
+      let s = undefined;
+      if( uiSlave && uiSlave.specs )
+          s = uiSlave.specs.find(i=>i.filename == slave.specificationid)
       // No specification
       if( !s)
         return{}
       if (s) {
+        let rootTopic = uiSlave.slaveForm.get("rootTopic")!.value
+        if( rootTopic )
+          uiSlave.slave.rootTopic = rootTopic
         let sl = new Slave(this.bus.busId,uiSlave.slave,this.config.mqttbasetopic)
-        o.stateTopic = this.getRootUrl(uiSlave.slaveForm) + sl.getStateTopic();
-        o.commandTopic = this.getRootUrl(uiSlave.slaveForm) + sl.getCommandTopic();
-        o.statePayload = sl.getStatePayload(s.entities);
-        o.triggerPollTopic = sl.getTriggerPollTopic();
+        uiSlave.stateTopic = this.getRootUrl(uiSlave.slaveForm) + sl.getStateTopic();
+        uiSlave.commandTopic = this.getRootUrl(uiSlave.slaveForm) + sl.getCommandTopic();
+        uiSlave.statePayload = sl.getStatePayload(s.entities);
+        uiSlave.triggerPollTopic = sl.getTriggerPollTopic();
+        uiSlave.commandTopics=[]
         s.entities.forEach((ent) => {
           let cmdTopic:IEntityCommandTopics = sl.getEntityCommandTopic(ent)!
           if( cmdTopic )
           {
             cmdTopic.commandTopic = this.getRootUrl(uiSlave.slaveForm) + cmdTopic.commandTopic
-            o.commandTopics!.push(cmdTopic);
+            uiSlave.commandTopics!.push(cmdTopic);
           }
         });
+        uiSlave.slaveForm.updateValueAndValidity()
+        let newUiSlaves:IuiSlave[] = []
+        this.uiSlaves.forEach( uis=>{
+          if(uis.slave.slaveid == uiSlave.slave.slaveid)
+            newUiSlaves.push(uiSlave)
+          else
+            newUiSlaves.push(uis) 
+        } )
+        this.uiSlaves = newUiSlaves
       }
-    return o;
+  }
+  getStateTopic(uiSlave:IuiSlave):string| undefined {
+    return uiSlave.stateTopic
   }
   getSpecs(slave: Islave, detectSpec: boolean | undefined, uiSlave:IuiSlave):Observable<IidentificationSpecification[]>{
     return this.entityApiService
@@ -431,6 +449,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       return this.config.rootUrl
     return ""
   }
+  
   getCommandTopic(){
 
   }

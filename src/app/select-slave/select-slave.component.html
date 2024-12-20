@@ -100,7 +100,6 @@
                     MQTT Topics
                   </mat-panel-title>
                 </mat-expansion-panel-header>
-                  <ng-container *ngIf="getTopicAndPayloadForUiSlave( uislave,uislave.specs ) as tAndP">
                     <h2>Quality of Service</h2>
                     <mat-form-field class="width200pt">
                       <mat-label>Quality of Service</mat-label>
@@ -119,7 +118,7 @@
                     <h2>Root Topic</h2>
                     <mat-form-field class="width150pt">
                       <mat-label>Root Topic Name</mat-label>
-                      <input matInput matTooltipClass="tooltip-class"  formControlName="rootTopic" matTooltip='Optional: 
+                      <input matInput matTooltipClass="tooltip-class"  formControlName="rootTopic" (change)="onRootTopicChange(uislave)" matTooltip='Optional: 
                       
                       Sets the first part of the MQTT state and command topics. 
                       
@@ -134,25 +133,25 @@
                     <mat-slide-toggle *ngIf="config.rootUrl != undefined" class="width50" formControlName="showUrl" matTooltip="Use this URL inside of Home Assistant Addons (E.g.Nodered)">Show REST API Url instead of MQTT Topics</mat-slide-toggle>
         
                     <div>
-                      {{tAndP.stateTopic }}<button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
-                      matTooltip="Copy to Clipboard" (click)="copy2Clipboard(tAndP.stateTopic!)" color="primary">
+                      {{ getStateTopic(uislave) }}<button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
+                      matTooltip="Copy to Clipboard" (click)="copy2Clipboard(uislave.stateTopic!)" color="primary">
                       <mat-icon>content_copy</mat-icon>
                     </button>
                     </div>
                     <h2>State Payload Example</h2>
                     <textarea id="w3review" name="w3review" rows="10" cols="20">
-                      {{tAndP.statePayload ?tAndP.statePayload:""}}
+                      {{uislave.statePayload ?uislave.statePayload:""}}
                     </textarea>
                     <h2 *ngIf="[1,2].includes(uislave.slaveForm.get('pollMode')!.value)">Trigger Poll Topic</h2>
                     <div *ngIf="[1,2].includes(uislave.slaveForm.get('pollMode')!.value)">
-                      {{tAndP.triggerPollTopic }}<button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
-                      matTooltip="Copy to Clipboard" (click)="copy2Clipboard(tAndP.triggerPollTopic)" color="primary">
+                      {{uislave.triggerPollTopic }}<button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
+                      matTooltip="Copy to Clipboard" (click)="copy2Clipboard(uislave.triggerPollTopic)" color="primary">
                       <mat-icon>content_copy</mat-icon>
                     </button>
                     </div>
                     <h2>Command Topics</h2>
                     <dl>
-                      <ng-container *ngFor="let commandEntity of tAndP.commandTopics">
+                      <ng-container *ngFor="let commandEntity of uislave.commandTopics">
                         <dt> {{getSpecEntityName(uislave.slave, commandEntity.entityId)}}</dt>
                         <dd>{{  commandEntity.commandTopic}}
                           <button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
@@ -168,7 +167,6 @@
                   </ng-container>
                         
                     </dl>
-                      </ng-container>
                 
               </mat-expansion-panel>
               <mat-expansion-panel *ngIf="uislave.slave.specificationid as specid">
