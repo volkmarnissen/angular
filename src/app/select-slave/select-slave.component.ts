@@ -237,7 +237,8 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     iident: IidentificationSpecification[],
   ): any {
     let o: any = {};
-
+      if( !iident)
+        return o;
       o.commandTopics = [];
       if(!uiSlave.slave || (uiSlave.slave as Islave).specification == undefined)
         return {};
@@ -503,13 +504,12 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     }
   }
 
-  private static controllers:string[]=["name","rootTopic","pollInterval", "pollMode","qos", ""]
+  private static controllers:string[]=["name","rootTopic","pollInterval", "pollMode","qos", "noDiscovery"]
   saveSlave(uiSlave:IuiSlave){
     SelectSlaveComponent.controllers.forEach(controller=>{
       SelectSlaveComponent.form2SlaveSetValue(uiSlave, controller)  
     })
     //SelectSlaveComponent.form2SlaveSetValue(uiSlave,"discoverEntitiesList")
-
     let spec:IidentificationSpecification = uiSlave.slaveForm.get("ispecs")!.value
     let selectedEntities:number[] = uiSlave.slaveForm.get("discoverEntitiesList")!.value
     if( spec ){

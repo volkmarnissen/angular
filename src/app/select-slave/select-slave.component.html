@@ -100,8 +100,7 @@
                     MQTT Topics
                   </mat-panel-title>
                 </mat-expansion-panel-header>
-                  <ng-container *ngIf="uislave.specs|async as iident">
-                  <ng-container *ngIf="getTopicAndPayloadForUiSlave( uislave,iident) as tAndP">
+                  <ng-container *ngIf="getTopicAndPayloadForUiSlave( uislave,uislave.specs ) as tAndP">
                     <h2>Quality of Service</h2>
                     <mat-form-field class="width200pt">
                       <mat-label>Quality of Service</mat-label>
@@ -170,7 +169,6 @@
                         
                     </dl>
                       </ng-container>
-                  </ng-container>
                 
               </mat-expansion-panel>
               <mat-expansion-panel *ngIf="uislave.slave.specificationid as specid">
