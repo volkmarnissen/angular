@@ -15,6 +15,8 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from "@angular/forms";
+import {MatListModule} from '@angular/material/list';
+
 import { ApiService } from "../services/api-service";
 import {
   getCurrentLanguage,
@@ -50,6 +52,8 @@ import {
   MatExpansionPanel,
   MatExpansionPanelHeader,
   MatExpansionPanelTitle,
+  
+
 } from "@angular/material/expansion";
 import { MatOption } from "@angular/material/core";
 import { MatSelect, MatSelectChange } from "@angular/material/select";
@@ -72,11 +76,13 @@ import { MatSlideToggle } from "@angular/material/slide-toggle";
 interface IuiSlave {
   slave: Islave;
   label: string;
-  specs: Observable<IidentificationSpecification[]>;
+  specsObservable: Observable<IidentificationSpecification[]>;
+  specs?:IidentificationSpecification[];
   slaveForm: FormGroup;
   commandEntities?: ImodbusEntity[];
   stateTopic?: string;
   statePayload?: string;
+  selectedEntitites?:any; 
 }
 
 @Component({
@@ -103,6 +109,7 @@ interface IuiSlave {
     MatCardContent,
     MatFormField,
     MatLabel,
+    MatListModule,
     MatSelect,
     MatOption,
     MatExpansionPanel,
@@ -182,11 +189,11 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   }
   private fillSpecs(
     detectSpec: boolean | undefined,
-    fg: FormGroup,
+    uiSlave: IuiSlave,
     slave: Islave,
     spec: IidentificationSpecification[],
   ): IidentificationSpecification[] {
-    let fc: FormControl = fg.get(["ispecs"]) as FormControl;
+    let fc: FormControl = uiSlave.slaveForm.get(["ispecs"]) as FormControl;
     let slaveSpec = spec.find((s) => s.configuredSlave != undefined);
     let identifiedCount = 0;
     let ispec: IidentificationSpecification | null = null;
@@ -202,13 +209,11 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
           slave.specificationid = (
             ispec as IidentificationSpecification
           ).filename;
-          this.onSelectionChange(slave);
           fc.setValue(ispec);
         }
       }
     }
     fc.setValue(slaveSpec);
-
     return spec;
   }
   private updateSlaves(bus: IBus, detectSpec?: boolean) {
@@ -258,12 +263,8 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       }
     return o;
   }
-
-  getUiSlave(slave: Islave, detectSpec: boolean | undefined): IuiSlave {
-    let fg = this.initiateSlaveControl(slave, null);
-    return {
-      slave: slave,
-      specs: this.entityApiService
+  getSpecs(slave: Islave, detectSpec: boolean | undefined, uiSlave:IuiSlave):Observable<IidentificationSpecification[]>{
+    return this.entityApiService
         .getSpecsForSlave(
           this.bus!.busId!,
           slave.slaveid,
@@ -271,12 +272,21 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
         )
         .pipe(
           map((iident) => {
-            return this.fillSpecs.bind(this)(detectSpec, fg, slave, iident);
+            uiSlave.specs = iident
+            return this.fillSpecs.bind(this)(detectSpec, uiSlave, slave, iident);
           }),
-        ),
+        )
+  }
+  getUiSlave(slave: Islave, detectSpec: boolean | undefined): IuiSlave {
+    let fg = this.initiateSlaveControl(slave, null);
+    let rc:IuiSlave = {
+      slave: slave,
       label: this.getSlaveName(slave),
       slaveForm: fg,
-    };
+      selectedEntitites: this.getSelectedEntites(slave)
+    } as any;
+    rc.specsObservable= this.getSpecs(slave,detectSpec,rc)
+    return rc;
   }
   updateUiSlaves(slave: Islave, detectSpec: boolean | undefined): void {
     let idx = this.uiSlaves.findIndex((s) => s.slave.slaveid == slave.slaveid);
@@ -295,13 +305,6 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     this.paramsSubscription.unsubscribe();
   }
 
-  onSelectionChange(slave: Islave) {
-    this.entityApiService
-      .postSlave(this.bus!.busId, slave)
-      .subscribe((slave) => {
-        this.updateUiSlaves(slave, false);
-      });
-  }
   showUnmatched() {
     this.showAllPublicSpecs.value;
     this.updateSlaves(this.bus, false);
@@ -322,60 +325,78 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     if (identified == 1) return "thumb_up";
     return "thumb_down";
   }
-  toBaseSpecification(
+  toSpecification(
     spec: IidentificationSpecification | null | undefined,
-  ): IbaseSpecification | undefined {
+  ): ImodbusSpecification | undefined {
     if (spec)
       return {
         filename: spec.filename,
         i18n: spec.i18n,
         status: spec.status,
         files: spec.files,
+        entities: spec.entities,
+        identified : spec.identified,
       };
     return undefined;
   }
-  onSpecificationChange(
-    slave: Islave | null,
-    event: IidentificationSpecification,
-  ) {
-    if (slave != null) {
-      if (event == null) {
-        delete slave.specification;
-        delete slave.specificationid;
+  onSpecificationChange(uiSlave:IuiSlave )
+ {
+    let spec:IidentificationSpecification = uiSlave.slaveForm.get("ispecs")!.value
+    if (uiSlave.slave != null) {
+      if (spec == null) {
+        delete uiSlave.slave.specification;
+        delete uiSlave.slave.specificationid;
       } else {
-        slave.specification = this.toBaseSpecification(event);
-        slave.specificationid = event.filename;
-      }
-
-      if (this.bus)
-        this.entityApiService
-          .postSlave(this.bus.busId, slave)
-          .subscribe((slave) => {
-            this.updateUiSlaves(slave, false);
-          });
+        uiSlave.slave.specification = this.toSpecification(spec);
+        uiSlave.slave.specificationid = spec.filename;
+        uiSlave.slave.noDiscoverEntities = []
+        uiSlave.selectedEntitites = this.getSelectedEntites(uiSlave.slave)
+        uiSlave.slaveForm.get("discoverEntitiesList")!.setValue(this.buildDiscoverEntityList(uiSlave.slave))
+        uiSlave.slaveForm.get("noDiscovery")!.setValue(uiSlave.slave.noDiscovery )
+      }      
     }
+  }
+    buildDiscoverEntityList(slave:Islave):number[]{
+    let rc:number[] = [];
+    if( slave && slave.specification && (slave.specification as ImodbusSpecification).entities)
+      (slave.specification as ImodbusSpecification).entities.forEach(e=>{
+        if(slave.noDiscoverEntities == undefined  ? true:!slave.noDiscoverEntities.includes( e.id))
+          rc.push(e.id)
+      })
+    return rc
+  }
+  private slave2Form( slave:Islave, fg:FormGroup){
+    fg.get("name")!.setValue((slave.name ? slave.name : null) as string | null)
+    fg.get("pollInterval")!.setValue([slave.pollInterval ? slave.pollInterval : 1000] )
+    fg.get("pollMode")!.setValue(slave.pollMode == undefined ? PollModes.intervall : slave.pollMode )
+    fg.get("qos")!.setValue(slave.qos ?slave.qos: -1 )
+    fg.get("discoverEntitiesList")!.setValue(this.buildDiscoverEntityList(slave) )
+    if( slave.noDiscovery )
+      fg.get("discoverEntitiesList")!.disable()
+    else
+      fg.get("discoverEntitiesList")!.enable()
   }
 
   initiateSlaveControl(
     slave: Islave,
     defaultValue: IidentificationSpecification | null,
   ): FormGroup {
-    if (slave.slaveid >= 0)
-      return this._formBuilder.group({
+    if (slave.slaveid >= 0){
+      let fg =  this._formBuilder.group({
         hiddenSlaveId: [slave.slaveid],
         ispecs: [defaultValue],
-        name: [
-          (slave.name ? slave.name : null) as string | null,
-          this.uniqueNameValidator.bind(this, slave.slaveid),
-        ],
-        pollInterval: [slave.polInterval ? slave.polInterval : 1000],
-        pollMode: [
-          slave.pollMode == undefined ? PollModes.intervall : slave.pollMode,
-        ],
-        qos: [ slave.qos ?slave.qos:-1],
+        name: [slave.name],
+        pollInterval: [slave.pollInterval],
+        pollMode: [slave.pollMode],
+        qos: [ slave.qos ],
         rootTopic: [ slave.rootTopic],
         showUrl:[false],
+        noDiscovery:[false],
+        discoverEntitiesList:[[]]
       });
+      this.slave2Form(slave,fg )
+      return fg
+    }
     else
       return this._formBuilder.group({
         slaveId: [null],
@@ -467,42 +488,61 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
           this.updateSlaves(this.bus, detectSpec);
         });
   }
+  private static form2SlaveSetValue( uiSlave:IuiSlave, controlname:string){
+    let val:any = uiSlave.slaveForm.get(controlname)!.value;
+    (uiSlave.slave as any)[controlname] = val == null? undefined:val
+  }
+  private static slave2FormSetValue( uiSlave:IuiSlave, controlname:string){
+    uiSlave.slaveForm.get(controlname)!.setValue((uiSlave.slave as any)[controlname])
+    let fc: FormControl = uiSlave.slaveForm.get(["ispecs"]) as FormControl;
+    if( uiSlave.specs){
+      let slaveSpec = uiSlave.specs.find((s) => s.configuredSlave != undefined);
+      if( slaveSpec)
+        fc.setValue(slaveSpec)
+    }
+  }
 
-  setSlaveName(event: Event, slave: Islave) {
-    slave.name = (event.target as HTMLInputElement).value;
-    this.entityApiService.postSlave(this.bus!.busId, slave).subscribe(() => {
-      this.updateUiSlaveData(slave);
-    });
+  private static controllers:string[]=["name","rootTopic","pollInterval", "pollMode","qos", "noDiscovery"]
+  saveSlave(uiSlave:IuiSlave){
+    SelectSlaveComponent.controllers.forEach(controller=>{
+      SelectSlaveComponent.form2SlaveSetValue(uiSlave, controller)  
+    })
+    //SelectSlaveComponent.form2SlaveSetValue(uiSlave,"discoverEntitiesList")
+
+    let spec:IidentificationSpecification = uiSlave.slaveForm.get("ispecs")!.value
+    let selectedEntities:number[] = uiSlave.slaveForm.get("discoverEntitiesList")!.value
+    if( spec ){
+      uiSlave.slave.specification = this.toSpecification(spec);
+      uiSlave.slave.specificationid = spec.filename;
+      uiSlave.slave.noDiscoverEntities = []
+      if( selectedEntities ){
+        spec.entities.forEach(e=>{ 
+          if( !selectedEntities.includes(e.id))
+            uiSlave.slave.noDiscoverEntities!.push(e.id)
+        })
+      }
+    }
+    
+    if (this.bus)
+      this.entityApiService
+            .postSlave(this.bus.busId, uiSlave.slave)
+            .subscribe((slave) => {
+              this.updateUiSlaves(slave, false);
+            });
   }
-  setSlaveRootTopic(event: Event, slave: Islave) {
-    slave.rootTopic = (event.target as HTMLInputElement).value;
-    this.entityApiService.postSlave(this.bus!.busId, slave).subscribe(() => {
-      this.updateUiSlaveData(slave);
-    });
-  }
-  setSlaveQos( slave: Islave, event: MatSelectChange) {
-  let qos = event.value
-    if( !qos || qos == -1)
-      delete slave.qos
-    else
-      slave.qos = qos
-    this.entityApiService.postSlave(this.bus!.busId, slave).subscribe(() => {
-      this.updateUiSlaveData(slave);
-    });
-  }
-  setPolInterval(event: Event, slave: Islave) {
-    slave.polInterval = parseInt((event.target as HTMLInputElement).value);
-    this.entityApiService.postSlave(this.bus!.busId, slave).subscribe(() => {
-      this.updateUiSlaveData(slave);
-    });
-  }
-  setPollMode(event: any, uislave: IuiSlave) {
-    uislave.slave.pollMode = event.value;
-    this.entityApiService
-      .postSlave(this.bus!.busId, uislave.slave)
-      .subscribe(() => {
-        uislave.slaveForm.updateValueAndValidity();
-      });
+  cancelSlave(uiSlave:IuiSlave){
+    uiSlave.slaveForm.reset()
+    SelectSlaveComponent.controllers.forEach(controlname=>{
+      uiSlave.slaveForm.get(controlname)!.setValue((uiSlave.slave as any)[controlname])
+    })
+    if( uiSlave.specs)
+    {
+      let slaveSpec = uiSlave.specs.find(s=>s.configuredSlave != undefined)
+      uiSlave.slaveForm.get("ispecs")!.setValue( slaveSpec)  
+    }
+
+    this.slave2Form(uiSlave.slave, uiSlave.slaveForm)
+  
   }
 
   getSpecificationI18nName(
@@ -547,6 +587,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     if (this.bus) {
       slave.specification = undefined;
       slave.specificationid = undefined;
+
       this.editSpecification(slave);
     }
   }
@@ -590,5 +631,32 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   }
   copy2Clipboard(text: string) {
     this.clipboard.copy(text);
+  }
+  getSelectedEntites(slave:Islave):{id: number, name:string}[]{
+    let rc:{id: number, name:string}[] = [];
+    if( slave && slave.specification && (slave.specification as ImodbusSpecification).entities)
+      (slave.specification as ImodbusSpecification).entities.forEach(e=>{
+      let name = getSpecificationI18nEntityName(slave.specification as ImodbusSpecification,this.currentLanguage,e.id)
+      rc.push( { id: e.id, name: name?name: "" })
+    })
+    return rc
+  }
+  needsSaving(idx: number): boolean {
+    let fg = this.uiSlaves[idx].slaveForm;
+    return fg == undefined || fg.touched;
+  }
+  getNoDiscoveryText(uiSlave:IuiSlave){
+    if( uiSlave.slaveForm.get("noDiscovery")!.value )
+      return "Discovery is disabled for the complete slave."
+    else
+      return "Discovery is enabled for the complete slave."
+
+  }
+  disableDiscoverEntitiesList(uiSlave:IuiSlave, disable:boolean){
+    if( uiSlave.slaveForm.get("noDiscovery")!.value)
+      uiSlave.slaveForm.get("discoverEntitiesList")!.disable()
+    else
+      uiSlave.slaveForm.get("discoverEntitiesList")!.enable()
+
   }
 }
