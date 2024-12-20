@@ -370,6 +370,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     fg.get("pollInterval")!.setValue([slave.pollInterval ? slave.pollInterval : 1000] )
     fg.get("pollMode")!.setValue(slave.pollMode == undefined ? PollModes.intervall : slave.pollMode )
     fg.get("qos")!.setValue(slave.qos ?slave.qos: -1 )
+    fg.get("noDiscovery")!.setValue(slave.noDiscovery ?slave.noDiscovery: false )
     fg.get("discoverEntitiesList")!.setValue(this.buildDiscoverEntityList(slave) )
     if( slave.noDiscovery )
       fg.get("discoverEntitiesList")!.disable()
@@ -502,7 +503,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     }
   }
 
-  private static controllers:string[]=["name","rootTopic","pollInterval", "pollMode","qos", "noDiscovery"]
+  private static controllers:string[]=["name","rootTopic","pollInterval", "pollMode","qos", ""]
   saveSlave(uiSlave:IuiSlave){
     SelectSlaveComponent.controllers.forEach(controller=>{
       SelectSlaveComponent.form2SlaveSetValue(uiSlave, controller)  
