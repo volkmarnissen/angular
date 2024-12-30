@@ -88,36 +88,36 @@ import { MatTooltip } from "@angular/material/tooltip";
 import { MatIconButton } from "@angular/material/button";
 
 @Component({
-    selector: "app-specification",
-    templateUrl: "./specification.component.html",
-    styleUrls: ["./specification.component.css"],
-    encapsulation: ViewEncapsulation.None,
-    standalone: true,
-    imports: [
-        MatIconButton,
-        MatTooltip,
-        MatIcon,
-        NgIf,
-        MatCard,
-        MatCardHeader,
-        MatCardTitle,
-        MatCardContent,
-        NgFor,
-        MatList,
-        MatListItem,
-        RouterLink,
-        MatExpansionPanel,
-        MatExpansionPanelHeader,
-        MatExpansionPanelTitle,
-        UploadFilesComponent,
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormField,
-        MatLabel,
-        MatInput,
-        TranslationComponent,
-        EntityComponent,
-    ]
+  selector: "app-specification",
+  templateUrl: "./specification.component.html",
+  styleUrls: ["./specification.component.css"],
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [
+    MatIconButton,
+    MatTooltip,
+    MatIcon,
+    NgIf,
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardContent,
+    NgFor,
+    MatList,
+    MatListItem,
+    RouterLink,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    UploadFilesComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    TranslationComponent,
+    EntityComponent,
+  ],
 })
 export class SpecificationComponent
   extends SessionStorage
@@ -244,7 +244,7 @@ export class SpecificationComponent
             )
             .pipe(
               map((e) => {
-                this.setValidationMessages()
+                this.setValidationMessages();
                 return {
                   id: e.id,
                   modbusValue: e.modbusValue,
@@ -261,14 +261,21 @@ export class SpecificationComponent
         let idx = s.entities.findIndex((e) => e.id == entity.id);
         if (idx >= 0) s.entities[idx] = entity;
         else s.entities.push(entity);
-        return this.entityApiService.postModbusWriteMqtt(
-          s,
-          entity.id,
-          this.busId,
-          this.slaveid,
-          this.config.mqttdiscoverylanguage,
-          value,
-        ).pipe(map((v)=>{ this.setValidationMessages() ;return v}));
+        return this.entityApiService
+          .postModbusWriteMqtt(
+            s,
+            entity.id,
+            this.busId,
+            this.slaveid,
+            this.config.mqttdiscoverylanguage,
+            value,
+          )
+          .pipe(
+            map((v) => {
+              this.setValidationMessages();
+              return v;
+            }),
+          );
       },
       getNonVariableNumberEntities: () => {
         let rc: ImodbusEntity[] = [];
@@ -738,7 +745,7 @@ export class SpecificationComponent
   }
 
   isValid(): boolean {
-    if (this.currentSpecification ) {
+    if (this.currentSpecification) {
       return this.validationForms.valid;
     }
     return false;

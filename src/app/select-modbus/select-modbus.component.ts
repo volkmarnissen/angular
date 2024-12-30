@@ -52,29 +52,29 @@ import {
 import { NgFor, NgIf } from "@angular/common";
 
 @Component({
-    selector: "app-select-modbus",
-    templateUrl: "./select-modbus.component.html",
-    styleUrls: ["./select-modbus.component.css"],
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        NgFor,
-        MatCard,
-        MatCardHeader,
-        MatCardTitle,
-        MatTooltip,
-        NgIf,
-        MatIconButton,
-        MatIcon,
-        MatCardContent,
-        MatTabGroup,
-        MatTab,
-        MatFormField,
-        MatLabel,
-        MatInput,
-        MatSelect,
-        MatOption,
-    ]
+  selector: "app-select-modbus",
+  templateUrl: "./select-modbus.component.html",
+  styleUrls: ["./select-modbus.component.css"],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    NgFor,
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatTooltip,
+    NgIf,
+    MatIconButton,
+    MatIcon,
+    MatCardContent,
+    MatTabGroup,
+    MatTab,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatSelect,
+    MatOption,
+  ],
 })
 export class SelectModbusComponent implements AfterViewInit, OnDestroy {
   constructor(

@@ -73,7 +73,7 @@ export class ApiService {
 
     let f: string =
       this.getFullUri(apiUri.specfication) + `?spec=${specification}`;
-     return this.httpClient.get<Ispecification>(f); // No error Handling!!!
+    return this.httpClient.get<Ispecification>(f); // No error Handling!!!
   }
 
   getModbusSpecification(
@@ -210,16 +210,17 @@ export class ApiService {
         }),
       );
   }
-  postUserRegister(username: string| undefined, password: string| undefined, noAuthentication:boolean): Observable<void> {
+  postUserRegister(
+    username: string | undefined,
+    password: string | undefined,
+    noAuthentication: boolean,
+  ): Observable<void> {
     return this.httpClient
-      .post<void>(
-        this.getFullUri(apiUri.userRegister) ,
-        {
-            username: username,
-            password:password,
-            noAuthentication:noAuthentication
-        }          
-      )
+      .post<void>(this.getFullUri(apiUri.userRegister), {
+        username: username,
+        password: password,
+        noAuthentication: noAuthentication,
+      })
       .pipe(
         catchError((err) => {
           this.errorHandler(err);

@@ -140,26 +140,26 @@
                     </div>
                     <h2>State Payload Example</h2>
                     <textarea id="w3review" name="w3review" rows="10" cols="20">
-                      {{uislave.statePayload ?uislave.statePayload:""}}
+                      {{getStatePayload(uislave)}}
                     </textarea>
                     <h2 *ngIf="[1,2].includes(uislave.slaveForm.get('pollMode')!.value)">Trigger Poll Topic</h2>
                     <div *ngIf="[1,2].includes(uislave.slaveForm.get('pollMode')!.value)">
-                      {{uislave.triggerPollTopic }}<button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
-                      matTooltip="Copy to Clipboard" (click)="copy2Clipboard(uislave.triggerPollTopic)" color="primary">
+                      {{getTriggerPollTopic(uislave) }}<button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
+                      matTooltip="Copy to Clipboard" (click)="copy2Clipboard(getTriggerPollTopic(uislave))" color="primary">
                       <mat-icon>content_copy</mat-icon>
                     </button>
                     </div>
                     <h2>Command Topics</h2>
                     <dl>
-                      <ng-container *ngFor="let commandEntity of uislave.commandTopics">
+                      <ng-container *ngFor="let commandEntity of uislave.commandEntities">
                         <dt> {{getSpecEntityName(uislave.slave, commandEntity.entityId)}}</dt>
-                        <dd>{{  commandEntity.commandTopic}}
+                        <dd>{{ getCommandTopic( uislave, commandEntity )}}
                           <button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
-                           (click)="copy2Clipboard(commandEntity.commandTopic)" color="primary">
+                           (click)="copy2Clipboard(getCommandTopic( uislave, commandEntity ))" color="primary">
                           <mat-icon>content_copy</mat-icon>
                       </button>
                      </dd>
-                      <dd *ngIf="commandEntity.modbusCommandTopic">.../set/modbus/
+                      <dd *ngIf="getModbusCommandTopic( uislave, commandEntity ) != '' ">.../set/modbus/
                         <!--<button mat-icon-button matTooltipClass="tooltip-class" mat-small-icon-button class="material-icons app-toolbar-menu save-button"
                          (click)="copy2Clipboard(commandEntity.modbusCommandTopic)" color="primary">
                         <mat-icon>content_copy</mat-icon>
