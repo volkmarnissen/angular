@@ -70,6 +70,7 @@ export class ConfigureComponent implements OnInit {
     private router: Router,
   ) {
     this.ghPersonalAccessToken = _formBuilder.control([""]);
+    this.debugComponentsFormControl = _formBuilder.control([""]);
   }
   private requiredInNonAddonScenario: ValidatorFn = (
     control: AbstractControl,
@@ -89,6 +90,7 @@ export class ConfigureComponent implements OnInit {
         !this.authStatus.hassiotoken) ||
       (this.configureMqttFormGroup.pristine &&
         this.ghPersonalAccessToken.pristine &&
+        this.debugComponentsFormControl.pristine &&
         this.discoveryLanguageFormControl.pristine)
     );
   }
@@ -107,6 +109,7 @@ export class ConfigureComponent implements OnInit {
     mqttcafile: [null as string | null],
   });
   ghPersonalAccessToken: FormControl;
+  debugComponentsFormControl: FormControl;
   discoveryLanguageFormControl = new FormControl<string | null>(null);
   connectMessage: string = "";
   ngOnInit(): void {
@@ -132,6 +135,12 @@ export class ConfigureComponent implements OnInit {
           config.mqttdiscoverylanguage,
         );
       }
+      if (config.debugComponents) {
+        this.debugComponentsFormControl!.setValue(
+          config.debugComponents
+        );
+      }
+
       this.entityApiService.getSslFiles().subscribe((rc) => {
         this.sslFiles = rc;
       });
@@ -196,7 +205,12 @@ export class ConfigureComponent implements OnInit {
       this.ghPersonalAccessToken &&
       this.ghPersonalAccessToken.value.length > 0
     )
-      this.config.githubPersonalToken = this.ghPersonalAccessToken.value;
+    this.config.githubPersonalToken = this.ghPersonalAccessToken.value;
+    if (
+      this.debugComponentsFormControl &&
+      this.debugComponentsFormControl.value.length > 0
+    )
+    this.config.debugComponents = this.debugComponentsFormControl.value;
     this.entityApiService.postConfiguration(this.config).subscribe(() => {
       this.close();
     });
