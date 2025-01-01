@@ -32,23 +32,23 @@ import { MatFormField, MatLabel, MatError } from "@angular/material/form-field";
 import { NgIf, NgFor } from "@angular/common";
 
 @Component({
-    selector: "app-entity-value-control",
-    templateUrl: "./entity-value-control.component.html",
-    styleUrl: "./entity-value-control.component.css",
-    standalone: true,
-    imports: [
-        NgIf,
-        MatFormField,
-        MatLabel,
-        MatInput,
-        FormsModule,
-        ReactiveFormsModule,
-        MatError,
-        MatSelect,
-        NgFor,
-        MatOption,
-        MatSlideToggle,
-    ]
+  selector: "app-entity-value-control",
+  templateUrl: "./entity-value-control.component.html",
+  styleUrl: "./entity-value-control.component.css",
+  standalone: true,
+  imports: [
+    NgIf,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    ReactiveFormsModule,
+    MatError,
+    MatSelect,
+    NgFor,
+    MatOption,
+    MatSlideToggle,
+  ],
 })
 export class EntityValueControlComponent
   implements OnInit, OnDestroy, OnChanges
@@ -60,10 +60,10 @@ export class EntityValueControlComponent
   entityName: string;
   sub: Subscription | undefined;
   constructor() {}
-  step:number| undefined = undefined
-  min:number| undefined = undefined
-  max:number| undefined = undefined
-  
+  step: number | undefined = undefined;
+  min: number | undefined = undefined;
+  max: number | undefined = undefined;
+
   optionsFormControl: FormControl<number | null> = new FormControl(null);
   numberFormControl: FormControl<number | null> = new FormControl(null);
   textFormControl: FormControl<string | null> = new FormControl(null);
@@ -119,7 +119,7 @@ export class EntityValueControlComponent
   }
 
   isSensor(): boolean {
-    return !this.entity|| this.entity.readonly;
+    return !this.entity || this.entity.readonly;
   }
   getConverterName(): string {
     return this.entity && this.entity.converter && this.entity.converter.name
@@ -145,8 +145,7 @@ export class EntityValueControlComponent
           if (this.entity.mqttValue != undefined)
             this.numberFormControl.setValue(this.getMqttValue() as number);
           let num = this.entity.converterParameters as Inumber;
-          if(num.step)
-            this.step = num.step
+          if (num.step) this.step = num.step;
           fc = this.numberFormControl;
           fc.clearValidators();
           if (num.identification != undefined && num.identification.min)

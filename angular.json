@@ -19,10 +19,7 @@
             },
             "localize": true,
             "index": "src/index.html",
-            "polyfills": [
-              "zone.js",
-              "@angular/localize/init"
-            ],
+            "polyfills": ["zone.js", "@angular/localize/init"],
             "tsConfig": "tsconfig.json",
             "assets": ["src/assets/images", "src/assets"],
             "styles": ["src/styles.css"],

@@ -1,68 +1,67 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "npm",
-			"script": "ng",
-			"problemMatcher": [],
-			"label": "npm: ng",
-			"detail": "ng"
-		},
-		{
-			"type": "npm",
-			"script": "build",
-			"group": "build",
-			"problemMatcher": [],
-			"label": "npm: build",
-			"detail": "ng build "
-		},
-		{
-			"type": "npm",
-			"script": "build.ui.dev",
-			"group": "build",
-			"problemMatcher": [],
-			"label": "npm: build.ui.dev",
-			"detail": "ng build --configuration development"
-		},
-		{
-			"type": "npm",
-			"script": "test-debug",
-			"problemMatcher": [],
-			"label": "npm: test-debug",
-			"detail": "ng test --browsers ChromeDebug --karma-config ./karma.conf.ts"
-		},
-		{
-			"type": "npm",
-			"script": "start",
-			"problemMatcher": [
-				{
-				  "base": "$tsc",
-				  "pattern": {
-					"regexp": "^(Error:\\s+)?([^:]*):(\\d+)[,:](\\d+)\\s-\\s(error|warning|info)\\s+TS(\\d+)\\s*:\\s*(.*)$",
-					"file": 2,
-					"line": 3,
-					"column": 4,
-					"severity": 5,
-					"code": 6,
-					"message": 7
-				  }
-				},
-				{
-				  "owner": "typescript",
-				  "pattern": "$tsc",
-				  "background": {
-					"activeOnStart": true,
-					"beginsPattern": {
-					  "regexp": "(.*?)"
-					},
-					"endsPattern": {
-					  "regexp": "bundle generation complete"
-					}
-				  }
-				}
-			  ],
-			"isBackground": true
-		}
-
-	]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "ng",
+      "problemMatcher": [],
+      "label": "npm: ng",
+      "detail": "ng"
+    },
+    {
+      "type": "npm",
+      "script": "build",
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: build",
+      "detail": "ng build "
+    },
+    {
+      "type": "npm",
+      "script": "build.ui.dev",
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: build.ui.dev",
+      "detail": "ng build --configuration development"
+    },
+    {
+      "type": "npm",
+      "script": "test-debug",
+      "problemMatcher": [],
+      "label": "npm: test-debug",
+      "detail": "ng test --browsers ChromeDebug --karma-config ./karma.conf.ts"
+    },
+    {
+      "type": "npm",
+      "script": "start",
+      "problemMatcher": [
+        {
+          "base": "$tsc",
+          "pattern": {
+            "regexp": "^(Error:\\s+)?([^:]*):(\\d+)[,:](\\d+)\\s-\\s(error|warning|info)\\s+TS(\\d+)\\s*:\\s*(.*)$",
+            "file": 2,
+            "line": 3,
+            "column": 4,
+            "severity": 5,
+            "code": 6,
+            "message": 7
+          }
+        },
+        {
+          "owner": "typescript",
+          "pattern": "$tsc",
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": {
+              "regexp": "(.*?)"
+            },
+            "endsPattern": {
+              "regexp": "bundle generation complete"
+            }
+          }
+        }
+      ],
+      "isBackground": true
+    }
+  ]
 }

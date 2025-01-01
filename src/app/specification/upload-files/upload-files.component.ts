@@ -8,7 +8,13 @@ import {
   EventEmitter,
   OnInit,
 } from "@angular/core";
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from "@angular/forms";
 import { GalleryItem, ImageItem, GalleryComponent } from "ng-gallery";
 import {
   IimageAndDocumentUrl,
@@ -35,37 +41,40 @@ import {
 } from "@angular/material/expansion";
 
 @Component({
-    selector: "app-upload-files",
-    templateUrl: "./upload-files.component.html",
-    styleUrl: "./upload-files.component.css",
-    standalone:true,
-    imports: [
-        MatAccordion,
-        MatExpansionPanel,
-        MatExpansionPanelHeader,
-        MatExpansionPanelTitle,
-        NgClass,
-        MatExpansionPanelDescription,
-        DragndropDirective,
-        NgIf,
-        NgFor,
-        MatIconButton,
-        MatTooltip,
-        MatIcon,
-        MatFormField,
-        MatLabel,
-        MatInput,
-        FormsModule,
-        ReactiveFormsModule,
-        GalleryComponent,
-    ]
+  selector: "app-upload-files",
+  templateUrl: "./upload-files.component.html",
+  styleUrl: "./upload-files.component.css",
+  standalone: true,
+  imports: [
+    MatAccordion,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    NgClass,
+    MatExpansionPanelDescription,
+    DragndropDirective,
+    NgIf,
+    NgFor,
+    MatIconButton,
+    MatTooltip,
+    MatIcon,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    ReactiveFormsModule,
+    GalleryComponent,
+  ],
 })
-export class UploadFilesComponent implements OnInit,OnChanges {
-  constructor(private entityApiService: ApiService, private fb:FormBuilder) {}
+export class UploadFilesComponent implements OnInit, OnChanges {
+  constructor(
+    private entityApiService: ApiService,
+    private fb: FormBuilder,
+  ) {}
   @Input("specification") currentSpecification: ImodbusSpecification | null;
-  uploadFilesForm: FormGroup
-  urlDocumentControl: FormControl<string | null> ;
-  urlImageControl: FormControl<string | null> ;
+  uploadFilesForm: FormGroup;
+  urlDocumentControl: FormControl<string | null>;
+  urlImageControl: FormControl<string | null>;
   @Output()
   updateDocumentation = new EventEmitter<IimageAndDocumentUrl[]>();
 
@@ -77,8 +86,8 @@ export class UploadFilesComponent implements OnInit,OnChanges {
   imageUrls: IimageAndDocumentUrl[] = [];
   documentUrls: IimageAndDocumentUrl[] = [];
   ngOnChanges(): void {
-    this.generateDocumentUrls()
-    this.generateImageGalleryItems()
+    this.generateDocumentUrls();
+    this.generateImageGalleryItems();
     if (this.addImageUrlButton) this.addImageUrlButton.disabled = true;
     if (this.addDocumentUrlButton) this.addDocumentUrlButton.disabled = true;
   }
@@ -86,10 +95,12 @@ export class UploadFilesComponent implements OnInit,OnChanges {
     this.uploadFilesForm = this.fb.group({
       urlDocument: [null as string | null],
       urlImage: [null as string | null],
-    })
-  this.urlDocumentControl = this.uploadFilesForm.get("urlDocument") as FormControl
-  this.urlImageControl = this.uploadFilesForm.get("urlImage") as FormControl
-  this.generateDocumentUrls()
+    });
+    this.urlDocumentControl = this.uploadFilesForm.get(
+      "urlDocument",
+    ) as FormControl;
+    this.urlImageControl = this.uploadFilesForm.get("urlImage") as FormControl;
+    this.generateDocumentUrls();
   }
   private fileBrowseHandler(
     input: EventTarget | null,
@@ -160,13 +171,17 @@ export class UploadFilesComponent implements OnInit,OnChanges {
       let found = this.currentSpecification.files.find((f) => f.url == url);
       if (!found) {
         this.entityApiService
-          .postAddFilesUrl(this.currentSpecification.status == SpecificationStatus.new? "_new" : this.currentSpecification.filename, {
-            url: url,
-            fileLocation: FileLocation.Global,
-            usage: usage,
-          })
+          .postAddFilesUrl(
+            this.currentSpecification.status == SpecificationStatus.new
+              ? "_new"
+              : this.currentSpecification.filename,
+            {
+              url: url,
+              fileLocation: FileLocation.Global,
+              usage: usage,
+            },
+          )
           .subscribe((files) => {
-
             this.currentSpecification!.files = files as IimageAndDocumentUrl[];
             if (usage == SpecificationFileUsage.img)
               this.generateImageGalleryItems();
@@ -177,14 +192,14 @@ export class UploadFilesComponent implements OnInit,OnChanges {
     }
   }
   addDocumentUrl() {
-    this.urlDocumentControl.updateValueAndValidity()
+    this.urlDocumentControl.updateValueAndValidity();
     this.addDocument(
       this.urlDocumentControl,
       SpecificationFileUsage.documentation,
     );
   }
   addImageUrl() {
-    this.urlImageControl.updateValueAndValidity()
+    this.urlImageControl.updateValueAndValidity();
     this.addDocument(this.urlImageControl, SpecificationFileUsage.img);
   }
   enableAddButton(event: Event, btn: MatIconButton) {
@@ -201,8 +216,7 @@ export class UploadFilesComponent implements OnInit,OnChanges {
         let doc = this.currentSpecification.files[i];
         if (doc.usage == SpecificationFileUsage.documentation) rc.push(doc);
       }
-    if( rc.length != this.documentUrls.length )
-      this.documentUrls = rc;
+    if (rc.length != this.documentUrls.length) this.documentUrls = rc;
   }
   generateImageGalleryItems(): void {
     let rc: GalleryItem[] = [];

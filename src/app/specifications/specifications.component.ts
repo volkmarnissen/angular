@@ -13,7 +13,10 @@ import {
   getSpecificationI18nName,
 } from "@modbus2mqtt/specification.shared";
 import { SpecificationServices } from "../services/specificationServices";
-import { Iconfiguration, IUserAuthenticationStatus } from "@modbus2mqtt/server.shared";
+import {
+  Iconfiguration,
+  IUserAuthenticationStatus,
+} from "@modbus2mqtt/server.shared";
 import { GalleryItem, ImageItem } from "ng-gallery";
 import { MatIcon } from "@angular/material/icon";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -35,28 +38,28 @@ interface ImodbusSpecificationWithMessages extends ImodbusSpecification {
 }
 
 @Component({
-    selector: "app-specifications",
-    templateUrl: "./specifications.component.html",
-    styleUrl: "./specifications.component.css",
-    imports: [
-        MatCard,
-        MatCardHeader,
-        MatCardTitle,
-        MatCardContent,
-        MatButton,
-        NgFor,
-        MatTooltip,
-        MatIcon,
-        MatIconButton,
-        NgIf,
-        NgClass,
-        InfoboxComponent,
-    ]
+  selector: "app-specifications",
+  templateUrl: "./specifications.component.html",
+  styleUrl: "./specifications.component.css",
+  imports: [
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardContent,
+    MatButton,
+    NgFor,
+    MatTooltip,
+    MatIcon,
+    MatIconButton,
+    NgIf,
+    NgClass,
+    InfoboxComponent,
+  ],
 })
 export class SpecificationsComponent implements OnInit {
   config: Iconfiguration;
   private specServices: SpecificationServices | undefined;
-  private authStatus:IUserAuthenticationStatus| undefined = undefined
+  private authStatus: IUserAuthenticationStatus | undefined = undefined;
   specifications: ImodbusSpecificationWithMessages[];
   galleryItems: Map<string, GalleryItem[]>;
   message: Subject<string> = new Subject<string>();
@@ -92,8 +95,8 @@ export class SpecificationsComponent implements OnInit {
   ngOnInit(): void {
     this.apiService.getConfiguration().subscribe((config) => {
       this.config = config;
-      this.apiService.getUserAuthenticationStatus().subscribe(authStatus=>{
-        this.authStatus = authStatus
+      this.apiService.getUserAuthenticationStatus().subscribe((authStatus) => {
+        this.authStatus = authStatus;
         this.specServices = new SpecificationServices(
           config.mqttdiscoverylanguage,
           this.apiService,
@@ -101,8 +104,7 @@ export class SpecificationsComponent implements OnInit {
         this.apiService
           .getSpecifications()
           .subscribe(this.fillSpecifications.bind(this));
-  
-      })
+      });
     });
   }
 
@@ -114,9 +116,11 @@ export class SpecificationsComponent implements OnInit {
   }
   deleteSpecification(spec: ImodbusSpecification) {
     if (
-      [SpecificationStatus.added, SpecificationStatus.new, SpecificationStatus.cloned].includes(
-        spec.status,
-      )
+      [
+        SpecificationStatus.added,
+        SpecificationStatus.new,
+        SpecificationStatus.cloned,
+      ].includes(spec.status)
     ) {
       if (
         confirm("Are you sure to delete " + this.getTranslatedSpecName(spec))
@@ -239,11 +243,9 @@ export class SpecificationsComponent implements OnInit {
   }
   generateDownloadLink(what: string): string {
     let url = "download/" + what;
-    if(!this.authStatus || this.authStatus.hassiotoken == undefined )
-    {
+    if (!this.authStatus || this.authStatus.hassiotoken == undefined) {
       let authToken = new SessionStorage().getAuthToken();
-      if (authToken) 
-        return authToken + "/" + url;  
+      if (authToken) return authToken + "/" + url;
     }
     return url;
   }

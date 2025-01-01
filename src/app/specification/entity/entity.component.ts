@@ -85,10 +85,11 @@ const optionMqttFormControlName = "optionMqtt";
 const variableTypeFormControlName = "variableType";
 const variableEntityFormControlName = "variableEntity";
 const mqttNameFormControlName = "mqttname";
-interface IdeviceClass { 
-  name:string, 
-  defaultuom?:string, 
-  uom?:string[] }
+interface IdeviceClass {
+  name: string;
+  defaultuom?: string;
+  uom?: string[];
+}
 const newEntity: ImodbusEntityWithName = {
   name: "",
   registerType: ModbusRegisterType.HoldingRegister,
@@ -107,38 +108,38 @@ const newEntity: ImodbusEntityWithName = {
   id: -1,
 };
 @Component({
-    selector: "app-entity",
-    templateUrl: "./entity.component.html",
-    styleUrl: "./entity.component.css",
-    standalone: true,
-    imports: [
-        MatCard,
-        MatCardHeader,
-        MatCardTitle,
-        NgIf,
-        MatIconButton,
-        MatTooltip,
-        MatIcon,
-        NgClass,
-        EntityValueControlComponent,
-        MatCardContent,
-        MatExpansionPanel,
-        MatExpansionPanelHeader,
-        MatExpansionPanelTitle,
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormField,
-        MatLabel,
-        MatInput,
-        MatError,
-        MatSlideToggle,
-        MatSelect,
-        NgFor,
-        MatOption,
-        CdkDropList,
-        CdkDrag,
-        AsyncPipe,
-    ]
+  selector: "app-entity",
+  templateUrl: "./entity.component.html",
+  styleUrl: "./entity.component.css",
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    NgIf,
+    MatIconButton,
+    MatTooltip,
+    MatIcon,
+    NgClass,
+    EntityValueControlComponent,
+    MatCardContent,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    MatSlideToggle,
+    MatSelect,
+    NgFor,
+    MatOption,
+    CdkDropList,
+    CdkDrag,
+    AsyncPipe,
+  ],
 })
 export class EntityComponent
   extends SessionStorage
@@ -243,14 +244,15 @@ export class EntityComponent
       stateClass: [null as EnumStateClasses | null],
       multiplier: [1, Validators.required],
       offset: [0, Validators.required],
-      decimals:[2],
+      decimals: [2],
       numberFormat: [EnumNumberFormat.default, Validators.required],
       uom: [null as string | null],
       min: [null as string | null],
       max: [null as string | null],
-      step: [null as string| null, Validators.compose([ Validators.min(0.001),
-        Validators.max(10000),
-      ])],
+      step: [
+        null as string | null,
+        Validators.compose([Validators.min(0.001), Validators.max(10000)]),
+      ],
     })),
       (this.stringPropertiesFormGroup = this.fb.group({
         identExpr: [null as string | null],
@@ -307,21 +309,30 @@ export class EntityComponent
   ngOnChanges(_changes: SimpleChanges) {
     this.generateEntityCopyToForm();
   }
-  private findUom(dc: IdeviceClass| undefined, uom:string| undefined):string| undefined{
-    if( dc && dc.uom && dc.defaultuom && (!uom || !dc.uom.includes(uom)))
-      return dc.defaultuom
-    return uom
+  private findUom(
+    dc: IdeviceClass | undefined,
+    uom: string | undefined,
+  ): string | undefined {
+    if (dc && dc.uom && dc.defaultuom && (!uom || !dc.uom.includes(uom)))
+      return dc.defaultuom;
+    return uom;
   }
-  getDeviceClass( deviceClassName:string| undefined ):IdeviceClass| undefined{
-    return EntityComponent.deviceClassesSensor.find(dc=>dc.name == deviceClassName)
+  getDeviceClass(
+    deviceClassName: string | undefined,
+  ): IdeviceClass | undefined {
+    return EntityComponent.deviceClassesSensor.find(
+      (dc) => dc.name == deviceClassName,
+    );
   }
-  deviceClassHasUoms():boolean{
-    if(!this.numberPropertiesFormGroup || !this.numberPropertiesFormGroup.get('deviceClass'))
-      return false
-    let dc =  this.numberPropertiesFormGroup.get('deviceClass')!.value
-    if(dc && dc.uom)
-      return true
-   return false
+  deviceClassHasUoms(): boolean {
+    if (
+      !this.numberPropertiesFormGroup ||
+      !this.numberPropertiesFormGroup.get("deviceClass")
+    )
+      return false;
+    let dc = this.numberPropertiesFormGroup.get("deviceClass")!.value;
+    if (dc && dc.uom) return true;
+    return false;
   }
 
   private copyEntityToForm(entity: ImodbusEntityWithName) {
@@ -441,14 +452,14 @@ export class EntityComponent
         this.numberPropertiesFormGroup
           .get("offset")!
           .setValue(np.offset ? np.offset : 0);
-          this.numberPropertiesFormGroup
+        this.numberPropertiesFormGroup
           .get("decimals")!
           .setValue(np.decimals != undefined ? np.decimals : -1);
-        let dc = this.getDeviceClass(np.device_class)
+        let dc = this.getDeviceClass(np.device_class);
         this.numberPropertiesFormGroup
           .get("deviceClass")!
           .setValue(dc ? dc : null);
-        np.uom = this.findUom(dc, np.uom)
+        np.uom = this.findUom(dc, np.uom);
         this.numberPropertiesFormGroup
           .get("uom")!
           .setValue(np.uom ? np.uom : null);
@@ -469,14 +480,10 @@ export class EntityComponent
               ? np.identification.min
               : null,
           );
-          if( !entity.readonly)
+        if (!entity.readonly)
           this.numberPropertiesFormGroup
-          .get("step")!
-          .setValue(
-            np.step && np.step !== undefined
-              ? np.step
-              : null,
-          );
+            .get("step")!
+            .setValue(np.step && np.step !== undefined ? np.step : null);
         this.numberPropertiesFormGroup
           .get("max")!
           .setValue(
@@ -537,8 +544,10 @@ export class EntityComponent
       return (this.entity.converterParameters as Iselect).options!;
     return [];
   }
-  getValueTemplate():string{
-    return this.entity.value_template ? this.entity.value_template: "{{ value_json." + this.entity.mqttname + "}}"
+  getValueTemplate(): string {
+    return this.entity.value_template
+      ? this.entity.value_template
+      : "{{ value_json." + this.entity.mqttname + "}}";
   }
   isTouched(): boolean {
     if (!this.entityFormGroup.pristine) return true;
@@ -678,7 +687,8 @@ export class EntityComponent
     if (this.entityFormGroup.get("forceUpdate")!.value != null)
       this.entity.forceUpdate = this.entityFormGroup.get("forceUpdate")!.value;
     if (this.entityFormGroup.get("value_template")!.value != null)
-      this.entity.value_template = this.entityFormGroup.get("value_template")!.value;
+      this.entity.value_template =
+        this.entityFormGroup.get("value_template")!.value;
     if (this.entityFormGroup.get("readonly")!.value != null)
       this.entity.readonly = this.entityFormGroup.get("readonly")!.value;
     if (
@@ -690,7 +700,6 @@ export class EntityComponent
     else delete this.entity.entityCategory;
     switch (this.getParameterTypeFromConverterFormControl()) {
       case "Inumber":
-          
         break;
     }
     this.setEntitiesTouched();
@@ -731,29 +740,27 @@ export class EntityComponent
           this.numberPropertiesFormGroup,
         );
         this.entity.converterParameters = {};
-        let enumber:Inumber = this.entity.converterParameters as Inumber
+        let enumber: Inumber = this.entity.converterParameters as Inumber;
         if (this.numberPropertiesFormGroup.get("multiplier")!.value != null)
           enumber.multiplier =
             this.numberPropertiesFormGroup.get("multiplier")!.value;
         else enumber.multiplier = 1;
 
         if (this.numberPropertiesFormGroup.get("offset")!.value != null)
-          enumber.offset =
-            this.numberPropertiesFormGroup.get("offset")!.value;
+          enumber.offset = this.numberPropertiesFormGroup.get("offset")!.value;
         else enumber.offset = 0;
         if (this.numberPropertiesFormGroup.get("decimals")!.value != null)
           enumber.decimals =
             this.numberPropertiesFormGroup.get("decimals")!.value;
-        else enumber.decimals = 2;        
+        else enumber.decimals = 2;
         if (this.numberPropertiesFormGroup.get("numberFormat")!.value != null)
           enumber.numberFormat =
             this.numberPropertiesFormGroup.get("numberFormat")!.value;
         let min = this.numberPropertiesFormGroup.get("min")!.value;
         let max = this.numberPropertiesFormGroup.get("max")!.value;
-        if(!this.entity.readonly ){
-          let val = this.numberPropertiesFormGroup.get("step")!.value
-          if( val )
-            enumber.step  = Number.parseFloat(val)
+        if (!this.entity.readonly) {
+          let val = this.numberPropertiesFormGroup.get("step")!.value;
+          if (val) enumber.step = Number.parseFloat(val);
         }
         if (min !== null && max !== null) {
           enumber.identification = {
@@ -768,12 +775,17 @@ export class EntityComponent
           enumber.state_class =
             this.numberPropertiesFormGroup.get("stateClass")!.value;
         // If there is a device class with a set of uoms, make sure, the uom is in the set
-        let dc = EntityComponent.deviceClassesSensor.find(dc=>dc.name == enumber.device_class)
-        let uomField = this.numberPropertiesFormGroup.get("uom")!.value != null? this.numberPropertiesFormGroup.get("uom")!.value:undefined
-        let uom = this.findUom(dc, uomField)
-        if(uom){
-          enumber.uom = uom
-          this.numberPropertiesFormGroup.get("uom")!.setValue( uom?uom:null)
+        let dc = EntityComponent.deviceClassesSensor.find(
+          (dc) => dc.name == enumber.device_class,
+        );
+        let uomField =
+          this.numberPropertiesFormGroup.get("uom")!.value != null
+            ? this.numberPropertiesFormGroup.get("uom")!.value
+            : undefined;
+        let uom = this.findUom(dc, uomField);
+        if (uom) {
+          enumber.uom = uom;
+          this.numberPropertiesFormGroup.get("uom")!.setValue(uom ? uom : null);
         }
 
         break;
@@ -1013,7 +1025,7 @@ export class EntityComponent
   }
   getMqttValue(rc: ImodbusEntity): string {
     if (rc)
-      if (rc.converter.name === "number" && rc.mqttValue!= undefined) {
+      if (rc.converter.name === "number" && rc.mqttValue != undefined) {
         return (rc.mqttValue as number).toString();
       } else return rc.mqttValue as string;
     return "N/A";
@@ -1024,7 +1036,7 @@ export class EntityComponent
     return "N/A";
   }
 
-  getDeviceClasses(): {name: string, uom?: string[]} [] {
+  getDeviceClasses(): { name: string; uom?: string[] }[] {
     if (this.getParameterTypeFromConverterFormControl())
       return this.getParameterTypeFromConverterFormControl() ===
         "Ibinary_sensor" ||
@@ -1043,8 +1055,7 @@ export class EntityComponent
   compareNumber(f1: number, f2: number) {
     return f1 == f2;
   }
-  compareName(f1: {name: string}, f2: {name: string}) {
-
+  compareName(f1: { name: string }, f2: { name: string }) {
     return f1 && f2 && f1.name == f2.name;
   }
 
@@ -1135,48 +1146,162 @@ export class EntityComponent
     }
   }
   static deviceClassesBinarySensor: [
-    { name: "None"},
-    { name: "connectivity"},
-    { name: "power"},
-    { name: "problem"},
-    { name: "running"},
-    { name: "safety"},
-    { name: "update"},
-  ]
+    { name: "None" },
+    { name: "connectivity" },
+    { name: "power" },
+    { name: "problem" },
+    { name: "running" },
+    { name: "safety" },
+    { name: "update" },
+  ];
 
-  static deviceClassesSensor:IdeviceClass[] = [
-      { name: "None" },
-      { name: "apparent_power", defaultuom: "VA", uom: ["VA"]},
-      { name: "atmospheric_pressure", defaultuom: "mbar", uom: ["cbar", "bar", "hPa", "mmHg", "inHg", "kPa", "mbar", "Pa", "psi"]},
-      { name: "current", defaultuom: "A", uom: ["A", "mA"]},
-      { name: "data_rate", defaultuom: "MB/s", uom: ["bit/s", "kbit/s", "Mbit/s", "Gbit/s", "B/s", "kB/s", "MB/s", "GB/s", "KiB/s", "MiB/s", "GiB/s" ]},
-      { name: "data_size", defaultuom: "GB", uom:  ["bit", "kbit", "Mbit", "Gbit", "B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "KiB", "MiB", "GiB", "TiB", "PiB" ]},
-      { name: "date"},
-      { name: "distance", defaultuom: "m", uom: [ "km", "m", "cm","mm", "mi", "nmi", "yd", "in" ]},
-      { name: "duration", defaultuom: "s", uom:  [ "d", "h","min", "s", "ms"] },
-      { name: "energy", defaultuom: "kWh", uom: ["J", "kJ", "MJ", "GJ", "Wh", "kWh", "MWh", "cal", "kcal", "Mcal","Gcal"]},
-      { name: "energy_storage", defaultuom: "kWh", uom: ["J", "kJ", "MJ", "GJ", "Wh", "kWh", "MWh", "cal", "kcal", "Mcal","Gcal"]},
-      { name: "enum"},
-      { name: "frequency", defaultuom: "Hz", uom: ["Hz", "kHz", "MHz",  "GHz"]},
-      { name: "gas", defaultuom: "m³", uom: ["m³", "ft³", "CCF"] },
-      { name: "humidity" , defaultuom: "%", uom: ["%"]},
-      { name: "pm1", defaultuom: "µg/m³", uom: ["µg/m³"]},
-      { name: "pm25", defaultuom: "µg/m³", uom: ["µg/m³"]},
-      { name: "pm10", defaultuom: "µg/m³", uom: ["µg/m³"]},
-      { name: "power_factor", defaultuom: "%³", uom: ["%"]},
-      { name: "power", defaultuom: "W", uom: ["W", "kW"]},
-      { name: "precipitation", defaultuom: "cm", uom: ["cm", "mm"] },
-      { name: "precipitation_intensity", defaultuom: "mm/h", uom: ["in/d", "in/h", "mm/d", "mm/h" ]},
-      { name: "pressure", defaultuom: "mbar", uom: ["Pa", "kPa", "hPa", "bar", "cbar", "mbar", "mmHg", "inHg", "psi"] },
-      { name: "reactive_power", defaultuom: "var", uom: ["var"]},
-      { name: "signal_strength", defaultuom: "bB", uom: ["dB", "dBm"] },
-      { name: "speed", defaultuom: "m/s", uom:["ft/s", "in/d", "in/h", "in/s", "km/h", "kn", "m/s", "mph", "mm/d", "mm/s"]},
-      { name: "temperature", defaultuom: "°C", uom: ["°C", "°F" , "K"]},
-      { name: "timestamp"},
-      { name: "voltage", defaultuom: "V", uom: ["V", "mV"]},
-      { name: "volume", defaultuom: "m³", uom: ["L", "mL", "gal", "fl. oz.", "m³", "ft³", "CCF"]},
-      { name: "volume_storage", defaultuom: "m³", uom: ["L", "mL", "gal", "fl. oz.", "m³", "ft³", "CCF"]},
-      { name: "water",  defaultuom: "m³", uom: ["L", "gal", "m³", "ft³", "CCF"]},
-      { name: "weight",  defaultuom: "kg", uom: ["kg", "g", "mg", "µg", "oz", "lb", "st"]},
-      ];
+  static deviceClassesSensor: IdeviceClass[] = [
+    { name: "None" },
+    { name: "apparent_power", defaultuom: "VA", uom: ["VA"] },
+    {
+      name: "atmospheric_pressure",
+      defaultuom: "mbar",
+      uom: ["cbar", "bar", "hPa", "mmHg", "inHg", "kPa", "mbar", "Pa", "psi"],
+    },
+    { name: "current", defaultuom: "A", uom: ["A", "mA"] },
+    {
+      name: "data_rate",
+      defaultuom: "MB/s",
+      uom: [
+        "bit/s",
+        "kbit/s",
+        "Mbit/s",
+        "Gbit/s",
+        "B/s",
+        "kB/s",
+        "MB/s",
+        "GB/s",
+        "KiB/s",
+        "MiB/s",
+        "GiB/s",
+      ],
+    },
+    {
+      name: "data_size",
+      defaultuom: "GB",
+      uom: [
+        "bit",
+        "kbit",
+        "Mbit",
+        "Gbit",
+        "B",
+        "kB",
+        "MB",
+        "GB",
+        "TB",
+        "PB",
+        "EB",
+        "ZB",
+        "YB",
+        "KiB",
+        "MiB",
+        "GiB",
+        "TiB",
+        "PiB",
+      ],
+    },
+    { name: "date" },
+    {
+      name: "distance",
+      defaultuom: "m",
+      uom: ["km", "m", "cm", "mm", "mi", "nmi", "yd", "in"],
+    },
+    { name: "duration", defaultuom: "s", uom: ["d", "h", "min", "s", "ms"] },
+    {
+      name: "energy",
+      defaultuom: "kWh",
+      uom: [
+        "J",
+        "kJ",
+        "MJ",
+        "GJ",
+        "Wh",
+        "kWh",
+        "MWh",
+        "cal",
+        "kcal",
+        "Mcal",
+        "Gcal",
+      ],
+    },
+    {
+      name: "energy_storage",
+      defaultuom: "kWh",
+      uom: [
+        "J",
+        "kJ",
+        "MJ",
+        "GJ",
+        "Wh",
+        "kWh",
+        "MWh",
+        "cal",
+        "kcal",
+        "Mcal",
+        "Gcal",
+      ],
+    },
+    { name: "enum" },
+    { name: "frequency", defaultuom: "Hz", uom: ["Hz", "kHz", "MHz", "GHz"] },
+    { name: "gas", defaultuom: "m³", uom: ["m³", "ft³", "CCF"] },
+    { name: "humidity", defaultuom: "%", uom: ["%"] },
+    { name: "pm1", defaultuom: "µg/m³", uom: ["µg/m³"] },
+    { name: "pm25", defaultuom: "µg/m³", uom: ["µg/m³"] },
+    { name: "pm10", defaultuom: "µg/m³", uom: ["µg/m³"] },
+    { name: "power_factor", defaultuom: "%³", uom: ["%"] },
+    { name: "power", defaultuom: "W", uom: ["W", "kW"] },
+    { name: "precipitation", defaultuom: "cm", uom: ["cm", "mm"] },
+    {
+      name: "precipitation_intensity",
+      defaultuom: "mm/h",
+      uom: ["in/d", "in/h", "mm/d", "mm/h"],
+    },
+    {
+      name: "pressure",
+      defaultuom: "mbar",
+      uom: ["Pa", "kPa", "hPa", "bar", "cbar", "mbar", "mmHg", "inHg", "psi"],
+    },
+    { name: "reactive_power", defaultuom: "var", uom: ["var"] },
+    { name: "signal_strength", defaultuom: "bB", uom: ["dB", "dBm"] },
+    {
+      name: "speed",
+      defaultuom: "m/s",
+      uom: [
+        "ft/s",
+        "in/d",
+        "in/h",
+        "in/s",
+        "km/h",
+        "kn",
+        "m/s",
+        "mph",
+        "mm/d",
+        "mm/s",
+      ],
+    },
+    { name: "temperature", defaultuom: "°C", uom: ["°C", "°F", "K"] },
+    { name: "timestamp" },
+    { name: "voltage", defaultuom: "V", uom: ["V", "mV"] },
+    {
+      name: "volume",
+      defaultuom: "m³",
+      uom: ["L", "mL", "gal", "fl. oz.", "m³", "ft³", "CCF"],
+    },
+    {
+      name: "volume_storage",
+      defaultuom: "m³",
+      uom: ["L", "mL", "gal", "fl. oz.", "m³", "ft³", "CCF"],
+    },
+    { name: "water", defaultuom: "m³", uom: ["L", "gal", "m³", "ft³", "CCF"] },
+    {
+      name: "weight",
+      defaultuom: "kg",
+      uom: ["kg", "g", "mg", "µg", "oz", "lb", "st"],
+    },
+  ];
 }

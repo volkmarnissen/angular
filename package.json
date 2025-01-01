@@ -1,6 +1,6 @@
 {
   "name": "@modbus2mqtt/angular",
-  "version": "0.12.14",
+  "version": "0.12.16",
   "sshserver": "odroid@homeassistant.lan",
   "credits": "multiple choice by Studio 365 from <a href='https://thenounproject.com/browse/icons/term/multiple-choice/' target='_blank' title='multiple choice Icons'>Noun Project</a> (CC BY 3.0)",
   "scripts": {
@@ -29,7 +29,7 @@
     "@angular/platform-browser-dynamic": "^19.0.1",
     "@angular/router": "^19.0.1",
     "@babel/preset-typescript": "^7.26.0",
-    "@modbus2mqtt/server.shared": "^0.13.10",
+    "@modbus2mqtt/server.shared": "^0.13.12",
     "@modbus2mqtt/specification.shared": "^0.10.8",
     "@ngx-translate/core": "^16.0.3",
     "@popperjs/core": "^2.11.8",

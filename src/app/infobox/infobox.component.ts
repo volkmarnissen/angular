@@ -11,32 +11,38 @@ import { Observable } from "rxjs";
 import { NgIf } from "@angular/common";
 const animationDuration = 1250;
 @Component({
-    selector: "app-infobox",
-    host: {
-        "[@showMessage]": "newAnimationState",
-        "(@showMessage.done)": "captureDoneEvent($event)",
-    },
-    animations: [
-        trigger("showMessage", [
-            // ...
-            state("open", style({
-                opacity: 1,
-            })),
-            state("close", style({
-                height: "20px",
-                opacity: 0.1,
-            })),
-            transition("open => close", [
-                animate((animationDuration / 1000).toFixed(1) + "s"),
-            ]),
-            transition("close => open", [
-                animate((animationDuration / 1000).toFixed(1) + "s"),
-            ]),
-        ]),
-    ],
-    imports: [NgIf],
-    templateUrl: "./infobox.component.html",
-    styleUrl: "./infobox.component.css"
+  selector: "app-infobox",
+  host: {
+    "[@showMessage]": "newAnimationState",
+    "(@showMessage.done)": "captureDoneEvent($event)",
+  },
+  animations: [
+    trigger("showMessage", [
+      // ...
+      state(
+        "open",
+        style({
+          opacity: 1,
+        }),
+      ),
+      state(
+        "close",
+        style({
+          height: "20px",
+          opacity: 0.1,
+        }),
+      ),
+      transition("open => close", [
+        animate((animationDuration / 1000).toFixed(1) + "s"),
+      ]),
+      transition("close => open", [
+        animate((animationDuration / 1000).toFixed(1) + "s"),
+      ]),
+    ]),
+  ],
+  imports: [NgIf],
+  templateUrl: "./infobox.component.html",
+  styleUrl: "./infobox.component.css",
 })
 export class InfoboxComponent implements OnInit, OnDestroy {
   messages: { endOfLive: number; message: string }[] = [];

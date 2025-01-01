@@ -10,7 +10,10 @@ import {
   ValidationErrors,
 } from "@angular/forms";
 import { ApiService } from "../services/api-service";
-import { Iconfiguration, IUserAuthenticationStatus } from "@modbus2mqtt/server.shared";
+import {
+  Iconfiguration,
+  IUserAuthenticationStatus,
+} from "@modbus2mqtt/server.shared";
 import { Observable, Subscription } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatOption } from "@angular/material/core";
@@ -30,31 +33,31 @@ import {
 } from "@angular/material/card";
 
 @Component({
-    selector: "app-configure",
-    templateUrl: "./configure.component.html",
-    styleUrls: ["./configure.component.css"],
-    imports: [
-        MatCard,
-        MatCardHeader,
-        MatCardTitle,
-        MatCardContent,
-        FormsModule,
-        ReactiveFormsModule,
-        MatIconButton,
-        MatTooltip,
-        MatIcon,
-        MatStepLabel,
-        MatFormField,
-        MatLabel,
-        MatInput,
-        NgIf,
-        MatError,
-        MatSelect,
-        NgFor,
-        MatOption,
-        NgClass,
-    ],
-    standalone:true
+  selector: "app-configure",
+  templateUrl: "./configure.component.html",
+  styleUrls: ["./configure.component.css"],
+  imports: [
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardContent,
+    FormsModule,
+    ReactiveFormsModule,
+    MatIconButton,
+    MatTooltip,
+    MatIcon,
+    MatStepLabel,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    NgIf,
+    MatError,
+    MatSelect,
+    NgFor,
+    MatOption,
+    NgClass,
+  ],
+  standalone: true,
 })
 export class ConfigureComponent implements OnInit {
   config: Iconfiguration;
@@ -67,26 +70,29 @@ export class ConfigureComponent implements OnInit {
     private router: Router,
   ) {
     this.ghPersonalAccessToken = _formBuilder.control([""]);
+    this.debugComponentsFormControl = _formBuilder.control([""]);
   }
   private requiredInNonAddonScenario: ValidatorFn = (
     control: AbstractControl,
   ): ValidationErrors | null => {
     {
-        if(this.authStatus && !this.authStatus.hassiotoken )
-          return Validators.required(control)
-        else
-          return null
+      if (this.authStatus && !this.authStatus.hassiotoken)
+        return Validators.required(control);
+      else return null;
     }
   };
-  saveDisabled(){
+  saveDisabled() {
     // connected or empty serverurl value
 
-    return (this.mqttConnectIcon != 'cast_connected' &&
-       this.authStatus && 
-      !this.authStatus.hassiotoken)
-    || (this.configureMqttFormGroup.pristine && 
-        this.ghPersonalAccessToken.pristine && 
+    return (
+      (this.mqttConnectIcon != "cast_connected" &&
+        this.authStatus &&
+        !this.authStatus.hassiotoken) ||
+      (this.configureMqttFormGroup.pristine &&
+        this.ghPersonalAccessToken.pristine &&
+        this.debugComponentsFormControl.pristine &&
         this.discoveryLanguageFormControl.pristine)
+    );
   }
   configObservable = this.entityApiService.getConfiguration();
   sslFiles: string[] = [];
@@ -94,7 +100,7 @@ export class ConfigureComponent implements OnInit {
   mqttConnectIcon: string = "cast";
   mqttConnectClass: string = "redIcon";
   mqttConnectMessage: string = "unknown";
-  authStatus: IUserAuthenticationStatus| undefined = undefined
+  authStatus: IUserAuthenticationStatus | undefined = undefined;
   configureMqttFormGroup = this._formBuilder.group({
     mqttserverurl: [null as string | null, this.requiredInNonAddonScenario],
     mqttuser: [null as string | null],
@@ -103,6 +109,7 @@ export class ConfigureComponent implements OnInit {
     mqttcafile: [null as string | null],
   });
   ghPersonalAccessToken: FormControl;
+  debugComponentsFormControl: FormControl;
   discoveryLanguageFormControl = new FormControl<string | null>(null);
   connectMessage: string = "";
   ngOnInit(): void {
@@ -128,16 +135,24 @@ export class ConfigureComponent implements OnInit {
           config.mqttdiscoverylanguage,
         );
       }
+      if (config.debugComponents) {
+        this.debugComponentsFormControl!.setValue(
+          config.debugComponents
+        );
+      }
+
       this.entityApiService.getSslFiles().subscribe((rc) => {
         this.sslFiles = rc;
       });
-      this.entityApiService.getUserAuthenticationStatus().subscribe(authStatus => {
-        this.authStatus = authStatus
-        this.mqttValidate();
-        if (config.githubPersonalToken)
-          this.ghPersonalAccessToken.setValue(config.githubPersonalToken);
-      });
-        })
+      this.entityApiService
+        .getUserAuthenticationStatus()
+        .subscribe((authStatus) => {
+          this.authStatus = authStatus;
+          this.mqttValidate();
+          if (config.githubPersonalToken)
+            this.ghPersonalAccessToken.setValue(config.githubPersonalToken);
+        });
+    });
   }
   form2Config(form: AbstractControl, config: Iconfiguration) {
     let mqttserverurl = form.get("mqttserverurl");
@@ -177,11 +192,9 @@ export class ConfigureComponent implements OnInit {
   }
 
   onChangekMqttConfig() {
-      this.mqttValidate();
+    this.mqttValidate();
   }
-  onChangeGithubToken(){
-
-  }
+  onChangeGithubToken() {}
   getSslFiles(): Observable<string[]> {
     return this.entityApiService.getSslFiles();
   }
@@ -192,7 +205,12 @@ export class ConfigureComponent implements OnInit {
       this.ghPersonalAccessToken &&
       this.ghPersonalAccessToken.value.length > 0
     )
-      this.config.githubPersonalToken = this.ghPersonalAccessToken.value;
+    this.config.githubPersonalToken = this.ghPersonalAccessToken.value;
+    if (
+      this.debugComponentsFormControl &&
+      this.debugComponentsFormControl.value.length > 0
+    )
+    this.config.debugComponents = this.debugComponentsFormControl.value;
     this.entityApiService.postConfiguration(this.config).subscribe(() => {
       this.close();
     });
@@ -200,7 +218,7 @@ export class ConfigureComponent implements OnInit {
   }
 
   close() {
-     this.router.navigate(["/"]);
+    this.router.navigate(["/"]);
   }
 
   hasConfigChanges(): boolean {
@@ -217,19 +235,21 @@ export class ConfigureComponent implements OnInit {
     let config: Iconfiguration = {} as unknown as Iconfiguration;
     this.form2Config(this.configureMqttFormGroup, config);
     this.entityApiService.postValidateMqtt(config).subscribe((result) => {
-      let hassio = (this.authStatus != undefined && this.authStatus.hassiotoken )
+      let hassio = this.authStatus != undefined && this.authStatus.hassiotoken;
       if (result && result.valid) {
         this.mqttConnectIcon = "cast_connected";
         this.mqttConnectClass = "greenIcon";
-            this.mqttConnectMessage = "connected";
+        this.mqttConnectMessage = "connected";
       } else {
         this.mqttConnectIcon = "cast";
-        this.mqttConnectClass = (hassio? "greenIcon" : "redIcon");
-        let  message = result.message
-        if( hassio)
-          message = message + "\nModbus <=> MQTT uses Home Assistants MQTT connection parameters" 
-        this.mqttConnectMessage = 
-          !result || !result.message ? "error" : message ;
+        this.mqttConnectClass = hassio ? "greenIcon" : "redIcon";
+        let message = result.message;
+        if (hassio)
+          message =
+            message +
+            "\nModbus <=> MQTT uses Home Assistants MQTT connection parameters";
+        this.mqttConnectMessage =
+          !result || !result.message ? "error" : message;
       }
     });
   }
