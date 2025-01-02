@@ -214,6 +214,8 @@
                                 (selectionChange)="onConverterValueChange()" [compareWith]="compareNumber">
                                 <mat-option [value]="0">Unsigned Int 16</mat-option>
                                 <mat-option [value]="2">Signed Int 16</mat-option>
+                                <mat-option [value]="3">Unsigned Int 32</mat-option>
+                                <mat-option [value]="4">Signed Int 32</mat-option>
                                 <mat-option [value]="1">Float 32</mat-option>
                             </mat-select>
                             <mat-error *ngIf="numberPropertiesFormGroup.get('numberFormat')!.hasError('required')">
