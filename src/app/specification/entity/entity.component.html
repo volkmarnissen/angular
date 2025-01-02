@@ -311,7 +311,7 @@
                 <div class="flexrows">
                     <mat-form-field class=" width100pt smallfield">
                         <input #propOptionModbus class="center" matInput type="number" formControlName="optionModbus"
-                            (change)="onChangeSelectOption()" (keyup.enter)="addOption()">
+                            (keyup.enter)="addOption()">
                         <mat-error *ngIf="selectPropertiesFormGroup!.get('optionModbus')!.hasError('required')">
                             This field is required
                         </mat-error>

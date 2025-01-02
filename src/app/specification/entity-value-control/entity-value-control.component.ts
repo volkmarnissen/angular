@@ -145,13 +145,16 @@ export class EntityValueControlComponent
           if (this.entity.mqttValue != undefined)
             this.numberFormControl.setValue(this.getMqttValue() as number);
           let num = this.entity.converterParameters as Inumber;
-          if (num.step) this.step = num.step;
-          fc = this.numberFormControl;
-          fc.clearValidators();
-          if (num.identification != undefined && num.identification.min)
-            fc.addValidators(Validators.min(num.identification.min));
-          if (num.identification != undefined && num.identification.max)
-            fc.addValidators(Validators.max(num.identification.max));
+          if( num != undefined){
+            if (num.step) this.step = num.step;
+            fc = this.numberFormControl;
+            fc.clearValidators();
+            if (num.identification != undefined && num.identification.min)
+              fc.addValidators(Validators.min(num.identification.min));
+            if (num.identification != undefined && num.identification.max)
+              fc.addValidators(Validators.max(num.identification.max));
+  
+          }
           break;
         case "select":
           if (this.entity.modbusValue)
