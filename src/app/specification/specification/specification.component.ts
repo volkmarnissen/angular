@@ -218,8 +218,11 @@ export class SpecificationComponent
       getMqttLanguageName: () => {
         return I18nService.getLanguageName(this.config.mqttdiscoverylanguage);
       },
-      getUom: (entity_id:number):string => {
-        return getUom( this.currentSpecification as ImodbusSpecification, entity_id )
+      getUom: (entity_id: number): string => {
+        return getUom(
+          this.currentSpecification as ImodbusSpecification,
+          entity_id,
+        );
       },
       postModbusEntity: (
         changedEntity: ImodbusEntityWithName,

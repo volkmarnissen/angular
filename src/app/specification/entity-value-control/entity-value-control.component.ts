@@ -54,7 +54,7 @@ export class EntityValueControlComponent
   implements OnInit, OnDestroy, OnChanges
 {
   @Input({ required: true }) entity: ImodbusEntityWithName | undefined;
-  @Input({ required: false }) uom: string ="";
+  @Input({ required: false }) uom: string = "";
   @Input({ required: true }) specificationMethods: ISpecificationMethods;
   @Input()
   mqttValueObservable: Observable<ImodbusData | undefined>;
@@ -146,7 +146,7 @@ export class EntityValueControlComponent
           if (this.entity.mqttValue != undefined)
             this.numberFormControl.setValue(this.getMqttValue() as number);
           let num = this.entity.converterParameters as Inumber;
-          if( num != undefined){
+          if (num != undefined) {
             if (num.step) this.step = num.step;
             fc = this.numberFormControl;
             fc.clearValidators();
@@ -154,7 +154,6 @@ export class EntityValueControlComponent
               fc.addValidators(Validators.min(num.identification.min));
             if (num.identification != undefined && num.identification.max)
               fc.addValidators(Validators.max(num.identification.max));
-  
           }
           break;
         case "select":
@@ -198,10 +197,10 @@ export class EntityValueControlComponent
         }
       });
   }
-  getUom():string{
-    return  this.entity? this.specificationMethods.getUom( this.entity.id ):""
+  getUom(): string {
+    return this.entity ? this.specificationMethods.getUom(this.entity.id) : "";
   }
-  
+
   getOptions(): IselectOption[] {
     if (this.entity) {
       let options = (this.entity.converterParameters as Iselect).options;
@@ -209,5 +208,4 @@ export class EntityValueControlComponent
     }
     return [];
   }
-
 }

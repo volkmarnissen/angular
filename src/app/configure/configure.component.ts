@@ -136,9 +136,7 @@ export class ConfigureComponent implements OnInit {
         );
       }
       if (config.debugComponents) {
-        this.debugComponentsFormControl!.setValue(
-          config.debugComponents
-        );
+        this.debugComponentsFormControl!.setValue(config.debugComponents);
       }
 
       this.entityApiService.getSslFiles().subscribe((rc) => {
@@ -205,12 +203,12 @@ export class ConfigureComponent implements OnInit {
       this.ghPersonalAccessToken &&
       this.ghPersonalAccessToken.value.length > 0
     )
-    this.config.githubPersonalToken = this.ghPersonalAccessToken.value;
+      this.config.githubPersonalToken = this.ghPersonalAccessToken.value;
     if (
       this.debugComponentsFormControl &&
       this.debugComponentsFormControl.value.length > 0
     )
-    this.config.debugComponents = this.debugComponentsFormControl.value;
+      this.config.debugComponents = this.debugComponentsFormControl.value;
     this.entityApiService.postConfiguration(this.config).subscribe(() => {
       this.close();
     });

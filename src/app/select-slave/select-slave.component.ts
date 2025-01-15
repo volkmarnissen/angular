@@ -192,8 +192,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   ): IidentificationSpecification[] {
     let fc: FormControl = uiSlave.slaveForm.get(["ispecs"]) as FormControl;
     let slaveSpec = spec.find((s) => s.configuredSlave != undefined);
-    if( slaveSpec )
-        slave.specification = this.toSpecification(slaveSpec)
+    if (slaveSpec) slave.specification = this.toSpecification(slaveSpec);
     let identifiedCount = 0;
     let ispec: IidentificationSpecification | null = null;
     if (detectSpec) {
@@ -307,7 +306,10 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     let ct = sl.getEntityCommandTopic(entity);
     return ct ? ct.commandTopic : "";
   }
-  getModbusCommandTopic(uiSlave: IuiSlave, entity: Ientity): string | undefined {
+  getModbusCommandTopic(
+    uiSlave: IuiSlave,
+    entity: Ientity,
+  ): string | undefined {
     let sl = new Slave(
       this.bus.busId,
       uiSlave.slave,

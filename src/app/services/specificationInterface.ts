@@ -25,7 +25,7 @@ export interface ISpecificationMethods {
   ): boolean;
   canEditEntity(): boolean;
   getMqttLanguageName(): string;
-  getUom(entity_id:number): string; 
+  getUom(entity_id: number): string;
   addEntity(addedEntity: ImodbusEntityWithName): void;
   deleteEntity(entityId: number): void;
   copy2Translation(entity: Ientity): void;

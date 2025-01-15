@@ -107,7 +107,6 @@ const newEntity: ImodbusEntityWithName = {
   modbusAddress: 0,
   id: -1,
 };
- 
 
 @Component({
   selector: "app-entity",
@@ -143,7 +142,6 @@ const newEntity: ImodbusEntityWithName = {
     AsyncPipe,
   ],
 })
-
 export class EntityComponent
   extends SessionStorage
   implements AfterViewInit, OnChanges, OnDestroy
@@ -162,15 +160,18 @@ export class EntityComponent
     }
     return true;
   }
-  variableTypes: {id:VariableTargetParameters, name:string }[] =   [
+  variableTypes: { id: VariableTargetParameters; name: string }[] = [
     { id: VariableTargetParameters.noParam, name: "" },
-    { id: VariableTargetParameters.deviceIdentifiers, name: "Identification for Discovery" },
+    {
+      id: VariableTargetParameters.deviceIdentifiers,
+      name: "Identification for Discovery",
+    },
     { id: VariableTargetParameters.deviceSerialNumber, name: "Serial Number" },
     { id: VariableTargetParameters.deviceSWversion, name: "Software Version" },
     { id: VariableTargetParameters.entityMultiplier, name: "Multiplier" },
     { id: VariableTargetParameters.entityOffset, name: "Offset" },
     { id: VariableTargetParameters.entityUom, name: "Unit of Measurement" },
-  ];     
+  ];
   @Input({ required: true })
   specificationMethods: ISpecificationMethods;
 
@@ -345,41 +346,39 @@ export class EntityComponent
     if (dc && dc.uom) return true;
     return false;
   }
-  private isVariableType(){
+  private isVariableType() {
     let vt = this.variableFormGroup.get(variableTypeFormControlName)!.value;
-    return (vt && vt != 0 && Number.parseInt(vt.value) != 0)
+    return vt && vt != 0 && Number.parseInt(vt.value) != 0;
   }
-  private enableEntityFieldsVariableType(){
+  private enableEntityFieldsVariableType() {
     let vt = this.variableFormGroup.get(variableTypeFormControlName)!.value;
 
-    let disableVtFields:{ form: AbstractControl, value:any}[]=[
-      {form: this.entityFormGroup.get("name")!, value:null},
-      {form: this.entityFormGroup.get(mqttNameFormControlName)!, value:null},
-      {form: this.entityFormGroup.get("icon")!, value:null},
-      {form: this.entityFormGroup.get("forceUpdate")!, value: false},
-      {form: this.entityFormGroup.get("entityCategory")!, value: null},
-      {form: this.entityFormGroup.get("readonly")!, value:true},
+    let disableVtFields: { form: AbstractControl; value: any }[] = [
+      { form: this.entityFormGroup.get("name")!, value: null },
+      { form: this.entityFormGroup.get(mqttNameFormControlName)!, value: null },
+      { form: this.entityFormGroup.get("icon")!, value: null },
+      { form: this.entityFormGroup.get("forceUpdate")!, value: false },
+      { form: this.entityFormGroup.get("entityCategory")!, value: null },
+      { form: this.entityFormGroup.get("readonly")!, value: true },
     ];
-    if(this.isVariableType()){
-      disableVtFields.forEach(f=>{
+    if (this.isVariableType()) {
+      disableVtFields.forEach((f) => {
         f.form.disable();
-        f.form.setValue( f.value)
-      })
+        f.form.setValue(f.value);
+      });
       if (
         isDeviceVariable(
-          this.variableFormGroup.get(variableTypeFormControlName)!.value
+          this.variableFormGroup.get(variableTypeFormControlName)!.value,
         )
       )
         this.variableFormGroup.get(variableEntityFormControlName)!.disable();
-      else 
-        this.variableFormGroup.get(variableEntityFormControlName)!.enable();
-    }
-    else{
-      disableVtFields.forEach(f=>f.form.enable())
+      else this.variableFormGroup.get(variableEntityFormControlName)!.enable();
+    } else {
+      disableVtFields.forEach((f) => f.form.enable());
       this.variableFormGroup.get(variableEntityFormControlName)!.disable();
     }
-    this.entityFormGroup.updateValueAndValidity()
-    this.variableFormGroup.updateValueAndValidity()
+    this.entityFormGroup.updateValueAndValidity();
+    this.variableFormGroup.updateValueAndValidity();
   }
   private copyEntityToForm(entity: ImodbusEntityWithName) {
     if (!this.entityFormGroup) return;
@@ -400,7 +399,7 @@ export class EntityComponent
       this.selectPropertiesFormGroup.enable();
       this.entityFormGroup.get(mqttNameFormControlName)?.setErrors(null);
       let entityFormGroup = this.entityFormGroup!;
-      this.enableEntityFieldsVariableType()
+      this.enableEntityFieldsVariableType();
     }
     this.variableFormGroup
       .get(variableTypeFormControlName)!
@@ -436,10 +435,14 @@ export class EntityComponent
           );
       this.entityFormGroup.get("icon")!.setValue(entity.icon);
       this.entityFormGroup.get("forceUpdate")!.setValue(entity.forceUpdate);
-      this.entityFormGroup.get("value_template")!.setValue(entity.value_template);
-      this.entityFormGroup.get("entityCategory")!.setValue(entity.entityCategory);
+      this.entityFormGroup
+        .get("value_template")!
+        .setValue(entity.value_template);
+      this.entityFormGroup
+        .get("entityCategory")!
+        .setValue(entity.entityCategory);
       this.entityFormGroup.get("readonly")!.setValue(entity.readonly);
-      }
+    }
 
     this.entityFormGroup
       .get("registerType")!
@@ -957,7 +960,7 @@ export class EntityComponent
     control: AbstractControl,
   ): ValidationErrors | null => {
     if (this.variableFormGroup) {
-      return (this.isVariableType()) ||
+      return this.isVariableType() ||
         (control.value != null && control.value.length > 0)
         ? null
         : { required: control.value };
@@ -1081,27 +1084,31 @@ export class EntityComponent
   compareEntities(f1: Ientity, f2: Ientity) {
     return f1 && f2 && f1.id == f2.id;
   }
-  getEntityLabel():string {
-    if( !this.entity.name && this.isVariableType())      
-      {
-        let type = this.variableTypes.find( e=> e.id == this.entity.variableConfiguration!.targetParameter )
-        if( !isDeviceVariable( this.entity.variableConfiguration!.targetParameter) )
-        {
-          let e = this.specificationMethods.getNonVariableNumberEntities().find(e=>e.id == this.entity.variableConfiguration!.entityId )          
-          return (e? "=>"  + e.name:"")
-        }
+  getEntityLabel(): string {
+    if (!this.entity.name && this.isVariableType()) {
+      let type = this.variableTypes.find(
+        (e) => e.id == this.entity.variableConfiguration!.targetParameter,
+      );
+      if (
+        !isDeviceVariable(this.entity.variableConfiguration!.targetParameter)
+      ) {
+        let e = this.specificationMethods
+          .getNonVariableNumberEntities()
+          .find((e) => e.id == this.entity.variableConfiguration!.entityId);
+        return e ? "=>" + e.name : "";
       }
-      return ""
+    }
+    return "";
   }
-  getVariableTypeOrEntityNameLabel():string {
-    if( this.entity.name)      
-      return this.entity.name
-    else
-      if( this.isVariableType()){
-        let type = this.variableTypes.find( e=> e.id == this.entity.variableConfiguration!.targetParameter )
-          return type? type.name: ""
-      }
-      return ""
+  getVariableTypeOrEntityNameLabel(): string {
+    if (this.entity.name) return this.entity.name;
+    else if (this.isVariableType()) {
+      let type = this.variableTypes.find(
+        (e) => e.id == this.entity.variableConfiguration!.targetParameter,
+      );
+      return type ? type.name : "";
+    }
+    return "";
   }
   getFunctionCode(functionCode: ModbusRegisterType | undefined): IRegisterType {
     let rc: IRegisterType | undefined = undefined;
