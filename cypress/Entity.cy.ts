@@ -9,6 +9,7 @@ import { Subject } from "rxjs"
 let specificationMethods:ISpecificationMethods = {
   getCurrentMessage:()=>{return {type:0, category: 0}},
   getMqttLanguageName:()=>{return "english"},
+  getUom:(entity_id:number):string => {return "cm"},
   getNonVariableNumberEntities:()=>{ return []},
   getMqttNames: ()=> {return []},     
   getSaveObservable:()=> {return new Subject<void>()},

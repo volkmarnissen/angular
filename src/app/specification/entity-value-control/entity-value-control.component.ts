@@ -54,6 +54,7 @@ export class EntityValueControlComponent
   implements OnInit, OnDestroy, OnChanges
 {
   @Input({ required: true }) entity: ImodbusEntityWithName | undefined;
+  @Input({ required: false }) uom: string ="";
   @Input({ required: true }) specificationMethods: ISpecificationMethods;
   @Input()
   mqttValueObservable: Observable<ImodbusData | undefined>;
@@ -197,7 +198,10 @@ export class EntityValueControlComponent
         }
       });
   }
-
+  getUom():string{
+    return  this.entity? this.specificationMethods.getUom( this.entity.id ):""
+  }
+  
   getOptions(): IselectOption[] {
     if (this.entity) {
       let options = (this.entity.converterParameters as Iselect).options;
@@ -205,4 +209,5 @@ export class EntityValueControlComponent
     }
     return [];
   }
+
 }

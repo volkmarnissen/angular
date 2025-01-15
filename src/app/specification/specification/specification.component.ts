@@ -52,7 +52,7 @@ import {
 } from "@modbus2mqtt/specification.shared";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { SessionStorage } from "../../services/SessionStorage";
-import { Imessage } from "@modbus2mqtt/specification.shared";
+import { Imessage, getUom } from "@modbus2mqtt/specification.shared";
 import { GalleryConfig } from "ng-gallery";
 import {
   ISpecificationMethods,
@@ -217,6 +217,9 @@ export class SpecificationComponent
 
       getMqttLanguageName: () => {
         return I18nService.getLanguageName(this.config.mqttdiscoverylanguage);
+      },
+      getUom: (entity_id:number):string => {
+        return getUom( this.currentSpecification as ImodbusSpecification, entity_id )
       },
       postModbusEntity: (
         changedEntity: ImodbusEntityWithName,
