@@ -35,7 +35,7 @@ import { APP_BASE_HREF } from "@angular/common";
 })
 export class ApiService {
   converterCache: Iconverter[] | undefined = undefined;
-  private rootUrl ="."
+  private rootUrl = ".";
   constructor(
     private httpClient: HttpClient,
     private router: Router,
@@ -59,8 +59,8 @@ export class ApiService {
         alert(msg);
       }
     };
-    if( (window as any).configuration && (window as any).configuration.rootUrl )
-      this.rootUrl = (window as any).configuration.rootUrl
+    if ((window as any).configuration && (window as any).configuration.rootUrl)
+      this.rootUrl = (window as any).configuration.rootUrl;
   }
   private getFullUri(uri: apiUri): string {
     return this.rootUrl + uri;

@@ -26,9 +26,9 @@
     }
   },
   "ts-node": {
-        "esm": true,
-        "experimentalSpecifierResolution": "node"
-    },
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  },
   "exclude": [
     "node_modules/**/*",
     "dist/**/*",

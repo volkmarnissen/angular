@@ -9,7 +9,7 @@
         <mat-error *ngIf="numberFormControl.hasError('max')">
             The value is greater than the maximum
         </mat-error>
-    </mat-form-field>
+    </mat-form-field>{{getUom()}}
 </ng-container>
 <ng-container *ngIf="getConverterName().indexOf('text') >=0 && !entity!.readonly ">
     <mat-form-field class="width150pt">
@@ -34,6 +34,6 @@
     <mat-form-field class="width100pt">
         <mat-label>MQTT Value</mat-label>
         <input matInput [formControl]="textFormControl"/>
-    </mat-form-field>
+    </mat-form-field>{{getUom()}}
 
 </ng-container>

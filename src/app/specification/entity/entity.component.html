@@ -30,7 +30,7 @@
                     </ng-container>
                 </div>
             </div>
-            <span [ngClass]="{'errorText': isCurrentMessage()}">{{entity.name}}</span>
+            <span [ngClass]="{'errorText': isCurrentMessage()}">{{getVariableTypeOrEntityNameLabel()}}<br *ngIf="entity.name == null"/>{{getEntityLabel()}}</span>
             <mat-icon [color]="entity.identified== 1?'primary':entity.identified== -1?'':'warn'" class="icon-display">
                 {{(entity.identified == undefined || entity.identified == -1?'thumbs_up_down':(entity.identified ==
                 1?'thumb_up':'thumb_down')) }}</mat-icon>
@@ -358,24 +358,29 @@
                         <mat-label>Set Value </mat-label>
                         <mat-select matInput type="number" formControlName="variableType" [compareWith]="compareNumber"
                             (selectionChange)="onEntityNameValueChange();entityFormGroup.updateValueAndValidity();">
+                            <mat-option
+                            *ngFor="let c of variableTypes"
+                            [value]="c.id">
+                            {{ c.name }}
+                        </mat-option>
                             <mat-option [value]="0"></mat-option>
                             <mat-option [value]="5">Serial Number</mat-option>
                             <mat-option [value]="6">Software Version</mat-option>
                             <mat-option [value]="1">Identification for Discovery</mat-option>
-                            <mat-option [value]="2">Multiplier</mat-option>
-                            <mat-option [value]="3">Offset</mat-option>
-                            <mat-option [value]="4">Unit of Measurement</mat-option>
+                            <mat-option [value]="3">Multiplier</mat-option>
+                            <mat-option [value]="4">Offset</mat-option>
+                            <mat-option [value]="2">Unit of Measurement</mat-option>
                         </mat-select>
                     </mat-form-field>
                     <mat-form-field class="smallfield">
                         <mat-label>Referenced Entity</mat-label>
-                        <mat-select matInput formControlName="variableEntity" [compareWith]="compareEntities"
+                        <mat-select matInput formControlName="variableEntity" [compareWith]="compareNumber"
                             [errorStateMatcher]="errorStateMatcher" [errorStateMatcher]="errorStateMatcher"
                             (selectionChange)="onEntityNameValueChange()">
                             <mat-option
                                 *ngFor="let c of specificationMethods?specificationMethods.getNonVariableNumberEntities():[]"
-                                [value]="c">
-                                {{ c.name }}
+                                [value]="c.id">
+                                {{ c.name? c.name: c.id }}
                             </mat-option>
                         </mat-select>
                         <mat-error *ngIf="entityFormGroup!.get('variableEntity')?.hasError('unique') != null">
