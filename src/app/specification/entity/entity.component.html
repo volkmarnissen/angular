@@ -357,7 +357,7 @@
                     <mat-form-field class="smallfield">
                         <mat-label>Set Value </mat-label>
                         <mat-select matInput type="number" formControlName="variableType" [compareWith]="compareNumber"
-                            (selectionChange)="onEntityNameValueChange();entityFormGroup.updateValueAndValidity();">
+                            (selectionChange)="onEntityNameValueChange();">
                             <mat-option
                             *ngFor="let c of variableTypes"
                             [value]="c.id">
@@ -376,10 +376,10 @@
                         <mat-label>Referenced Entity</mat-label>
                         <mat-select matInput formControlName="variableEntity" [compareWith]="compareNumber"
                             [errorStateMatcher]="errorStateMatcher" [errorStateMatcher]="errorStateMatcher"
-                            (selectionChange)="onEntityNameValueChange()">
+                            (selectionChange)="onVariableEntityValueChange()">
                             <mat-option
-                                *ngFor="let c of specificationMethods?specificationMethods.getNonVariableNumberEntities():[]"
-                                [value]="c.id">
+                                *ngFor="let c of xxx"
+                                [value]="c.id" >
                                 {{ c.name? c.name: c.id }}
                             </mat-option>
                         </mat-select>

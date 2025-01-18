@@ -144,7 +144,15 @@ export class EntityValueControlComponent
       switch (this.entity.converter.name) {
         case "number":
           if (this.entity.mqttValue != undefined)
-            this.numberFormControl.setValue(parseFloat(Number.parseFloat((this.getMqttValue() as number).toString()).toFixed((this.entity.converterParameters as Inumber).decimals)));
+            this.numberFormControl.setValue(
+              parseFloat(
+                Number.parseFloat(
+                  (this.getMqttValue() as number).toString(),
+                ).toFixed(
+                  (this.entity.converterParameters as Inumber).decimals,
+                ),
+              ),
+            );
           let num = this.entity.converterParameters as Inumber;
           if (num != undefined) {
             if (num.step) this.step = num.step;

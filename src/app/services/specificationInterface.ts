@@ -16,7 +16,7 @@ export interface ISpecificationMethods {
     changedEntity: ImodbusEntityWithName,
   ): Observable<ImodbusData>;
   postModbusWriteMqtt(entity: ImodbusEntity, value: string): Observable<string>;
-  getNonVariableNumberEntities(): ImodbusEntityWithName[];
+  getNonVariableNumberEntities(): { id: number; name: string }[];
   getMqttNames(entityId: number): string[];
   getCurrentMessage(): Imessage | undefined;
   hasDuplicateVariableConfigurations(

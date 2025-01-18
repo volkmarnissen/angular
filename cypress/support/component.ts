@@ -26,11 +26,19 @@ declare global {
   namespace Cypress {
     interface Chainable {
       mount: typeof mount;
+      openAllExpansionPanels: () => void;
     }
   }
 }
 
 Cypress.Commands.add("mount", mount);
+Cypress.Commands.add("openAllExpansionPanels", () => {
+  cy.get("mat-expansion-panel-header[aria-expanded=false]").then((elements) => {
+    elements.each((index) => {
+      elements[index].click();
+    });
+  });
+});
 
 // Example use:
 // cy.mount(MyComponent)

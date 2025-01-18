@@ -181,6 +181,15 @@
                     <mat-list-option  *ngFor="let selected of uislave.selectedEntitites" [value]="selected.id" >{{selected.name}}</mat-list-option>
               </mat-selection-list>
               </mat-expansion-panel>
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>Modbus Status &amp;Errors
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <p>XXXX</p>
+                <app-modbus-error-component  [modbusErrors]="getModbusErrors(uislave)"/>
+              </mat-expansion-panel>
+      
             </mat-card-content>
           </form>
         </mat-card>

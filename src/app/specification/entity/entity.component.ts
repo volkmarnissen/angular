@@ -617,28 +617,32 @@ export class EntityComponent
       this.entity.id
     );
   }
+  onVariableEntityValueChange() {
+    this.specificationMethods.setEntitiesTouched();
+    this.entity.variableConfiguration = {
+      targetParameter: this.variableFormGroup.get(variableTypeFormControlName)!
+        .value,
+      entityId:
+        this.variableFormGroup.get(variableEntityFormControlName)!.value == null
+          ? undefined
+          : this.variableFormGroup.get(variableEntityFormControlName)!.value,
+    };
+    this.entity.name = undefined;
+    this.enableEntityFieldsVariableType();
+    this.specificationMethods.copy2Translation(this.entity);
+  }
   onEntityNameValueChange() {
     // set mqtt name in form control,
     // read variable configuration and set values accordingly.
     // No impact on modbus values
     // set entity.name, entity.mqttname and entity.variableConfiguration
     if (!this.entity) return;
+
     this.specificationMethods.setEntitiesTouched();
-    if (this.isVariableType()) {
-      this.entity.variableConfiguration = {
-        targetParameter: this.variableFormGroup.get(
-          variableTypeFormControlName,
-        )!.value,
-        entityId:
-          this.variableFormGroup.get(variableEntityFormControlName)!.value ==
-          null
-            ? undefined
-            : this.variableFormGroup.get(variableEntityFormControlName)!.value
-                .id,
-      };
-      this.entity.name = undefined;
-    } else {
+    if (this.isVariableType()) this.onVariableEntityValueChange();
+    else {
       delete this.entity.variableConfiguration;
+      this.onVariableEntityValueChange();
       if (
         this.entityFormGroup.get(nameFormControlName)!.value != null &&
         this.entityFormGroup.get(nameFormControlName)!.value != "N/A"
@@ -657,9 +661,9 @@ export class EntityComponent
       this.entityFormGroup
         .get(mqttNameFormControlName)!
         .setValue(this.entity.mqttname != null ? this.entity.mqttname : null);
+      this.enableEntityFieldsVariableType();
+      this.specificationMethods.copy2Translation(this.entity);
     }
-    this.enableEntityFieldsVariableType();
-    this.specificationMethods.copy2Translation(this.entity);
   }
   onModbusAddressChange() {
     if (!this.entity) return;
@@ -1100,6 +1104,11 @@ export class EntityComponent
     }
     return "";
   }
+  getNonVariableNumberEntities(): { id: number; name: string }[] {
+    return [{ id: 4, name: "ent 4" }];
+    //return this.specificationMethods.getNonVariableNumberEntities()
+  }
+  xxx = [{ id: 4, name: "ent 4" }];
   getVariableTypeOrEntityNameLabel(): string {
     if (this.entity.name) return this.entity.name;
     else if (this.isVariableType()) {

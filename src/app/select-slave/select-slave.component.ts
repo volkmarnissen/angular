@@ -48,6 +48,7 @@ import {
   Slave,
   Iconfiguration,
   IEntityCommandTopics,
+  ImodbusErrorsForSlave,
 } from "@modbus2mqtt/server.shared";
 import { MatInput } from "@angular/material/input";
 import {
@@ -71,6 +72,7 @@ import { MatIconButtonSizesModule } from "mat-icon-button-sizes";
 import { NgFor, NgIf, AsyncPipe } from "@angular/common";
 import { MatTooltip } from "@angular/material/tooltip";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
+import { ModbusErrorComponent } from "../modbus-error/modbus-error.component";
 
 interface IuiSlave {
   slave: Islave;
@@ -88,6 +90,7 @@ interface IuiSlave {
   styleUrls: ["./select-slave.component.css"],
   standalone: true,
   imports: [
+    ModbusErrorComponent,
     MatSlideToggle,
     MatTooltip,
     FormsModule,
@@ -747,5 +750,8 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     if (uiSlave.slaveForm.get("noDiscovery")!.value)
       uiSlave.slaveForm.get("discoverEntitiesList")!.enable();
     else uiSlave.slaveForm.get("discoverEntitiesList")!.disable();
+  }
+  getModbusErrors(uiSlave: IuiSlave): ImodbusErrorsForSlave | undefined {
+    return uiSlave.slave.modbusErrorsForSlave;
   }
 }

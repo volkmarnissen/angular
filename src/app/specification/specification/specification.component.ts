@@ -284,15 +284,17 @@ export class SpecificationComponent
           );
       },
       getNonVariableNumberEntities: () => {
-        let rc: ImodbusEntity[] = [];
+        let rc: { id: number; name: string }[] = [];
         if (this.currentSpecification)
           this.currentSpecification.entities.forEach((e) => {
             if (
               (e.variableConfiguration == undefined ||
                 e.variableConfiguration.targetParameter == null) &&
               getParameterType(e.converter) == "Inumber"
-            )
-              rc.push(e);
+            ) {
+              let d = (e as ImodbusEntityWithName).name;
+              rc.push({ id: e.id, name: d ? d : "" });
+            }
           });
         return rc;
       },
