@@ -61,7 +61,4 @@ describe("Entity Component tests", () => {
       //  "not.be.null");
 
       });
-
-  });
-
 });

@@ -164,7 +164,7 @@ export class SpecificationComponent
 
     if (this.sub) this.sub.unsubscribe();
   }
-  specificationSubject = new Subject<ImodbusSpecification>();
+  specificationSubject:Subject<ImodbusSpecification>| undefined  = undefined //Seems not to be used new Subject<ImodbusSpecification>();
   enterSpecNameFormGroup: FormGroup;
   validationForms: FormGroup;
 
@@ -207,6 +207,7 @@ export class SpecificationComponent
             );
           this.setValidationMessages();
           this.setErrorMessages();
+          if(this.specificationSubject)
           this.specificationSubject.next(this.currentSpecification);
         }
       },
@@ -525,7 +526,6 @@ export class SpecificationComponent
     this.currentSpecification!.files = $event; //update documents
     this.filesTouched = true;
     this.setValidationMessages();
-    this.copyToSpec();
   }
   updateTranslation(entity: ImodbusEntityWithName): void {
     if (entity && this.currentSpecification) {
@@ -673,8 +673,7 @@ export class SpecificationComponent
     this.enterSpecNameFormGroup = this.fb.group({
       name: [
         null as string | null,
-        Validators.required,
-        this.asyncValidateUniqueFilename.bind(this),
+        Validators.required
       ],
       filename: [null as string | null],
       icon: [null as string | null],
@@ -782,7 +781,7 @@ export class SpecificationComponent
     return getBaseFilename(url.url);
   }
 
-  asyncValidateUniqueFilename: AsyncValidatorFn = (
+  private asyncValidateUniqueFilename: AsyncValidatorFn = (
     control: AbstractControl,
   ): Observable<ValidationErrors | null> => {
     let successSubject = new Subject<ValidationErrors | null>();
@@ -813,7 +812,7 @@ export class SpecificationComponent
       }),
     );
   };
-  asyncValidateUniqueName: AsyncValidatorFn = (
+  private asyncValidateUniqueName: AsyncValidatorFn = (
     control: AbstractControl,
   ): Observable<ValidationErrors | null> => {
     let successSubject = new Subject<ValidationErrors | null>();
