@@ -375,6 +375,7 @@ export class EntityComponent
       else this.variableFormGroup.get(variableEntityFormControlName)!.enable();
     } else {
       disableVtFields.forEach((f) => f.form.enable());
+      this.variableFormGroup.get(variableEntityFormControlName)!.setValue( null );
       this.variableFormGroup.get(variableEntityFormControlName)!.disable();
     }
     this.entityFormGroup.updateValueAndValidity();
@@ -619,14 +620,19 @@ export class EntityComponent
   }
   onVariableEntityValueChange() {
     this.specificationMethods.setEntitiesTouched();
-    this.entity.variableConfiguration = {
-      targetParameter: this.variableFormGroup.get(variableTypeFormControlName)!
-        .value,
-      entityId:
-        this.variableFormGroup.get(variableEntityFormControlName)!.value == null
-          ? undefined
-          : this.variableFormGroup.get(variableEntityFormControlName)!.value,
-    };
+    let variableType = this.variableFormGroup.get(variableTypeFormControlName)!
+        .value
+    if( variableType)
+      this.entity.variableConfiguration = {
+        targetParameter: variableType,
+        entityId:
+          this.variableFormGroup.get(variableEntityFormControlName)!.value == null
+            ? undefined
+            : this.variableFormGroup.get(variableEntityFormControlName)!.value,
+      };
+    else
+      if(this.entity.variableConfiguration)
+        delete this.entity.variableConfiguration
     this.entity.name = undefined;
     this.enableEntityFieldsVariableType();
     this.specificationMethods.copy2Translation(this.entity);

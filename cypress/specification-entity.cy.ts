@@ -1,3 +1,4 @@
+import { ImodbusEntityWithName } from "angular/src/app/services/specificationInterface";
 import {
   afterEachEntityHelper,
   beforeEachHelper as beforeEachEntityHelper,
@@ -37,4 +38,30 @@ describe("Entity Component tests", () => {
     //  .then(()=>{debugger})
     cy.get('[formcontrolname="name"]').should("be.disabled");
   });
+  it("No Variable Type => no variableConfiguration", () => {
+
+
+    cy.get('mat-select[formControlName="variableType"]')
+    .click()
+    .get("mat-option")
+    .first()
+    .click()
+    cy.get('input[formControlName="name"]').type("test")
+    cy.get('input[formControlName="icon"]').click().then(()=>{setOnEntityNameOrVariableFieldsChangeFunc((entity) => {
+        expect(entity.variableConfiguration).to.be.undefined;
+        expect((entity as ImodbusEntityWithName).name).to.be.equal('test');
+        })})
+      cy.get('mat-select[formControlName="variableEntity"]').invoke('val')
+      .then(val=>{    
+        const myVal = val;      
+        expect(myVal).to.equal('');
+      })
+    
+      //cy.get('input[formControlName="name"]').should(
+      //  "not.be.null");
+
+      });
+
+  });
+
 });
