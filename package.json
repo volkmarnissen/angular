@@ -15,6 +15,10 @@
     "test-debug": "ng test --browsers ChromeDebug --karma-config ./karma.conf.ts",
     "prettier": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/modbus2mqtt/angular"
+  },
   "devDependencies": {
     "@angular-devkit/build-angular": "^19.0.6",
     "@angular/animations": "^19.0.1",
@@ -30,7 +34,6 @@
     "@angular/platform-browser-dynamic": "^19.0.5",
     "@angular/router": "^19.0.1",
     "@babel/preset-typescript": "^7.26.0",
-    "@modbus2mqtt/server.shared": "github:modbus2mqtt/server.shared",
     "@modbus2mqtt/specification.shared": "github:modbus2mqtt/specification.shared",
     "@ngx-translate/core": "^16.0.3",
     "@popperjs/core": "^2.11.8",
@@ -50,6 +53,8 @@
     "yaml": "^2.6.1"
   },
   "dependencies": {
+    "@modbus2mqtt/server.shared": "github:modbus2mqtt/server.shared",
+    "@types/mqtt": "^0.0.34",
     "mat-icon-button-sizes": "^1.0.6"
   }
 }
