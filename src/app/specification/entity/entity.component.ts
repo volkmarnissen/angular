@@ -204,6 +204,7 @@ export class EntityComponent
     },
     { registerType: ModbusRegisterType.AnalogInputs, name: "Analog Input" },
     { registerType: ModbusRegisterType.Coils, name: "Coils" },
+    { registerType: ModbusRegisterType.DiscreteInputs, name: "Discrete Inputs" },
   ];
 
   entitiesDisplayedColumns = [
