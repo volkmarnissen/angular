@@ -115,7 +115,8 @@ export class TranslationComponent implements OnInit, OnDestroy {
       "name",
       new FormControl<string | null>(null),
     );
-    this.specificationSubscription = this.specificationObservable.subscribe(
+    if(this.specificationObservable)
+      this.specificationSubscription = this.specificationObservable.subscribe(
       (_specFromParent) => {
         if (_specFromParent) this.currentSpecification = _specFromParent;
         if (this.mqttdiscoverylanguage != "en") {

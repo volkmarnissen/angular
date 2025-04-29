@@ -16,5 +16,11 @@
     transform: scale(0.5);
 }
 .indent {
+    text-indent: 2em;
+}
+.indent2 {
     text-indent: 4em;
+}
+.indent3 {
+    text-indent: 6em;
 }
