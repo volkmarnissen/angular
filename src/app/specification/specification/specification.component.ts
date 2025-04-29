@@ -206,7 +206,7 @@ export class SpecificationComponent
               },
             );
           this.setValidationMessages();
-          this.setErrorMessages();
+          //TODO this.setErrorMessages();
           if(this.specificationSubject)
           this.specificationSubject.next(this.currentSpecification);
         }
@@ -737,12 +737,7 @@ export class SpecificationComponent
         this.validationMessages = mesgs;
       });
   }
-  setErrorMessages(): void {
-    this.errorMessages = new Set<string>();
-    this.currentSpecification?.entities.forEach((entity) => {
-      if (entity.modbusError) this.errorMessages.add(entity.modbusError);
-    });
-  }
+
   getErrorMessageHint(message: string): string {
     switch (message) {
       case "Timed out":
