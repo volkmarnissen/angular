@@ -15,16 +15,16 @@ import {
 } from "@modbus2mqtt/server.shared";
 import { ModbusRegisterType } from "@modbus2mqtt/specification.shared";
 
+
+let date = Date.now()
 let modbusErrors: ImodbusErrorsForSlave = {
   task: ModbusTasks.deviceDetection,
-  date: Date.now(),
+  date: date,
   address: { address:1,registerType:ModbusRegisterType.HoldingRegister},
   state:ModbusErrorStates.crc
 
 };
-
-describe("Modbus Error Component tests", () => {
-  beforeEach(() => {
+function mount( currentDate:number){
     // This configures the rootUrl for /api... calls
     // they need to be relative in ingress scenarios,
     // but they must be absolute for cypress tests
@@ -39,21 +39,36 @@ describe("Modbus Error Component tests", () => {
       autoDetectChanges: true,
       componentProperties: {
         modbusErrors: [modbusErrors],
+        currentDate: date + 30*1000
       },
     });
+
+    // This configures the rootUrl for /api... calls
+    // they need to be relative in ingress scenarios,
+    // but they must be absolute for cypress tests
+    cy.window().then((win) => {
+      (win as any).configuration = { rootUrl: "/" };
+    });
+    cy.mount(ModbusErrorComponent, {
+      providers: [
+        provideHttpClient(withInterceptorsFromDi()),
+        provideRouter([]),
+      ],
+      autoDetectChanges: true,
+      componentProperties: {
+        modbusErrors: [modbusErrors],
+        currentDate: currentDate
+      },
+    });
+}
+describe("Modbus Error Component tests", () => {
+  it("can mount 30 seconds after last error", () => {
+    mount(date + 30*1000)
+    cy.get('mat-panel-description:first').should('contain', '30 seconds ago')
   });
-  it("can mountx", () => {});
   
-  xit("first icon is red", () => {
-    cy.get("div.icon-text mat-icon").should("satisfy", ($el) => {
-      const classList = Array.from($el[0].classList);
-      return classList.includes("red"); // passes
-    });
-  });
-  xit("third icon is green", () => {
-    cy.get("div.icon-text mat-icon").should("satisfy", ($el) => {
-      const classList = Array.from($el[2].classList);
-      return classList.includes("green"); // passes
-    });
+  it("can mount 90 seconds after last error", () => {
+      mount(date + 90*1000)
+      cy.get('mat-panel-description:first').should('contain', '1:30 minutes ago')
   });
 });

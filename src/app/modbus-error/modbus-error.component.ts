@@ -24,7 +24,7 @@ import {
 import { ApiService } from "../services/api-service";
 import { MatExpansionModule, MatExpansionPanel, MatExpansionPanelHeader } from "@angular/material/expansion";
 import { ModbusRegisterType } from "@modbus2mqtt/specification.shared";
-
+const oneMinuteInMs=60*1000
 @Component({
   selector: "app-modbus-error-component",
   imports: [MatIconModule, NgFor, NgTemplateOutlet, MatExpansionModule],
@@ -35,6 +35,8 @@ import { ModbusRegisterType } from "@modbus2mqtt/specification.shared";
 export class ModbusErrorComponent implements OnInit {
   config: Iconfiguration;
   @Input({ required: true }) modbusErrors: ImodbusErrorsForSlave[] | undefined;
+  @Input({ required: false }) currentDate: number| undefined = undefined;
+
   tasksToLog:ModbusTasks[]=[ModbusTasks.poll,ModbusTasks.specification, ModbusTasks.deviceDetection, ModbusTasks.initialConnect]
   constructor(private entityApiService: ApiService) {}
   ngOnInit(): void {
@@ -58,6 +60,11 @@ export class ModbusErrorComponent implements OnInit {
       case ModbusRegisterType.HoldingRegister: return "Holding Registers"
       default: return "Unknown"
     }
+  }
+  getCurrentDate():number{
+    if( this.currentDate == undefined)
+      return Date.now()
+    return this.currentDate
   }
   getMinAgo(mins:number, date:Date= new Date()):Date{
     let dt = new Date(date.getFullYear(),date.getMonth(), date.getDate(), date.getHours(),-mins+date.getMinutes(), date.getSeconds())
@@ -142,5 +149,16 @@ export class ModbusErrorComponent implements OnInit {
       rcs.push(r)
     })
     return rcs
+  }
+  getSinceTimeString(errorList:ImodbusErrorsForSlave[]):string{
+    if(errorList == undefined)
+      return 'XX'
+    let delta=this.getCurrentDate() - errorList[errorList.length-1].date 
+    let minutes = Math.floor(delta/oneMinuteInMs)
+    let seconds = Math.floor((delta/1000) % 60)
+    if(delta > oneMinuteInMs)
+      return "" + minutes + ":"  + seconds + " minutes ago"
+    else
+      return "" + seconds + " seconds ago"
   }
 }
