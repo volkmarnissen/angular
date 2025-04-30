@@ -217,7 +217,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     fc.setValue(slaveSpec);
     return spec;
   }
-  private updateSlaves(bus: IBus, detectSpec?: boolean) {
+  private updateSlaves( detectSpec?: boolean) {
     this.entityApiService.getSlaves(this.bus.busId).subscribe((slaves) => {
       this.uiSlaves = [];
       slaves.forEach((s) => {
@@ -370,7 +370,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
 
   showUnmatched() {
     this.showAllPublicSpecs.value;
-    this.updateSlaves(this.bus, false);
+    this.updateSlaves(false);
   }
   compareSpecificationIdentification(
     o1: IidentificationSpecification,
@@ -531,7 +531,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
           );
           if (dIdx >= 0) {
             this.uiSlaves.splice(dIdx, 1);
-            this.updateSlaves(this.bus, false);
+            this.updateSlaves( false);
           }
         });
   }
@@ -564,7 +564,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       this.entityApiService
         .postSlave(this.bus.busId, { slaveid: slaveId })
         .subscribe(() => {
-          this.updateSlaves(this.bus, detectSpec);
+          this.updateSlaves( detectSpec);
         });
   }
   private static form2SlaveSetValue(uiSlave: IuiSlave, controlname: string) {
