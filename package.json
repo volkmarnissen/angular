@@ -34,6 +34,8 @@
     "@angular/platform-browser-dynamic": "^19.0.5",
     "@angular/router": "^19.0.1",
     "@babel/preset-typescript": "^7.26.0",
+    "@modbus2mqtt/server.shared": "github:modbus2mqtt/server.shared#main",
+    "@modbus2mqtt/specification.shared": "github:modbus2mqtt/specification.shared#main",
     "@ngx-translate/core": "^16.0.3",
     "@popperjs/core": "^2.11.8",
     "@types/ws": "^8.5.13",
@@ -52,8 +54,6 @@
     "yaml": "^2.6.1"
   },
   "dependencies": {
-    "@modbus2mqtt/server.shared": "github:modbus2mqtt/server.shared",
-    "@modbus2mqtt/specification.shared": "github:modbus2mqtt/specification.shared",
     "@types/mqtt": "^0.0.34",
     "mat-icon-button-sizes": "^1.0.6"
   }
