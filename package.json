@@ -54,6 +54,8 @@
     "yaml": "^2.6.1"
   },
   "dependencies": {
+    "@modbus2mqtt/server.shared": "github:modbus2mqtt/server.shared",
+    "@modbus2mqtt/specification.shared": "github:modbus2mqtt/specification.shared",
     "@types/mqtt": "^0.0.34",
     "mat-icon-button-sizes": "^1.0.6"
   }
