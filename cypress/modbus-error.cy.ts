@@ -10,23 +10,21 @@ import { ModbusErrorComponent } from "angular/src/app/modbus-error/modbus-error.
 import {
   Iconfiguration,
   ImodbusErrorsForSlave,
+  ModbusErrorStates,
+  ModbusTasks,
 } from "@modbus2mqtt/server.shared";
+import { ModbusRegisterType } from "@modbus2mqtt/specification.shared";
 
+
+let date = Date.now()
 let modbusErrors: ImodbusErrorsForSlave = {
-  errors: [{ entityId: 1, message: "One Error" }],
-  totalErrorCount: 1,
-  errorsSinceLastSuccessful: 0,
-  allEntitiesFailed: false,
-  notIdentifiedEntities: [],
-  lastErrorTime: new Date(2021, 1, 1, 7, 7, 7).getTime(),
-  lastAllEntitiesFailedTime: 0,
-  lastSuccessfulIdentifiedTime: 0,
-  lastAllEntitiesFailedSinceLastSuccessful: 0,
-  lastIdentifiedSinceLastSuccessful: 0,
-};
+  task: ModbusTasks.deviceDetection,
+  date: date,
+  address: { address:1,registerType:ModbusRegisterType.HoldingRegister},
+  state:ModbusErrorStates.crc
 
-describe("Modbus Error Component tests", () => {
-  beforeEach(() => {
+};
+function mount( currentDate:number){
     // This configures the rootUrl for /api... calls
     // they need to be relative in ingress scenarios,
     // but they must be absolute for cypress tests
@@ -38,22 +36,39 @@ describe("Modbus Error Component tests", () => {
         provideHttpClient(withInterceptorsFromDi()),
         provideRouter([]),
       ],
+      autoDetectChanges: true,
       componentProperties: {
-        modbusErrors: modbusErrors,
+        modbusErrors: [modbusErrors],
+        currentDate: date + 30*1000
       },
     });
-  });
-  it("can mount", () => {});
-  it("first icon is red", () => {
-    cy.get("div.icon-text mat-icon").should("satisfy", ($el) => {
-      const classList = Array.from($el[0].classList);
-      return classList.includes("red"); // passes
+
+    // This configures the rootUrl for /api... calls
+    // they need to be relative in ingress scenarios,
+    // but they must be absolute for cypress tests
+    cy.window().then((win) => {
+      (win as any).configuration = { rootUrl: "/" };
     });
-  });
-  it("third icon is green", () => {
-    cy.get("div.icon-text mat-icon").should("satisfy", ($el) => {
-      const classList = Array.from($el[2].classList);
-      return classList.includes("green"); // passes
+    cy.mount(ModbusErrorComponent, {
+      providers: [
+        provideHttpClient(withInterceptorsFromDi()),
+        provideRouter([]),
+      ],
+      autoDetectChanges: true,
+      componentProperties: {
+        modbusErrors: [modbusErrors],
+        currentDate: currentDate
+      },
     });
+}
+describe("Modbus Error Component tests", () => {
+  it("can mount 30 seconds after last error", () => {
+    mount(date + 30*1000)
+    cy.get('mat-panel-description:first').should('contain', '30 seconds ago')
+  });
+  
+  it("can mount 90 seconds after last error", () => {
+      mount(date + 90*1000)
+      cy.get('mat-panel-description:first').should('contain', '1:30 minutes ago')
   });
 });

@@ -414,6 +414,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
         uiSlave.slave.specificationid = spec.filename;
         uiSlave.slave.noDiscoverEntities = [];
         uiSlave.selectedEntitites = this.getSelectedEntites(uiSlave.slave);
+        uiSlave.label = this.getSlaveName(uiSlave.slave),
         uiSlave.slaveForm
           .get("discoverEntitiesList")!
           .setValue(this.buildDiscoverEntityList(uiSlave.slave));
@@ -751,7 +752,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       uiSlave.slaveForm.get("discoverEntitiesList")!.enable();
     else uiSlave.slaveForm.get("discoverEntitiesList")!.disable();
   }
-  getModbusErrors(uiSlave: IuiSlave): ImodbusErrorsForSlave | undefined {
+  getModbusErrors(uiSlave: IuiSlave): ImodbusErrorsForSlave[] | undefined {
     return uiSlave.slave.modbusErrorsForSlave;
   }
 }
