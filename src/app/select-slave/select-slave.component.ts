@@ -181,7 +181,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
           this.bus = bus;
           if (this.bus) {
             this.busname = getConnectionName(this.bus.connectionData);
-            this.updateSlaves(bus);
+            this.updateSlaves();
           }
         });
       });
