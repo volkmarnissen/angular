@@ -15,19 +15,19 @@
    <ng-template #errorStates let-stateErrors='stateErrors'>
       <ng-container
       [ngTemplateOutlet]="errors" 
-      [ngTemplateOutletContext]="{errorlist:filterLast(stateErrors), timeHeader: 'Last'}"/>
+      [ngTemplateOutletContext]="{errorlist:filterLast(stateErrors), timeHeader: 'Last', timeSince: true}"/>
       <ng-container
       [ngTemplateOutlet]="errors" 
-      [ngTemplateOutletContext]="{errorlist:filterNewerThan(stateErrors, getMinAgo(5)), timeHeader: '5 minutes'}"/>
+      [ngTemplateOutletContext]="{errorlist:filterNewerThan(stateErrors, getMinAgo(5)), timeHeader: '5 minutes', timeSince: false}"/>
       <ng-container
       [ngTemplateOutlet]="errors" 
-      [ngTemplateOutletContext]="{errorlist:filterNewerThan(stateErrors, getMinAgo(60)), timeHeader: '1 hour'}"/>
+      [ngTemplateOutletContext]="{errorlist:filterNewerThan(stateErrors, getMinAgo(60)), timeHeader: '1 hour', timeSince: false}"/>
    </ng-template>
-   <ng-template #errors let-errorlist='errorlist' let-timeHeader='timeHeader'>
+   <ng-template #errors let-errorlist='errorlist' let-timeHeader='timeHeader' let-timeSince="timeSince">
       <mat-expansion-panel >
       <mat-expansion-panel-header>
         <mat-panel-title> {{timeHeader}}</mat-panel-title>
-        <mat-panel-description> {{errorlist.length}} errors</mat-panel-description>
+        <mat-panel-description>{{timeSince?getSinceTimeString(errorlist) :'' + errorlist.length +" errors"}}  </mat-panel-description>
       </mat-expansion-panel-header>
       <div>
          <div *ngFor="let e of getErrors(errorlist)">
