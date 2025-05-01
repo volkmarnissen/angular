@@ -26,8 +26,15 @@ let ev = new EventEmitter<number | undefined>()
  * If other initial values are required, a new test file is required
  */
 export function beforeEachHelper() {
-  cy.intercept("GET", "**/converters", {
-    fixture: "converters.json",
+  cy.intercept("GET", "**/" + apiUri.configuration, {
+    fixture: "configuration.json",
+  });
+  cy.intercept("GET", "**/" + apiUri.bus, {
+    fixture: "bus.json",
+  });  cy.intercept("GET", "**/" + apiUri.slaves, {
+    fixture: "slaves.json",
+  });  cy.intercept("GET", "**/" + apiUri.specsForSlaveId, {
+    fixture: "detection.json",
   });
   // This configures the rootUrl for /api... calls
   // they need to be relative in ingress scenarios,

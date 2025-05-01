@@ -1,0 +1,9 @@
+{
+   "slaveid": 1,
+   "specificationid": "dimplexpco5",
+   "name": "slavename",
+   "pollInterval": 500,
+   "pollMode": 1,
+   "rootTopic": "heatpump",
+   "modbusErrorsForSlave": []
+}

@@ -1,0 +1,4 @@
+{
+    "mqttbasetopic": "modbus2mqtt",
+    "rootUrl": "/"
+}
