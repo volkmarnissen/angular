@@ -1,0 +1,15 @@
+ [
+    {
+        "filename":  "dimplexpco5",
+        "status":  0,
+        "entities":  [],
+        "files":  [],
+        "i18n":  [],
+        "identified":  1,
+        "configuredSlave":  {
+            "slaveid": 1,
+            "name": "slavename",
+            "specificationid": "dimplexpco5"
+        }
+    }
+ ]  
