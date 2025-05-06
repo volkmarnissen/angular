@@ -1,4 +1,6 @@
 {
     "mqttbasetopic": "modbus2mqtt",
-    "rootUrl": "/"
+    "rootUrl": "/",
+    "mqttdiscoverylanguage": "en"
+
 }

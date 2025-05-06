@@ -45,19 +45,28 @@
               <mat-form-field>
                 <mat-label>Specification</mat-label>
 
-                <mat-select matInput formControlName="ispecs" (selectionChange)="onSpecificationChange(uislave)"
+                <mat-select matInput formControlName="specificationid" (selectionChange)="onSpecificationChange(uislave)"
                   [compareWith]="compareSpecificationIdentification">
-                  <ng-container *ngIf="uislave.specsObservable|async  as uiSlaves">
-                    <ng-container *ngFor="let i = index; let ispec of uiSlaves">
+                  <ng-container *ngIf="uislave.specsObservable|async  as identSpecs;else undetectedTemplate">
+                    <ng-container *ngFor="let i = index; let ispec of identSpecs">
                     <mat-option [value]="ispec">
                       <mat-icon
                         [matTooltip]="statusTooltip(ispec?ispec.status:3)">{{statusIcon(ispec?ispec.status:3)}}</mat-icon>
                       <mat-icon [color]="ispec?.identified== 1?'primary':'warn'"
                         [matTooltip]="identifiedTooltip(ispec.identified)">{{identifiedIcon(ispec.identified)}}</mat-icon>
-                      {{ ispec!== null?getSpecificationI18nName(ispec, currentLanguage):'' }}
+                      {{ ispec!== null? ispec.name:"unknown"}}
                     </mat-option>
                     </ng-container>
                   </ng-container>
+                  <ng-template #undetectedTemplate >
+                    <ng-container *ngFor="let i = index; let ispec of preparedSpecs">
+                      <mat-option [value]="ispec">
+                        <mat-icon
+                          [matTooltip]="statusTooltip(ispec?ispec.status:3)">{{statusIcon(ispec?ispec.status:3)}}</mat-icon>
+                           {{ ispec!== null? ispec.name:"unknown"}}
+                      </mat-option>
+                      </ng-container>
+                  </ng-template>
                 </mat-select>
               </mat-form-field>
               <mat-expansion-panel>
@@ -152,7 +161,7 @@
                     <h2>Command Topics</h2>
                     <dl>
                       <ng-container *ngFor="let commandEntity of uislave.commandEntities">
-                        <dt> {{getSpecEntityName(uislave.slave, commandEntity.entityId)}}</dt>
+                        <dt> {{getSpecEntityName(uislave, commandEntity.entityId)}}</dt>
                         <dd>{{ getCommandTopic( uislave, commandEntity )}}
                           <button mat-icon-button mat-small-icon-button class="material-icons app-toolbar-menu save-button"
                            (click)="copy2Clipboard(getCommandTopic( uislave, commandEntity ))" color="primary">

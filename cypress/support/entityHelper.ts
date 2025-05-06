@@ -73,7 +73,7 @@ let selectEntity: ImodbusEntity = {
   modbusValue: [4, 1, 1, 1],
   mqttValue: "ent 4",
   identified: IdentifiedStates.identified,
-  converter: { name: "select", registerTypes: [3, 4] },
+  converter: "select",
   readonly: false,
   registerType: 3,
   modbusAddress: 4,
