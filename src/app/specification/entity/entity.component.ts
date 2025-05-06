@@ -1,11 +1,9 @@
 import {
   AfterViewInit,
   Component,
-  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
-  Output,
   SimpleChanges,
 } from "@angular/core";
 
@@ -23,13 +21,12 @@ import {
 } from "@angular/forms";
 import { Observable, Subject, Subscription } from "rxjs";
 import {
+  Converters,
   EnumNumberFormat,
   EnumStateClasses,
   IFunctionCode as IRegisterType,
-  Iconverter,
   IdentifiedStates,
   Ientity,
-  Imessage,
   ImodbusData,
   ImodbusEntity,
   Iname,
@@ -41,7 +38,6 @@ import {
   VariableTargetParameters,
   getFileNameFromName,
   getParameterType,
-  setSpecificationI18nEntityName,
 } from "@modbus2mqtt/specification.shared";
 import { SessionStorage } from "../../services/SessionStorage";
 import { M2mErrorStateMatcher } from "../../services/M2mErrorStateMatcher";
@@ -97,13 +93,7 @@ const newEntity: ImodbusEntityWithName = {
   modbusValue: [0],
   mqttValue: "",
   identified: IdentifiedStates.unknown,
-  converter: {
-    name: "number",
-    registerTypes: [
-      ModbusRegisterType.HoldingRegister,
-      ModbusRegisterType.AnalogInputs,
-    ],
-  },
+  converter: "number",
   modbusAddress: 0,
   id: -1,
 };
@@ -183,7 +173,7 @@ export class EntityComponent
   entityCategories: string[] = ["", "config", "diagnostic"];
 
   mqttValues: HTMLElement;
-  converters: Observable<Iconverter[]>;
+  converters: Observable<Converters[]>;
   currentLanguage: string;
   mqttValueObservable: Subject<ImodbusData | undefined> = new Subject<
     ImodbusData | undefined
@@ -229,7 +219,7 @@ export class EntityComponent
         null as string | null,
         this.entityMqttNameValidator.bind(this),
       ],
-      converter: [null as Iconverter | null, Validators.required],
+      converter: [null as Converters | null, Validators.required],
       modbusAddress: [
         null as number | null,
         Validators.compose([
@@ -448,7 +438,7 @@ export class EntityComponent
 
     this.entityFormGroup
       .get("registerType")!
-      .setValue(this.getFunctionCode(entity.registerType));
+      .setValue(entity.registerType);
     converterFormControl.setValue(entity.converter);
     modbusAddressFormControl.setValue(
       entity.modbusAddress != undefined ? entity.modbusAddress : null,
@@ -689,7 +679,7 @@ export class EntityComponent
           ? modbusAddressFormControl.value
           : undefined;
       if (converterFormControl.value !== null) {
-        this.entity.converter = converterFormControl.value as Iconverter;
+        this.entity.converter = converterFormControl.value as Converters;
       }
     }
     this.entity.registerType =
@@ -948,7 +938,7 @@ export class EntityComponent
     control: AbstractControl,
   ): ValidationErrors | null => {
     {
-      return this.entity.converter.name != "select" ||
+      return this.entity.converter != "select" ||
         undefined ==
           this.getCurrentOptions().find((opt) => opt.name == control.value)
         ? null
@@ -1058,7 +1048,7 @@ export class EntityComponent
   }
   getMqttValue(rc: ImodbusEntity): string {
     if (rc)
-      if (rc.converter.name === "number" && rc.mqttValue != undefined) {
+      if (rc.converter === "number" && rc.mqttValue != undefined) {
         return (rc.mqttValue as number).toString();
       } else return rc.mqttValue as string;
     return "N/A";
@@ -1078,9 +1068,7 @@ export class EntityComponent
         : EntityComponent.deviceClassesSensor;
     else return [];
   }
-  compareIConverters(c1: Iconverter, c2: Iconverter): boolean {
-    return c1 != null && c2 != null && c1.name === c2.name;
-  }
+
   compareFunctionCodes(f1: IRegisterType, f2: IRegisterType) {
     return f1 && f2 && f1.registerType == f2.registerType;
   }
@@ -1125,13 +1113,6 @@ export class EntityComponent
       return type ? type.name : "";
     }
     return "";
-  }
-  getFunctionCode(functionCode: ModbusRegisterType | undefined): IRegisterType {
-    let rc: IRegisterType | undefined = undefined;
-    if (functionCode)
-      rc = this.registerTypes.find((fc) => fc.registerType == functionCode);
-    if (rc) return rc;
-    return this.registerTypes[0];
   }
 
   addOption() {
