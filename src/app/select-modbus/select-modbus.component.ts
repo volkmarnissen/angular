@@ -170,6 +170,8 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
         let serialport = (bus.connectionData as IRTUConnection).serialport;
         let baudRate = (bus.connectionData as IRTUConnection).baudrate;
         let timeout = (bus.connectionData as IRTUConnection).timeout;
+        let tcpBridgePort = (bus.connectionData as IRTUConnection).tcpBridgePort
+        
         let sd = this.getBusFormGroup(idx).get([
           "rtu",
           "serial",
@@ -180,6 +182,8 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
         if (br) br.setValue(baudRate);
         let to = fg.get(["rtu", "timeout"]);
         if (to) to.setValue(timeout);
+        let tbp = fg.get(["rtu", "tcpBridgePort"]);
+        if (tbp) tbp.setValue(tcpBridgePort);        
       } else {
         let host = (bus.connectionData as ITCPConnection).host;
         let port = (bus.connectionData as ITCPConnection).port;
@@ -211,6 +215,8 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
   saveBus(idx: number): Promise<number> {
     return new Promise<number>((resolve) => {
       let connection = this.copyForm2Connection(idx);
+
+        
       let busid: number | undefined =
         null != this.busses.data[idx] ? this.busses.data[idx].busId : undefined;
 
@@ -247,6 +253,11 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
           (connectionData as IRTUConnection).serialport = serial.value;
           (connectionData as IRTUConnection).timeout = timeout.value;
         }
+        // Optional BridgePort
+        let tcpBridgePort =fg.get(["rtu", "tcpBridgePort"])
+        if ( null != tcpBridgePort && tcpBridgePort.value )
+          (connectionData as IRTUConnection).tcpBridgePort = tcpBridgePort.value
+
         delete (connectionData as any).host;
         delete (connectionData as any).port;
       } else {
@@ -318,6 +329,7 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
         serial: [null, this.serialValidator],
         selectBaudRate: [9600, Validators.required],
         timeout: [BUS_TIMEOUT_DEFAULT, Validators.required],
+        tcpBridgePort:[null]
       }),
       tcp: this._formBuilder.group({
         host: ["", Validators.required],

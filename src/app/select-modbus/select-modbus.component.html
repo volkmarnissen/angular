@@ -73,6 +73,13 @@
                       <input type='number' matInput formControlName="timeout" />
                     </mat-form-field>
                   </div>
+                  <div>
+                    <mat-form-field matTooltip="If this field is not empty, a Modbus TCP bridge will listen on this port and forwards modbus requests to this RTU connection">
+                      <mat-label>TCP Bridge Port</mat-label>
+                      <input type='number' matInput formControlName="tcpBridgePort" />                   
+                    </mat-form-field>
+                  </div>
+
                 </div>
               </mat-tab>
               <mat-tab label="TCP" formGroupName="tcp">
