@@ -14,12 +14,12 @@ describe("Select Slave tests", () => {
           expect(req.body.pollMode).to.equal(0);
           expect(req.body.specificationid).to.equal("second");
           break;
-        case 2:
-          slaveAdded();
-          break;
       }
-
+    
       req.reply(req.body);
+    });
+    cy.intercept("GET", "**/" + apiUri.slaves.replace("/api/", "") + "*", {
+      fixture: "slaves.json",
     });
     cy.intercept("DELETE", "http://api/slave?busid=1&slaveid=1", (req) => {
       req.reply({});
@@ -48,6 +48,24 @@ describe("Select Slave tests", () => {
     cy.get("div.card-header-buttons button.delete-button:first").click({
       force: true,
     });
+
+  });
+  it("add slave", () => {
+    cy.intercept("POST", "http://api/slave?busid=1", (req) => {
+      //expect(req.body).to.include('Acme Company')
+      switch (req.body.slaveid) {
+        case 1:
+          console.log(JSON.stringify(req.body));
+          expect(req.body.pollMode).to.equal(0);
+          expect(req.body.specificationid).to.equal("second");
+          break;
+        case 2:
+          slaveAdded();
+          break;
+      }
+
+      req.reply(req.body);      
+    });
     cy.get('input[name="slaveId"]').type("2", { force: true });
     cy.get(
       'div.card-header-buttons button[mattooltip="Add Modbus Slave"]',
@@ -57,5 +75,5 @@ describe("Select Slave tests", () => {
       .get("mat-option")
       .contains("Second")
       .should("not.be.null");
-  });
+    })
 });
