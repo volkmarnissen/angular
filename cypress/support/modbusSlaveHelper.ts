@@ -119,9 +119,6 @@ export function beforeEachHelper() {
   cy.intercept("GET", "**/" + apiUri.bus.replace("/api/", "") + "*", {
     fixture: "bus.json",
   });
-  cy.intercept("GET", "**/" + apiUri.slaves.replace("/api/", "") + "*", {
-    fixture: "slaves.json",
-  });
   cy.intercept(
     "GET",
     "**/" + apiUri.specifications.replace("/api/", "") + "*",
