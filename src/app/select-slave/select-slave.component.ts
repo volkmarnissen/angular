@@ -199,36 +199,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       });
     });
   }
-  private fillSpecs(
-    detectSpec: boolean | undefined,
-    uiSlave: IuiSlave,
-    slave: Islave,
-    spec: IidentificationSpecification[],
-  ): IidentificationSpecification[] {
-    let fc: FormControl = uiSlave.slaveForm.get(["ispecs"]) as FormControl;
-    let slaveSpec = spec.find((s) => s.configuredSlave != undefined);
-    if (slaveSpec) slave.specification = this.toSpecification(slaveSpec);
-    let identifiedCount = 0;
-    let ispec: IidentificationSpecification | null = null;
-    if (detectSpec) {
-      if (!slaveSpec) {
-        spec.forEach((s) => {
-          if (s.identified == IdentifiedStates.identified) {
-            identifiedCount++;
-            ispec = s;
-          }
-        });
-        if (identifiedCount == 1 && ispec != null) {
-          slave.specificationid = (
-            ispec as IidentificationSpecification
-          ).filename;
-          fc.setValue(ispec);
-        }
-      }
-    }
-    fc.setValue(slaveSpec);
-    return spec;
-  }
+
   private updateSlaves( detectSpec?: boolean) {
     this.entityApiService.getSlaves(this.bus.busId).subscribe((slaves) => {
       this.uiSlaves = [];
