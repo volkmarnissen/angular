@@ -316,6 +316,33 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       slave.slaveid,
       this.showAllPublicSpecs.value!,
       this.config.mqttdiscoverylanguage
+    ).pipe(
+      map(identSpecs=>{
+        let found:IidentificationSpecification| undefined = undefined
+        if( detectSpec){
+          let foundOne = false
+          identSpecs.forEach(ispec=>{ 
+            if( ispec.identified== IdentifiedStates.identified )
+              if( found == undefined){
+                found = ispec
+                foundOne = true
+              }              
+              else
+              foundOne = false            
+          })
+          if( foundOne ){
+            let ctrl= rc.slaveForm.get("specificationid")
+            if( ctrl){
+              ctrl.setValue(found)
+              // This will not considered as touched, because the uislave.slaveForm is not active yet
+              // It will be marked as touched in this.addSlave
+            }
+              
+          }
+            
+        }
+        return identSpecs
+      })
     );
     this.addSpecificationToUiSlave(rc)
     rc.selectedEntitites = this.getSelectedEntites(slave),
@@ -525,8 +552,13 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     if (this.canAddSlaveId(newSlaveFormGroup))
       this.entityApiService
         .postSlave(this.bus.busId, { slaveid: slaveId })
-        .subscribe(() => {
-          this.updateSlaves( detectSpec);
+        .subscribe((slave) => {
+          let newUiSlave = this.getUiSlave(slave, detectSpec)
+          let newUislaves = ([] as IuiSlave[]).concat(this.uiSlaves,[newUiSlave])
+          this.uiSlaves = newUislaves
+          let specCtrl = newUiSlave.slaveForm.get("specificationid")
+          if( specCtrl && specCtrl.value != undefined )
+            newUiSlave.slaveForm.markAllAsTouched()
         });
   }
   private static form2SlaveSetValue(uiSlave: IuiSlave, controlname: string) {
@@ -653,15 +685,18 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
 
   getSlaveName(slave: Islave): string {
     if (slave == null) return "New";
-    if (slave.name) return slave.name + "(" + slave.slaveid + ")";
-
+    let rc:string| undefined = undefined
+    if (slave.name) 
+      rc = slave.name;
+    else
     if ( slave.specification ){
       let name = getSpecificationI18nName( slave.specification,this.config.mqttdiscoverylanguage)
       if( name)
-        return name
+        rc = name 
     }
-    return "Unknown"
-
+    if( rc == undefined )
+      rc = "Unknown"
+    return rc  + "("+ slave.slaveid + ")"
   }
   getSpecEntityName(uiSlave: IuiSlave, entityId: number):string {
     let name:string|undefined=""
