@@ -194,7 +194,10 @@ export class EntityComponent
     },
     { registerType: ModbusRegisterType.AnalogInputs, name: "Analog Input" },
     { registerType: ModbusRegisterType.Coils, name: "Coils" },
-    { registerType: ModbusRegisterType.DiscreteInputs, name: "Discrete Inputs" },
+    {
+      registerType: ModbusRegisterType.DiscreteInputs,
+      name: "Discrete Inputs",
+    },
   ];
 
   entitiesDisplayedColumns = [
@@ -366,7 +369,7 @@ export class EntityComponent
       else this.variableFormGroup.get(variableEntityFormControlName)!.enable();
     } else {
       disableVtFields.forEach((f) => f.form.enable());
-      this.variableFormGroup.get(variableEntityFormControlName)!.setValue( null );
+      this.variableFormGroup.get(variableEntityFormControlName)!.setValue(null);
       this.variableFormGroup.get(variableEntityFormControlName)!.disable();
     }
     this.entityFormGroup.updateValueAndValidity();
@@ -436,9 +439,7 @@ export class EntityComponent
       this.entityFormGroup.get("readonly")!.setValue(entity.readonly);
     }
 
-    this.entityFormGroup
-      .get("registerType")!
-      .setValue(entity.registerType);
+    this.entityFormGroup.get("registerType")!.setValue(entity.registerType);
     converterFormControl.setValue(entity.converter);
     modbusAddressFormControl.setValue(
       entity.modbusAddress != undefined ? entity.modbusAddress : null,
@@ -611,19 +612,20 @@ export class EntityComponent
   }
   onVariableEntityValueChange() {
     this.specificationMethods.setEntitiesTouched();
-    let variableType = this.variableFormGroup.get(variableTypeFormControlName)!
-        .value
-    if( variableType)
+    let variableType = this.variableFormGroup.get(
+      variableTypeFormControlName,
+    )!.value;
+    if (variableType)
       this.entity.variableConfiguration = {
         targetParameter: variableType,
         entityId:
-          this.variableFormGroup.get(variableEntityFormControlName)!.value == null
+          this.variableFormGroup.get(variableEntityFormControlName)!.value ==
+          null
             ? undefined
             : this.variableFormGroup.get(variableEntityFormControlName)!.value,
       };
-    else
-      if(this.entity.variableConfiguration)
-        delete this.entity.variableConfiguration
+    else if (this.entity.variableConfiguration)
+      delete this.entity.variableConfiguration;
     this.entity.name = undefined;
     this.enableEntityFieldsVariableType();
     this.specificationMethods.copy2Translation(this.entity);

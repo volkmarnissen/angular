@@ -141,10 +141,12 @@ export class EntityValueControlComponent
       let s = this.entity.name;
       this.entityName = s ? s : "";
       let fc: FormControl | undefined = undefined;
-      switch (this.entity.converter
-      ) {
+      switch (this.entity.converter) {
         case "number":
-          if (this.entity.mqttValue != undefined && typeof this.entity.mqttValue == 'number')
+          if (
+            this.entity.mqttValue != undefined &&
+            typeof this.entity.mqttValue == "number"
+          )
             this.numberFormControl.setValue(
               parseFloat(
                 Number.parseFloat(
@@ -207,7 +209,9 @@ export class EntityValueControlComponent
       });
   }
   getUom(): string {
-    return this.entity && this.specificationMethods ? this.specificationMethods.getUom(this.entity.id) : "";
+    return this.entity && this.specificationMethods
+      ? this.specificationMethods.getUom(this.entity.id)
+      : "";
   }
 
   getOptions(): IselectOption[] {

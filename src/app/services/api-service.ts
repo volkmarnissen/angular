@@ -236,7 +236,7 @@ export class ApiService {
     busid: number,
     specificSlaveId: number,
     showAllPublicSpecs: boolean,
-    language:string
+    language: string,
   ): Observable<IidentificationSpecification[]> {
     let p1 = specificSlaveId ? "&slaveid=" + specificSlaveId : "";
     let param = "?busid=" + busid + p1 + "&language=" + language;

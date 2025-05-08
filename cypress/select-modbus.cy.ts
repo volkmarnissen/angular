@@ -8,6 +8,6 @@ describe("Select Slave tests", () => {
     cy.intercept("GET", "**/converters", {
       fixture: "converters.json",
     });
-    cy.get('mat-select[formControlName="variableType"]')
-      });
+    cy.get('mat-select[formControlName="variableType"]');
   });
+});

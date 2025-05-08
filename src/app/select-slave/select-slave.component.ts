@@ -50,7 +50,7 @@ import {
   Iconfiguration,
   IEntityCommandTopics,
   ImodbusErrorsForSlave,
-  apiUri
+  apiUri,
 } from "@modbus2mqtt/server.shared";
 import { MatInput } from "@angular/material/input";
 import {
@@ -124,8 +124,8 @@ interface IuiSlave {
   ],
 })
 export class SelectSlaveComponent extends SessionStorage implements OnInit {
-  preparedIdentSpecs:IidentificationSpecification[]
-  preparedSpecs:Ispecification[]
+  preparedIdentSpecs: IidentificationSpecification[];
+  preparedSpecs: Ispecification[];
   getDetectSpecToolTip(): string {
     return this.slaveNewForm.get("detectSpec")?.value == true
       ? "If there is exactly one specification matching to the modbus data for this slave, " +
@@ -175,18 +175,29 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     this.entityApiService.getConfiguration().subscribe((config) => {
       this.config = config;
       this.currentLanguage = getCurrentLanguage(navigator.language);
-      this.entityApiService.getSpecifications().subscribe(specs=>{
-        this.preparedSpecs = specs
-        specs.forEach(spec=>{
-          let name = getSpecificationI18nName(spec,this.currentLanguage)
+      this.entityApiService.getSpecifications().subscribe((specs) => {
+        this.preparedSpecs = specs;
+        specs.forEach((spec) => {
+          let name = getSpecificationI18nName(spec, this.currentLanguage);
 
-          let entities:IidentEntity[]= spec.entities.map((e)=>{return { id: e.id, name: e.name, readonly:e.readonly, mqttname: e.mqttname}})
-          if(name==undefined)
-             name="unknown"
-          this.preparedIdentSpecs =[]
-          this.preparedIdentSpecs.push({ name: name, identified:IdentifiedStates.unknown, entities: entities , filename:spec.filename} as IidentificationSpecification)
-        })
-      })
+          let entities: IidentEntity[] = spec.entities.map((e) => {
+            return {
+              id: e.id,
+              name: e.name,
+              readonly: e.readonly,
+              mqttname: e.mqttname,
+            };
+          });
+          if (name == undefined) name = "unknown";
+          this.preparedIdentSpecs = [];
+          this.preparedIdentSpecs.push({
+            name: name,
+            identified: IdentifiedStates.unknown,
+            entities: entities,
+            filename: spec.filename,
+          } as IidentificationSpecification);
+        });
+      });
       this.paramsSubscription = this.route.params.subscribe((params) => {
         let busId = +params["busid"];
         this.entityApiService.getBus(busId).subscribe((bus) => {
@@ -200,7 +211,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     });
   }
 
-  private updateSlaves( detectSpec?: boolean) {
+  private updateSlaves(detectSpec?: boolean) {
     this.entityApiService.getSlaves(this.bus.busId).subscribe((slaves) => {
       this.uiSlaves = [];
       slaves.forEach((s) => {
@@ -218,42 +229,46 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   onRootTopicChange(uiSlave: IuiSlave): any {
     let o: any = {};
     if (!uiSlave.specification) return o;
-    if (!uiSlave.slave || (uiSlave.slave as Islave).specificationid == undefined)
+    if (
+      !uiSlave.slave ||
+      (uiSlave.slave as Islave).specificationid == undefined
+    )
       return {};
-    this.addSpecificationToUiSlave( uiSlave)
+    this.addSpecificationToUiSlave(uiSlave);
 
-        let rootTopic = uiSlave.slaveForm.get("rootTopic")!.value;
-        if (rootTopic) uiSlave.slave.rootTopic = rootTopic;
-        this.fillCommandTopics(uiSlave);
-        uiSlave.slaveForm.updateValueAndValidity();
-        let newUiSlaves: IuiSlave[] = [];
-        this.uiSlaves.forEach((uis) => {
-          if (uis.slave.slaveid == uiSlave.slave.slaveid)
-            newUiSlaves.push(uiSlave);
-          else newUiSlaves.push(uis);
-        });
-        this.uiSlaves = newUiSlaves;
-   }
+    let rootTopic = uiSlave.slaveForm.get("rootTopic")!.value;
+    if (rootTopic) uiSlave.slave.rootTopic = rootTopic;
+    this.fillCommandTopics(uiSlave);
+    uiSlave.slaveForm.updateValueAndValidity();
+    let newUiSlaves: IuiSlave[] = [];
+    this.uiSlaves.forEach((uis) => {
+      if (uis.slave.slaveid == uiSlave.slave.slaveid) newUiSlaves.push(uiSlave);
+      else newUiSlaves.push(uis);
+    });
+    this.uiSlaves = newUiSlaves;
+  }
   fillCommandTopics(uiSlave: IuiSlave) {
     let sl = new Slave(
       this.bus.busId,
       uiSlave.slave,
-      this.config.mqttbasetopic
+      this.config.mqttbasetopic,
     );
     uiSlave.commandEntities = [];
-    let specificationidFC:IidentificationSpecification|undefined = uiSlave.slaveForm.get("specificationid")!.value as IidentificationSpecification
-    if(specificationidFC){
-      uiSlave.slave.specificationid = specificationidFC.filename
-      this.addSpecificationToUiSlave(uiSlave)
-      if( uiSlave.slave.specification)
+    let specificationidFC: IidentificationSpecification | undefined =
+      uiSlave.slaveForm.get("specificationid")!
+        .value as IidentificationSpecification;
+    if (specificationidFC) {
+      uiSlave.slave.specificationid = specificationidFC.filename;
+      this.addSpecificationToUiSlave(uiSlave);
+      if (uiSlave.slave.specification)
         uiSlave.slave.specification.entities.forEach((ent) => {
-        let cmdTopic: IEntityCommandTopics = sl.getEntityCommandTopic(ent)!;
-        if (cmdTopic) {
-          cmdTopic.commandTopic =
-            this.getRootUrl(uiSlave.slaveForm) + cmdTopic.commandTopic;
-          uiSlave.commandEntities!.push(ent as any);
-        }
-      });      
+          let cmdTopic: IEntityCommandTopics = sl.getEntityCommandTopic(ent)!;
+          if (cmdTopic) {
+            cmdTopic.commandTopic =
+              this.getRootUrl(uiSlave.slaveForm) + cmdTopic.commandTopic;
+            uiSlave.commandEntities!.push(ent as any);
+          }
+        });
     }
   }
   getStateTopic(uiSlave: IuiSlave): string | undefined {
@@ -309,45 +324,42 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     let rc: IuiSlave = {
       slave: slave,
       label: this.getSlaveName(slave),
-      slaveForm: fg
-      } as any;
-    rc.specsObservable = this.entityApiService.getSpecsDetection(
-      this.bus!.busId!,
-      slave.slaveid,
-      this.showAllPublicSpecs.value!,
-      this.config.mqttdiscoverylanguage
-    ).pipe(
-      map(identSpecs=>{
-        let found:IidentificationSpecification| undefined = undefined
-        if( detectSpec){
-          let foundOne = false
-          identSpecs.forEach(ispec=>{ 
-            if( ispec.identified== IdentifiedStates.identified )
-              if( found == undefined){
-                found = ispec
-                foundOne = true
-              }              
-              else
-              foundOne = false            
-          })
-          if( foundOne ){
-            let ctrl= rc.slaveForm.get("specificationid")
-            if( ctrl){
-              ctrl.setValue(found)
-              // This will not considered as touched, because the uislave.slaveForm is not active yet
-              // It will be marked as touched in this.addSlave
+      slaveForm: fg,
+    } as any;
+    rc.specsObservable = this.entityApiService
+      .getSpecsDetection(
+        this.bus!.busId!,
+        slave.slaveid,
+        this.showAllPublicSpecs.value!,
+        this.config.mqttdiscoverylanguage,
+      )
+      .pipe(
+        map((identSpecs) => {
+          let found: IidentificationSpecification | undefined = undefined;
+          if (detectSpec) {
+            let foundOne = false;
+            identSpecs.forEach((ispec) => {
+              if (ispec.identified == IdentifiedStates.identified)
+                if (found == undefined) {
+                  found = ispec;
+                  foundOne = true;
+                } else foundOne = false;
+            });
+            if (foundOne) {
+              let ctrl = rc.slaveForm.get("specificationid");
+              if (ctrl) {
+                ctrl.setValue(found);
+                // This will not considered as touched, because the uislave.slaveForm is not active yet
+                // It will be marked as touched in this.addSlave
+              }
             }
-              
           }
-            
-        }
-        return identSpecs
-      })
-    );
-    this.addSpecificationToUiSlave(rc)
-    rc.selectedEntitites = this.getSelectedEntites(slave),
-  
-    this.fillCommandTopics(rc);
+          return identSpecs;
+        }),
+      );
+    this.addSpecificationToUiSlave(rc);
+    (rc.selectedEntitites = this.getSelectedEntites(slave)),
+      this.fillCommandTopics(rc);
     return rc;
   }
   updateUiSlaves(slave: Islave, detectSpec: boolean | undefined): void {
@@ -387,8 +399,10 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     if (identified == 1) return "thumb_up";
     return "thumb_down";
   }
-  getIidentSpec(filename:string|undefined):IidentificationSpecification|undefined{
-    return this.preparedIdentSpecs.find(is=> is.filename == filename)
+  getIidentSpec(
+    filename: string | undefined,
+  ): IidentificationSpecification | undefined {
+    return this.preparedIdentSpecs.find((is) => is.filename == filename);
   }
   onSpecificationChange(uiSlave: IuiSlave) {
     let identSpec: IidentificationSpecification =
@@ -398,14 +412,14 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
         delete uiSlave.slave.specification;
         delete uiSlave.slave.specificationid;
       } else {
-        this.addSpecificationToUiSlave(uiSlave)
+        this.addSpecificationToUiSlave(uiSlave);
         uiSlave.slave.specificationid = identSpec.filename;
         uiSlave.slave.noDiscoverEntities = [];
         uiSlave.selectedEntitites = this.getSelectedEntites(uiSlave.slave);
-        uiSlave.label = this.getSlaveName(uiSlave.slave),
-        uiSlave.slaveForm
-          .get("discoverEntitiesList")!
-          .setValue(this.buildDiscoverEntityList(uiSlave.slave));
+        (uiSlave.label = this.getSlaveName(uiSlave.slave)),
+          uiSlave.slaveForm
+            .get("discoverEntitiesList")!
+            .setValue(this.buildDiscoverEntityList(uiSlave.slave));
         uiSlave.slaveForm
           .get("noDiscovery")!
           .setValue(uiSlave.slave.noDiscovery);
@@ -431,7 +445,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   }
   private slave2Form(slave: Islave, fg: FormGroup) {
     fg.get("name")!.setValue((slave.name ? slave.name : null) as string | null);
-    fg.get("specificationid")!.setValue( { filename:slave.specificationid })
+    fg.get("specificationid")!.setValue({ filename: slave.specificationid });
     fg.get("pollInterval")!.setValue([
       slave.pollInterval ? slave.pollInterval : 1000,
     ]);
@@ -520,7 +534,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
           );
           if (dIdx >= 0) {
             this.uiSlaves.splice(dIdx, 1);
-            this.updateSlaves( false);
+            this.updateSlaves(false);
           }
         });
   }
@@ -553,19 +567,25 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       this.entityApiService
         .postSlave(this.bus.busId, { slaveid: slaveId })
         .subscribe((slave) => {
-          let newUiSlave = this.getUiSlave(slave, detectSpec)
-          let newUislaves = ([] as IuiSlave[]).concat(this.uiSlaves,[newUiSlave])
-          this.uiSlaves = newUislaves
-          let specCtrl = newUiSlave.slaveForm.get("specificationid")
-          if( specCtrl && specCtrl.value != undefined )
-            newUiSlave.slaveForm.markAllAsTouched()
+          let newUiSlave = this.getUiSlave(slave, detectSpec);
+          let newUislaves = ([] as IuiSlave[]).concat(this.uiSlaves, [
+            newUiSlave,
+          ]);
+          this.uiSlaves = newUislaves;
+          // The value change during loading of selection list is before
+          // Initialization of the UI
+          // replacing this.uiSlaves with newUiSlaves will initialize and show it
+          // Now, the new value needs to be marked as touched to enable cancel and save.
+          let specCtrl = newUiSlave.slaveForm.get("specificationid");
+
+          if (specCtrl && specCtrl.value != undefined)
+            newUiSlave.slaveForm.markAllAsTouched();
         });
   }
   private static form2SlaveSetValue(uiSlave: IuiSlave, controlname: string) {
     let val: any = uiSlave.slaveForm.get(controlname)!.value;
     (uiSlave.slave as any)[controlname] = val == null ? undefined : val;
   }
-
 
   private static controllers: string[] = [
     "name",
@@ -575,9 +595,10 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     "qos",
     "noDiscovery",
   ];
-  private addSpecificationToUiSlave(uiSlave:IuiSlave){
-    uiSlave.slave.specification  = this.preparedSpecs.find( ps=> ps.filename == uiSlave.slave.specificationid)
-    
+  private addSpecificationToUiSlave(uiSlave: IuiSlave) {
+    uiSlave.slave.specification = this.preparedSpecs.find(
+      (ps) => ps.filename == uiSlave.slave.specificationid,
+    );
   }
   saveSlave(uiSlave: IuiSlave) {
     SelectSlaveComponent.controllers.forEach((controller) => {
@@ -591,10 +612,10 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     )!.value;
     if (spec) {
       uiSlave.slave.specificationid = spec.filename;
-      this.addSpecificationToUiSlave(uiSlave)
+      this.addSpecificationToUiSlave(uiSlave);
       uiSlave.slave.noDiscoverEntities = [];
       if (selectedEntities && uiSlave.specification) {
-        uiSlave.specification.entities.forEach((e:IidentEntity) => {
+        uiSlave.specification.entities.forEach((e: IidentEntity) => {
           if (!selectedEntities.includes(e.id))
             uiSlave.slave.noDiscoverEntities!.push(e.id);
         });
@@ -611,12 +632,12 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   cancelSlave(uiSlave: IuiSlave) {
     uiSlave.slaveForm.reset();
     SelectSlaveComponent.controllers.forEach((controlname) => {
-      let value = (uiSlave.slave as any)[controlname]
-      if( controlname == "specificationid")
-        value = this.preparedIdentSpecs.find( s=>s.filename == uiSlave.slave.specificationid)
-      uiSlave.slaveForm
-        .get(controlname)!
-        .setValue(value);
+      let value = (uiSlave.slave as any)[controlname];
+      if (controlname == "specificationid")
+        value = this.preparedIdentSpecs.find(
+          (s) => s.filename == uiSlave.slave.specificationid,
+        );
+      uiSlave.slaveForm.get(controlname)!.setValue(value);
     });
     this.slave2Form(uiSlave.slave, uiSlave.slaveForm);
   }
@@ -685,28 +706,28 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
 
   getSlaveName(slave: Islave): string {
     if (slave == null) return "New";
-    let rc:string| undefined = undefined
-    if (slave.name) 
-      rc = slave.name;
-    else
-    if ( slave.specification ){
-      let name = getSpecificationI18nName( slave.specification,this.config.mqttdiscoverylanguage)
-      if( name)
-        rc = name 
+    let rc: string | undefined = undefined;
+    if (slave.name) rc = slave.name;
+    else if (slave.specification) {
+      let name = getSpecificationI18nName(
+        slave.specification,
+        this.config.mqttdiscoverylanguage,
+      );
+      if (name) rc = name;
     }
-    if( rc == undefined )
-      rc = "Unknown"
-    return rc  + "("+ slave.slaveid + ")"
+    if (rc == undefined) rc = "Unknown";
+    return rc + "(" + slave.slaveid + ")";
   }
-  getSpecEntityName(uiSlave: IuiSlave, entityId: number):string {
-    let name:string|undefined=""
-    if (uiSlave != null && uiSlave.slave && uiSlave.slave.specificationid){
+  getSpecEntityName(uiSlave: IuiSlave, entityId: number): string {
+    let name: string | undefined = "";
+    if (uiSlave != null && uiSlave.slave && uiSlave.slave.specificationid) {
       let sl = new Slave(
         this.bus.busId,
         uiSlave.slave,
-        this.config.mqttbasetopic)
-       let name= sl.getEntityName(entityId)
-       return name != undefined? name:"";
+        this.config.mqttbasetopic,
+      );
+      let name = sl.getEntityName(entityId);
+      return name != undefined ? name : "";
     }
     return "";
   }
@@ -721,13 +742,13 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       (slave.specification as ImodbusSpecification).entities
     )
       (slave.specification as ImodbusSpecification).entities.forEach((e) => {
-        let name:string|undefined|null= e.name
-        if (! name )
+        let name: string | undefined | null = e.name;
+        if (!name)
           name = getSpecificationI18nEntityName(
-              slave.specification as ImodbusSpecification,
-              this.currentLanguage,
-              e.id,
-            );
+            slave.specification as ImodbusSpecification,
+            this.currentLanguage,
+            e.id,
+          );
         rc.push({ id: e.id, name: name ? name : "" });
       });
     return rc;

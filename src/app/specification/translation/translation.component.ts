@@ -115,23 +115,23 @@ export class TranslationComponent implements OnInit, OnDestroy {
       "name",
       new FormControl<string | null>(null),
     );
-    if(this.specificationObservable)
+    if (this.specificationObservable)
       this.specificationSubscription = this.specificationObservable.subscribe(
-      (_specFromParent) => {
-        if (_specFromParent) this.currentSpecification = _specFromParent;
-        if (this.mqttdiscoverylanguage != "en") {
-          let dql = this.currentSpecification.i18n.find(
-            (langStruct) => langStruct.lang == this.mqttdiscoverylanguage,
-          );
-          let en = this.currentSpecification.i18n.find(
-            (langStruct) => langStruct.lang == "en",
-          );
-          if (en) this.languageToggle = dql != undefined;
-          else this.languageToggle = true;
-        }
-        this.reloadTexts();
-      },
-    );
+        (_specFromParent) => {
+          if (_specFromParent) this.currentSpecification = _specFromParent;
+          if (this.mqttdiscoverylanguage != "en") {
+            let dql = this.currentSpecification.i18n.find(
+              (langStruct) => langStruct.lang == this.mqttdiscoverylanguage,
+            );
+            let en = this.currentSpecification.i18n.find(
+              (langStruct) => langStruct.lang == "en",
+            );
+            if (en) this.languageToggle = dql != undefined;
+            else this.languageToggle = true;
+          }
+          this.reloadTexts();
+        },
+      );
   }
   onLanguageToggle() {
     this.languageToggle = !this.languageToggle;
