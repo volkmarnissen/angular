@@ -692,7 +692,8 @@ export class SpecificationComponent
         this.entityApiService
           .getSlave(this.busId, this.slaveid)
           .subscribe((slave) => {
-            if (slave.specificationid)
+            if( !this.currentSpecification )
+            if (slave.specificationid )
               this.entityApiService
                 .getSpecification(slave.specificationid)
                 .subscribe((spec) => {

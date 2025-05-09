@@ -32,7 +32,7 @@ import {
   IidentEntity,
 } from "@modbus2mqtt/specification.shared";
 import { Clipboard } from "@angular/cdk/clipboard";
-import { Observable, Subscription, map } from "rxjs";
+import { Observable, Subject, Subscription, map, of } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
 import { SessionStorage } from "../services/SessionStorage";
 import { M2mErrorStateMatcher } from "../services/M2mErrorStateMatcher";
@@ -80,7 +80,7 @@ import { isUndefined } from "cypress/types/lodash";
 interface IuiSlave {
   slave: Islave;
   label: string;
-  specsObservable: Observable<IidentificationSpecification[]>;
+  specsObservable?: Observable<IidentificationSpecification[]>;
   specification?: Ispecification;
   slaveForm: FormGroup;
   commandEntities?: ImodbusEntity[];
@@ -189,13 +189,6 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
             };
           });
           if (name == undefined) name = "unknown";
-          this.preparedIdentSpecs = [];
-          this.preparedIdentSpecs.push({
-            name: name,
-            identified: IdentifiedStates.unknown,
-            entities: entities,
-            filename: spec.filename,
-          } as IidentificationSpecification);
         });
       });
       this.paramsSubscription = this.route.params.subscribe((params) => {
@@ -318,7 +311,57 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     let ct = sl.getEntityCommandTopic(entity);
     return ct && ct.modbusCommandTopic ? ct.modbusCommandTopic : "";
   }
-
+  getDetectedSpecs(uiSlave:IuiSlave,detectSpec:boolean|undefined):Observable<IidentificationSpecification[]>{
+    let rc = this.entityApiService
+    .getSpecsDetection(
+      this.bus!.busId!,
+      uiSlave.slave.slaveid,
+      this.showAllPublicSpecs.value!,
+      this.config.mqttdiscoverylanguage,
+    )
+    .pipe(
+      map((identSpecs) => {
+        let found: IidentificationSpecification | undefined = undefined;
+        if (detectSpec) {
+          let foundOne = false;
+          identSpecs.forEach((ispec) => {
+            if (ispec.identified == IdentifiedStates.identified)
+              if (found == undefined) {
+                found = ispec;
+                foundOne = true;
+              } else foundOne = false;
+          });
+          if (foundOne) {
+            let ctrl = uiSlave.slaveForm.get("specificationid");
+            if (ctrl) {
+              ctrl.setValue(found);
+              // This will not considered as touched, because the uislave.slaveForm is not active yet
+              // It will be marked as touched in this.addSlave
+            }
+          }
+        }
+        return identSpecs;
+      }),
+    );
+    return rc
+  }
+  getSpecsForConfiguredSlave(uiSlave:IuiSlave):Observable<IidentificationSpecification[]>{
+    let rc= new Subject<IidentificationSpecification[]>()
+    this.entityApiService.getModbusSpecification(this.bus.busId,uiSlave.slave.slaveid,uiSlave.slave.specificationid).subscribe(v=>{
+      let rci:IidentificationSpecification[]=[]
+      this.preparedSpecs.forEach(spec=>{
+        console.log( "v" + v.filename + " spec" + spec.filename)
+        let name = getSpecificationI18nName(spec,this.config.mqttdiscoverylanguage)
+        rci.push({
+            name: name,
+            identified: spec.filename== v.filename?v.identified:IdentifiedStates.unknown,
+            filename: spec.filename,
+          } as IidentificationSpecification);
+        rc.next(rci)       
+      })
+    })
+    return rc;
+  }
   getUiSlave(slave: Islave, detectSpec: boolean | undefined): IuiSlave {
     let fg = this.initiateSlaveControl(slave, null);
     let rc: IuiSlave = {
@@ -326,37 +369,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       label: this.getSlaveName(slave),
       slaveForm: fg,
     } as any;
-    rc.specsObservable = this.entityApiService
-      .getSpecsDetection(
-        this.bus!.busId!,
-        slave.slaveid,
-        this.showAllPublicSpecs.value!,
-        this.config.mqttdiscoverylanguage,
-      )
-      .pipe(
-        map((identSpecs) => {
-          let found: IidentificationSpecification | undefined = undefined;
-          if (detectSpec) {
-            let foundOne = false;
-            identSpecs.forEach((ispec) => {
-              if (ispec.identified == IdentifiedStates.identified)
-                if (found == undefined) {
-                  found = ispec;
-                  foundOne = true;
-                } else foundOne = false;
-            });
-            if (foundOne) {
-              let ctrl = rc.slaveForm.get("specificationid");
-              if (ctrl) {
-                ctrl.setValue(found);
-                // This will not considered as touched, because the uislave.slaveForm is not active yet
-                // It will be marked as touched in this.addSlave
-              }
-            }
-          }
-          return identSpecs;
-        }),
-      );
+    rc.specsObservable = (slave.specificationid == undefined? this.getDetectedSpecs( rc,detectSpec):this.getSpecsForConfiguredSlave(rc) )
     this.addSpecificationToUiSlave(rc);
     (rc.selectedEntitites = this.getSelectedEntites(slave)),
       this.fillCommandTopics(rc);

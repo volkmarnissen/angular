@@ -107,7 +107,7 @@
                         <mat-select matInput formControlName="converter" 
                             (selectionChange)="onModbusAddressChange()">
                             <mat-option *ngFor="let c of converters| async " [value]="c">
-                                {{ c.name }}
+                                {{ c }}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>

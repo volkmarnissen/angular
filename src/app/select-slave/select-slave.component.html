@@ -52,7 +52,7 @@
                     <mat-option [value]="ispec">
                       <mat-icon
                         [matTooltip]="statusTooltip(ispec?ispec.status:3)">{{statusIcon(ispec?ispec.status:3)}}</mat-icon>
-                      <mat-icon [color]="ispec?.identified== 1?'primary':'warn'"
+                      <mat-icon *ngIf="ispec?.identified!= -1" [color]="ispec?.identified== 1?'primary':'warn'"
                         [matTooltip]="identifiedTooltip(ispec.identified)">{{identifiedIcon(ispec.identified)}}</mat-icon>
                       {{ ispec!== null? ispec.name:"unknown"}}
                     </mat-option>
@@ -63,7 +63,8 @@
                       <mat-option [value]="ispec">
                         <mat-icon
                           [matTooltip]="statusTooltip(ispec?ispec.status:3)">{{statusIcon(ispec?ispec.status:3)}}</mat-icon>
-                           {{ ispec!== null? ispec.name:"unknown"}}
+                        {{ ispec!== null? ispec.name:"unknown"}}
+                             {{ ispec!== null? ispec.name:"unknown"}}
                       </mat-option>
                       </ng-container>
                   </ng-template>
