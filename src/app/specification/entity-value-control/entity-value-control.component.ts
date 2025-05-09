@@ -146,16 +146,20 @@ export class EntityValueControlComponent
           if (
             this.entity.mqttValue != undefined &&
             typeof this.entity.mqttValue == "number"
-          )
+          ){
+            let decimals = (this.entity.converterParameters as Inumber).decimals
+            decimals = decimals && decimals > 0? decimals:2;
             this.numberFormControl.setValue(
               parseFloat(
                 Number.parseFloat(
                   (this.getMqttValue() as number).toString(),
                 ).toFixed(
-                  (this.entity.converterParameters as Inumber).decimals,
+                  decimals,
                 ),
               ),
             );
+          }
+            
           let num = this.entity.converterParameters as Inumber;
           if (num != undefined) {
             if (num.step) this.step = num.step;
