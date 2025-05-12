@@ -162,7 +162,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   //slavesFormArray: FormArray<FormGroup>
   slaveNewForm: FormGroup = this._formBuilder.group({
     slaveId: [null],
-    detectSpec: [true],
+    detectSpec: [false],
   });
   paramsSubscription: Subscription;
   errorStateMatcher = new M2mErrorStateMatcher();
@@ -347,19 +347,23 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   }
   getSpecsForConfiguredSlave(uiSlave:IuiSlave):Observable<IidentificationSpecification[]>{
     let rc= new Subject<IidentificationSpecification[]>()
-    this.entityApiService.getModbusSpecification(this.bus.busId,uiSlave.slave.slaveid,uiSlave.slave.specificationid).subscribe(v=>{
+    let fct = ( specModbus:ImodbusSpecification| undefined )=>{
       let rci:IidentificationSpecification[]=[]
       this.preparedSpecs.forEach(spec=>{
-        console.log( "v" + v.filename + " spec" + spec.filename)
-        let name = getSpecificationI18nName(spec,this.config.mqttdiscoverylanguage)
+      let name = getSpecificationI18nName(spec,this.config.mqttdiscoverylanguage)
         rci.push({
             name: name,
-            identified: spec.filename== v.filename?v.identified:IdentifiedStates.unknown,
+            identified: specModbus && spec.filename== specModbus.filename?specModbus.identified:IdentifiedStates.unknown,
             filename: spec.filename,
           } as IidentificationSpecification);
         rc.next(rci)       
       })
-    })
+    }
+    if( uiSlave.slave.specificationid )
+      this.entityApiService.getModbusSpecification(this.bus.busId,uiSlave.slave.slaveid,uiSlave.slave.specificationid, true).subscribe(fct)
+    else
+      fct(undefined )
+
     return rc;
   }
   getUiSlave(slave: Islave, detectSpec: boolean | undefined): IuiSlave {
@@ -369,7 +373,8 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       label: this.getSlaveName(slave),
       slaveForm: fg,
     } as any;
-    rc.specsObservable = (slave.specificationid == undefined? this.getDetectedSpecs( rc,detectSpec):this.getSpecsForConfiguredSlave(rc) )
+    
+    rc.specsObservable = this.getSpecsForConfiguredSlave(rc) // getDetectedSpecs is disabled, because of performance issues
     this.addSpecificationToUiSlave(rc);
     (rc.selectedEntitites = this.getSelectedEntites(slave)),
       this.fillCommandTopics(rc);

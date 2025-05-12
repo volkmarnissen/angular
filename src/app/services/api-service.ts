@@ -70,7 +70,7 @@ export class ApiService {
 
   errorHandler: (err: HttpErrorResponse) => any;
   getSpecification(
-    specification: string | undefined = undefined,
+    specification: string | undefined = undefined
   ): Observable<Ispecification> {
     if (!specification) throw new Error("spec is a required parameter");
 
@@ -83,11 +83,16 @@ export class ApiService {
     busid: number,
     slaveid: number,
     specification: string | undefined = undefined,
+    deviceDetection:boolean| undefined = undefined
   ): Observable<ImodbusSpecification> {
+    let deviceDetectionStr :string = ''
+    if(deviceDetection)
+      deviceDetectionStr = '&deviceDetection=1'
+
     let f: string =
       this.getFullUri(apiUri.modbusSpecification) +
       `?busid=${busid}&slaveid=${slaveid}`;
-    if (specification) f = f + `&spec=${specification}`;
+    if (specification) f = f + `&spec=${specification}${deviceDetectionStr}`;
     return this.httpClient.get<ImodbusSpecification>(f).pipe(
       catchError((err) => {
         this.errorHandler(err);
