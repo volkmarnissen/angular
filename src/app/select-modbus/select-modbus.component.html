@@ -74,10 +74,8 @@
                     </mat-form-field>
                   </div>
                   <div>
-                    <mat-form-field matTooltip="If this field is not empty, a Modbus TCP bridge will listen on this port and forwards modbus requests to this RTU connection">
-                      <mat-label>TCP Bridge Port</mat-label>
-                      <input type='number' matInput formControlName="tcpBridgePort" />                   
-                    </mat-form-field>
+                      <mat-slide-toggle formControlName="tcpBridge" matTooltip="A Modbus TCP bridge will listen on port 502 and forwards modbus requests to this RTU connection">TCP Bridge to RTU </mat-slide-toggle>
+
                   </div>
 
                 </div>
