@@ -123,8 +123,8 @@ export class EntityValueControlComponent
     return !this.entity || this.entity.readonly;
   }
   getConverterName(): string {
-    return this.entity && this.entity.converter && this.entity.converter.name
-      ? this.entity.converter.name
+    return this.entity && this.entity.converter
+      ? this.entity.converter
       : "sensor";
   }
   getMqttValue(): string | number {
@@ -141,18 +141,25 @@ export class EntityValueControlComponent
       let s = this.entity.name;
       this.entityName = s ? s : "";
       let fc: FormControl | undefined = undefined;
-      switch (this.entity.converter.name) {
+      switch (this.entity.converter) {
         case "number":
-          if (this.entity.mqttValue != undefined && typeof this.entity.mqttValue == 'number')
+          if (
+            this.entity.mqttValue != undefined &&
+            typeof this.entity.mqttValue == "number"
+          ){
+            let decimals = (this.entity.converterParameters as Inumber).decimals
+            decimals = decimals && decimals > 0? decimals:2;
             this.numberFormControl.setValue(
               parseFloat(
                 Number.parseFloat(
                   (this.getMqttValue() as number).toString(),
                 ).toFixed(
-                  (this.entity.converterParameters as Inumber).decimals,
+                  decimals,
                 ),
               ),
             );
+          }
+            
           let num = this.entity.converterParameters as Inumber;
           if (num != undefined) {
             if (num.step) this.step = num.step;
@@ -206,7 +213,9 @@ export class EntityValueControlComponent
       });
   }
   getUom(): string {
-    return this.entity && this.specificationMethods ? this.specificationMethods.getUom(this.entity.id) : "";
+    return this.entity && this.specificationMethods
+      ? this.specificationMethods.getUom(this.entity.id)
+      : "";
   }
 
   getOptions(): IselectOption[] {

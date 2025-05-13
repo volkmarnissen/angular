@@ -104,10 +104,10 @@
                     </div>
                     <mat-form-field class="smallfield">
                         <mat-label>Converter</mat-label>
-                        <mat-select matInput formControlName="converter" [compareWith]="compareIConverters"
+                        <mat-select matInput formControlName="converter" 
                             (selectionChange)="onModbusAddressChange()">
                             <mat-option *ngFor="let c of converters| async " [value]="c">
-                                {{ c.name }}
+                                {{ c }}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
@@ -344,7 +344,7 @@
                 </mat-form-field>
             </form>
         </mat-expansion-panel>
-        <mat-expansion-panel *ngIf="! ['binary_sensor', 'button'] .includes(entity.converter.name)">
+        <mat-expansion-panel *ngIf="! ['binary_sensor', 'button'] .includes(entity.converter)">
             <mat-expansion-panel-header>
                 <mat-panel-title [matTooltip]="variableFormGroup.valid?'':'This panel has errors'">
                     <p [ngClass]="{'errorText': !variableFormGroup.valid}"> Variable Properties {{!entity.readonly?" and MQTT topic":"" }}</p>

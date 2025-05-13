@@ -164,7 +164,7 @@ export class SpecificationComponent
 
     if (this.sub) this.sub.unsubscribe();
   }
-  specificationSubject:Subject<ImodbusSpecification>| undefined  = undefined //Seems not to be used new Subject<ImodbusSpecification>();
+  specificationSubject: Subject<ImodbusSpecification> | undefined = undefined; //Seems not to be used new Subject<ImodbusSpecification>();
   enterSpecNameFormGroup: FormGroup;
   validationForms: FormGroup;
 
@@ -207,8 +207,8 @@ export class SpecificationComponent
             );
           this.setValidationMessages();
           //TODO this.setErrorMessages();
-          if(this.specificationSubject)
-          this.specificationSubject.next(this.currentSpecification);
+          if (this.specificationSubject)
+            this.specificationSubject.next(this.currentSpecification);
         }
       },
       setEntitiesTouched: (): void => {
@@ -671,10 +671,7 @@ export class SpecificationComponent
 
   ngOnInit(): void {
     this.enterSpecNameFormGroup = this.fb.group({
-      name: [
-        null as string | null,
-        Validators.required
-      ],
+      name: [null as string | null, Validators.required],
       filename: [null as string | null],
       icon: [null as string | null],
       manufacturer: [null as string | null],
@@ -695,7 +692,8 @@ export class SpecificationComponent
         this.entityApiService
           .getSlave(this.busId, this.slaveid)
           .subscribe((slave) => {
-            if (slave.specificationid)
+            if( !this.currentSpecification )
+            if (slave.specificationid )
               this.entityApiService
                 .getSpecification(slave.specificationid)
                 .subscribe((spec) => {

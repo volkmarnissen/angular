@@ -5,7 +5,6 @@ import { catchError, first, map } from "rxjs/operators";
 //we've defined our base url here in the env
 import {
   ImodbusSpecification,
-  Iconverter,
   ImodbusEntity,
   IimageAndDocumentUrl,
   HttpErrorsEnum,
@@ -14,6 +13,7 @@ import {
   editableConverters,
   Imessage,
   IimportMessages,
+  Converters,
 } from "@modbus2mqtt/specification.shared";
 import { SessionStorage } from "./SessionStorage";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -34,7 +34,7 @@ import { APP_BASE_HREF } from "@angular/common";
   providedIn: "root",
 })
 export class ApiService {
-  converterCache: Iconverter[] | undefined = undefined;
+  converterCache: Converters[] | undefined = undefined;
   private rootUrl = ".";
   constructor(
     private httpClient: HttpClient,
@@ -70,7 +70,7 @@ export class ApiService {
 
   errorHandler: (err: HttpErrorResponse) => any;
   getSpecification(
-    specification: string | undefined = undefined,
+    specification: string | undefined = undefined
   ): Observable<Ispecification> {
     if (!specification) throw new Error("spec is a required parameter");
 
@@ -83,11 +83,16 @@ export class ApiService {
     busid: number,
     slaveid: number,
     specification: string | undefined = undefined,
+    deviceDetection:boolean| undefined = undefined
   ): Observable<ImodbusSpecification> {
+    let deviceDetectionStr :string = ''
+    if(deviceDetection)
+      deviceDetectionStr = '&deviceDetection=1'
+
     let f: string =
       this.getFullUri(apiUri.modbusSpecification) +
       `?busid=${busid}&slaveid=${slaveid}`;
-    if (specification) f = f + `&spec=${specification}`;
+    if (specification) f = f + `&spec=${specification}${deviceDetectionStr}`;
     return this.httpClient.get<ImodbusSpecification>(f).pipe(
       catchError((err) => {
         this.errorHandler(err);
@@ -95,9 +100,9 @@ export class ApiService {
       }),
     );
   }
-  getConverters(): Observable<Iconverter[]> {
+  getConverters(): Observable<Converters[]> {
     if (this.converterCache != undefined) {
-      let sub = new Subject<Iconverter[]>();
+      let sub = new Subject<Converters[]>();
       sub.pipe(first());
       setTimeout(() => {
         sub.next(this.converterCache!);
@@ -106,14 +111,14 @@ export class ApiService {
     }
 
     let url = this.getFullUri(apiUri.converters);
-    return this.httpClient.get<Iconverter[]>(url).pipe(
+    return this.httpClient.get<Converters[]>(url).pipe(
       map((cnv) => {
-        this.converterCache = cnv as Iconverter[];
+        this.converterCache = cnv as Converters[];
         return cnv;
       }),
       catchError((err) => {
         this.errorHandler(err);
-        return new Observable<Iconverter[]>();
+        return new Observable<Converters[]>();
       }),
     );
   }
@@ -232,18 +237,19 @@ export class ApiService {
       );
   }
 
-  getSpecsForSlave(
+  getSpecsDetection(
     busid: number,
     specificSlaveId: number,
     showAllPublicSpecs: boolean,
+    language: string,
   ): Observable<IidentificationSpecification[]> {
     let p1 = specificSlaveId ? "&slaveid=" + specificSlaveId : "";
-    let param = "?busid=" + busid + p1;
+    let param = "?busid=" + busid + p1 + "&language=" + language;
     if (showAllPublicSpecs) param = param + "&showAllPublicSpecs=true";
     return this.httpClient
       .get<
         IidentificationSpecification[]
-      >(this.getFullUri(apiUri.specsForSlaveId) + `${param}`)
+      >(this.getFullUri(apiUri.specsDetection) + `${param}`)
       .pipe(
         catchError((err) => {
           this.errorHandler(err);
@@ -406,8 +412,8 @@ export class ApiService {
   ): Observable<string> {
     let lSpec: ImodbusSpecification = structuredClone(spec);
     let entity = lSpec.entities.find((e) => e.id == entityid);
-    if (entity && editableConverters.includes(entity.converter.name)) {
-      switch (entity.converter.name) {
+    if (entity && editableConverters.includes(entity.converter)) {
+      switch (entity.converter) {
         case "select":
           I18nService.specificationTextsToTranslation(lSpec, language, entity);
           return this.httpClient
