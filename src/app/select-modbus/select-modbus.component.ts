@@ -50,6 +50,7 @@ import {
   MatCardContent,
 } from "@angular/material/card";
 import { NgFor, NgIf } from "@angular/common";
+import { MatSlideToggle } from "@angular/material/slide-toggle";
 
 @Component({
   selector: "app-select-modbus",
@@ -62,6 +63,7 @@ import { NgFor, NgIf } from "@angular/common";
     MatCard,
     MatCardHeader,
     MatCardTitle,
+    MatSlideToggle,
     MatTooltip,
     NgIf,
     MatIconButton,
@@ -170,8 +172,8 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
         let serialport = (bus.connectionData as IRTUConnection).serialport;
         let baudRate = (bus.connectionData as IRTUConnection).baudrate;
         let timeout = (bus.connectionData as IRTUConnection).timeout;
-        let tcpBridgePort = (bus.connectionData as IRTUConnection)
-          .tcpBridgePort;
+        let tcpBridge = (bus.connectionData as IRTUConnection)
+          .tcpBridge;
 
         let sd = this.getBusFormGroup(idx).get([
           "rtu",
@@ -183,8 +185,8 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
         if (br) br.setValue(baudRate);
         let to = fg.get(["rtu", "timeout"]);
         if (to) to.setValue(timeout);
-        let tbp = fg.get(["rtu", "tcpBridgePort"]);
-        if (tbp) tbp.setValue(tcpBridgePort);
+        let tbp = fg.get(["rtu", "tcpBridge"]);
+        if (tbp) tbp.setValue(tcpBridge);
       } else {
         let host = (bus.connectionData as ITCPConnection).host;
         let port = (bus.connectionData as ITCPConnection).port;
@@ -254,10 +256,10 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
           (connectionData as IRTUConnection).timeout = timeout.value;
         }
         // Optional BridgePort
-        let tcpBridgePort = fg.get(["rtu", "tcpBridgePort"]);
-        if (null != tcpBridgePort && tcpBridgePort.value)
-          (connectionData as IRTUConnection).tcpBridgePort =
-            tcpBridgePort.value;
+        let tcpBridge = fg.get(["rtu", "tcpBridge"]);
+        if (null != tcpBridge && tcpBridge.value)
+          (connectionData as IRTUConnection).tcpBridge =
+            tcpBridge.value;
 
         delete (connectionData as any).host;
         delete (connectionData as any).port;
@@ -330,7 +332,7 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
         serial: [null, this.serialValidator],
         selectBaudRate: [9600, Validators.required],
         timeout: [BUS_TIMEOUT_DEFAULT, Validators.required],
-        tcpBridgePort: [null],
+        tcpBridge: [false],
       }),
       tcp: this._formBuilder.group({
         host: ["", Validators.required],
