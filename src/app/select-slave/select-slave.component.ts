@@ -120,7 +120,7 @@ interface IuiSlave {
     MatExpansionPanelTitle,
     MatInput,
     MatError,
-    AsyncPipe,
+    AsyncPipe
   ],
 })
 export class SelectSlaveComponent extends SessionStorage implements OnInit {
@@ -177,19 +177,6 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       this.currentLanguage = getCurrentLanguage(navigator.language);
       this.entityApiService.getSpecifications().subscribe((specs) => {
         this.preparedSpecs = specs;
-        specs.forEach((spec) => {
-          let name = getSpecificationI18nName(spec, this.currentLanguage);
-
-          let entities: IidentEntity[] = spec.entities.map((e) => {
-            return {
-              id: e.id,
-              name: e.name,
-              readonly: e.readonly,
-              mqttname: e.mqttname,
-            };
-          });
-          if (name == undefined) name = "unknown";
-        });
       });
       this.paramsSubscription = this.route.params.subscribe((params) => {
         let busId = +params["busid"];
@@ -197,6 +184,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
           this.bus = bus;
           if (this.bus) {
             this.busname = getConnectionName(this.bus.connectionData);
+            this.getIdentSpecs(undefined).then((identSpecs)=>{this.preparedIdentSpecs = identSpecs})
             this.updateSlaves();
           }
         });
@@ -345,8 +333,8 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
     );
     return rc
   }
-  getSpecsForConfiguredSlave(uiSlave:IuiSlave):Observable<IidentificationSpecification[]>{
-    let rc= new Subject<IidentificationSpecification[]>()
+  getIdentSpecs(uiSlave:IuiSlave| undefined ):Promise<IidentificationSpecification[]>{
+    return new Promise<IidentificationSpecification[]>((resolve, reject)=>{
     let fct = ( specModbus:ImodbusSpecification| undefined )=>{
       let rci:IidentificationSpecification[]=[]
       this.preparedSpecs.forEach(spec=>{
@@ -356,15 +344,17 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
             identified: specModbus && spec.filename== specModbus.filename?specModbus.identified:IdentifiedStates.unknown,
             filename: spec.filename,
           } as IidentificationSpecification);
-        rc.next(rci)       
       })
+      resolve(rci)
     }
-    if( uiSlave.slave.specificationid )
-      this.entityApiService.getModbusSpecification(this.bus.busId,uiSlave.slave.slaveid,uiSlave.slave.specificationid, true).subscribe(fct)
+    if( uiSlave && uiSlave.slave.specificationid )
+      this.entityApiService.getModbusSpecification(this.bus.busId,uiSlave.slave.slaveid,uiSlave.slave.specificationid, false).subscribe((spec)=>{
+          console.log("DSSSS")
+          fct(spec)
+        })
     else
       fct(undefined )
-
-    return rc;
+    })
   }
   getUiSlave(slave: Islave, detectSpec: boolean | undefined): IuiSlave {
     let fg = this.initiateSlaveControl(slave, null);
@@ -373,8 +363,9 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       label: this.getSlaveName(slave),
       slaveForm: fg,
     } as any;
-    
-    rc.specsObservable = this.getSpecsForConfiguredSlave(rc) // getDetectedSpecs is disabled, because of performance issues
+    let sub = new Subject<IidentificationSpecification[]>()
+    rc.specsObservable = sub
+    this.getIdentSpecs(rc).then((identSpecs)=>{ sub.next(identSpecs)}).catch(e=>{ console.log(e.message)}) // getDetectedSpecs is disabled, because of performance issues
     this.addSpecificationToUiSlave(rc);
     (rc.selectedEntitites = this.getSelectedEntites(slave)),
       this.fillCommandTopics(rc);
@@ -592,10 +583,13 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
           // Initialization of the UI
           // replacing this.uiSlaves with newUiSlaves will initialize and show it
           // Now, the new value needs to be marked as touched to enable cancel and save.
-          let specCtrl = newUiSlave.slaveForm.get("specificationid");
+          if( detectSpec){
+            let specCtrl = newUiSlave.slaveForm.get("specificationid");
 
-          if (specCtrl && specCtrl.value != undefined)
-            newUiSlave.slaveForm.markAllAsTouched();
+            if (specCtrl && specCtrl.value != undefined)
+              newUiSlave.slaveForm.markAllAsTouched();
+
+          }
         });
   }
   private static form2SlaveSetValue(uiSlave: IuiSlave, controlname: string) {
