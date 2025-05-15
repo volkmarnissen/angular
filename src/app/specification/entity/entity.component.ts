@@ -439,7 +439,7 @@ export class EntityComponent
       this.entityFormGroup.get("readonly")!.setValue(entity.readonly);
     }
 
-    this.entityFormGroup.get("registerType")!.setValue(entity.registerType);
+    this.entityFormGroup.get("registerType")!.setValue( { registerType: entity.registerType, name: "unknown"});
     converterFormControl.setValue(entity.converter);
     modbusAddressFormControl.setValue(
       entity.modbusAddress != undefined ? entity.modbusAddress : null,

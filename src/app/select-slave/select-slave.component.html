@@ -47,8 +47,8 @@
 
                 <mat-select matInput formControlName="specificationid" (selectionChange)="onSpecificationChange(uislave)"
                   [compareWith]="compareSpecificationIdentification">
-                  <ng-container *ngIf="uislave.specsObservable|async  as identSpecs;else undetectedTemplate">
-                    <ng-container *ngFor="let i = index; let ispec of identSpecs">
+                  <ng-container *ngIf="uislave.specs;else undetectedTemplate">
+                    <ng-container *ngFor="let ispec of uislave.specs">
                     <mat-option [value]="ispec">
                       <mat-icon
                         [matTooltip]="statusTooltip(ispec?ispec.status:3)">{{statusIcon(ispec?ispec.status:3)}}</mat-icon>
@@ -59,7 +59,7 @@
                     </ng-container>
                   </ng-container>
                   <ng-template #undetectedTemplate >
-                    <ng-container *ngFor="let i = index; let ispec of preparedSpecs">
+                    <ng-container *ngFor="let ispec of preparedIdentSpecs">
                       <mat-option [value]="ispec">
                         <mat-icon
                           [matTooltip]="statusTooltip(ispec?ispec.status:3)">{{statusIcon(ispec?ispec.status:3)}}</mat-icon>
