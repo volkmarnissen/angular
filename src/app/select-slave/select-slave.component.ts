@@ -80,7 +80,7 @@ import { isUndefined } from "cypress/types/lodash";
 interface IuiSlave {
   slave: Islave;
   label: string;
-  specs?: IidentificationSpecification[];
+  specsObservable?: Observable<IidentificationSpecification[]>;
   specification?: Ispecification;
   slaveForm: FormGroup;
   commandEntities?: ImodbusEntity[];
@@ -119,7 +119,8 @@ interface IuiSlave {
     MatExpansionPanelHeader,
     MatExpansionPanelTitle,
     MatInput,
-    MatError
+    MatError,
+    AsyncPipe
   ],
 })
 export class SelectSlaveComponent extends SessionStorage implements OnInit {
@@ -347,7 +348,10 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       resolve(rci)
     }
     if( uiSlave && uiSlave.slave.specificationid )
-      this.entityApiService.getModbusSpecification(this.bus.busId,uiSlave.slave.slaveid,uiSlave.slave.specificationid, true).subscribe(fct)
+      this.entityApiService.getModbusSpecification(this.bus.busId,uiSlave.slave.slaveid,uiSlave.slave.specificationid, false).subscribe((spec)=>{
+          console.log("DSSSS")
+          fct(spec)
+        })
     else
       fct(undefined )
     })
@@ -359,7 +363,9 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       label: this.getSlaveName(slave),
       slaveForm: fg,
     } as any;
-    this.getIdentSpecs(rc).then((identSpecs)=>{rc.specs = identSpecs}).catch(e=>{ console.log(e.message)}) // getDetectedSpecs is disabled, because of performance issues
+    let sub = new Subject<IidentificationSpecification[]>()
+    rc.specsObservable = sub
+    this.getIdentSpecs(rc).then((identSpecs)=>{ sub.next(identSpecs)}).catch(e=>{ console.log(e.message)}) // getDetectedSpecs is disabled, because of performance issues
     this.addSpecificationToUiSlave(rc);
     (rc.selectedEntitites = this.getSelectedEntites(slave)),
       this.fillCommandTopics(rc);
