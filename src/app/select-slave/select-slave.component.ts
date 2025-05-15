@@ -464,9 +464,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
   private slave2Form(slave: Islave, fg: FormGroup) {
     fg.get("name")!.setValue((slave.name ? slave.name : null) as string | null);
     fg.get("specificationid")!.setValue({ filename: slave.specificationid });
-    fg.get("pollInterval")!.setValue([
-      slave.pollInterval ? slave.pollInterval : 1000,
-    ]);
+    fg.get("pollInterval")!.setValue(slave.pollInterval ? slave.pollInterval : 1000);
     fg.get("pollMode")!.setValue(
       slave.pollMode == undefined ? PollModes.intervall : slave.pollMode,
     );

@@ -48,7 +48,11 @@ export class ModbusErrorComponent implements OnInit {
     ModbusTasks.initialConnect,
   ];
   constructor(private entityApiService: ApiService) {}
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    setInterval(() => {
+      this.currentDate = Date.now()
+    }, 60*1000);
+  }
   getTaskName(task: ModbusTasks): string {
     switch (task) {
       case ModbusTasks.deviceDetection:
@@ -85,7 +89,9 @@ export class ModbusErrorComponent implements OnInit {
     if (this.currentDate == undefined) return Date.now();
     return this.currentDate;
   }
-  getMinAgo(mins: number, date: Date = new Date()): Date {
+  getMinAgo(mins: number): Date {
+    let date = new Date(this.getCurrentDate())
+
     let dt = new Date(
       date.getFullYear(),
       date.getMonth(),
