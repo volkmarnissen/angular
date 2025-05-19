@@ -257,7 +257,7 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
         }
         // Optional BridgePort
         let tcpBridge = fg.get(["rtu", "tcpBridge"]);
-        if (null != tcpBridge && tcpBridge.value)
+        if (null != tcpBridge )
           (connectionData as IRTUConnection).tcpBridge =
             tcpBridge.value;
 
