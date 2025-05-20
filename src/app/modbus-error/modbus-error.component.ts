@@ -18,6 +18,7 @@ import { MatTooltip } from "@angular/material/tooltip";
 import {
   Iconfiguration,
   ImodbusErrorsForSlave,
+  ImodbusStatusForSlave,
   ModbusErrorStates,
   ModbusTasks,
 } from "@modbus2mqtt/server.shared";
@@ -38,14 +39,17 @@ const oneMinuteInMs = 60 * 1000;
 })
 export class ModbusErrorComponent implements OnInit {
   config: Iconfiguration;
-  @Input({ required: true }) modbusErrors: ImodbusErrorsForSlave[] | undefined;
+  @Input({ required: true }) modbusErrors: ImodbusStatusForSlave | undefined;
   @Input({ required: false }) currentDate: number | undefined = undefined;
 
+  tasksToCount : ModbusTasks[] = [
+    ModbusTasks.poll,
+    ModbusTasks.specification
+  ]
+  
   tasksToLog: ModbusTasks[] = [
     ModbusTasks.poll,
-    ModbusTasks.specification,
-    ModbusTasks.deviceDetection,
-    ModbusTasks.initialConnect,
+    ModbusTasks.specification
   ];
   constructor(private entityApiService: ApiService) {}
   ngOnInit(): void {
@@ -169,7 +173,7 @@ export class ModbusErrorComponent implements OnInit {
       address: { address: -1, registerType: ModbusRegisterType.AnalogInputs },
       task: ModbusTasks.initialConnect,
       state: ModbusErrorStates.noerror,
-      date: 0,
+      date: 0
     };
     if (inValue != undefined)
       inValue.forEach((v) => {

@@ -10,17 +10,22 @@ import { ModbusErrorComponent } from "angular/src/app/modbus-error/modbus-error.
 import {
   Iconfiguration,
   ImodbusErrorsForSlave,
+  ImodbusStatusForSlave,
   ModbusErrorStates,
   ModbusTasks,
 } from "@modbus2mqtt/server.shared";
 import { ModbusRegisterType } from "@modbus2mqtt/specification.shared";
 
 let date = Date.now();
-let modbusErrors: ImodbusErrorsForSlave = {
-  task: ModbusTasks.deviceDetection,
+let modbusErrors: ImodbusStatusForSlave = {
+  errors: [{
+  task: ModbusTasks.specification,
   date: date,
   address: { address: 1, registerType: ModbusRegisterType.HoldingRegister },
   state: ModbusErrorStates.crc,
+}],
+requestCount: [0,1,2,3,4,5,6,7],
+queueLength: 23
 };
 function mount(currentDate: number) {
   // This configures the rootUrl for /api... calls
@@ -33,7 +38,7 @@ function mount(currentDate: number) {
     providers: [provideHttpClient(withInterceptorsFromDi()), provideRouter([])],
     autoDetectChanges: true,
     componentProperties: {
-      modbusErrors: [modbusErrors],
+      modbusErrors: modbusErrors,
       currentDate: date + 30 * 1000,
     },
   });
@@ -48,7 +53,7 @@ function mount(currentDate: number) {
     providers: [provideHttpClient(withInterceptorsFromDi()), provideRouter([])],
     autoDetectChanges: true,
     componentProperties: {
-      modbusErrors: [modbusErrors],
+      modbusErrors: modbusErrors,
       currentDate: currentDate,
     },
   });
