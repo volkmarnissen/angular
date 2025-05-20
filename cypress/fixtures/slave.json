@@ -5,5 +5,9 @@
   "pollInterval": 500,
   "pollMode": 1,
   "rootTopic": "heatpump",
-  "modbusErrorsForSlave": []
+  "modbusStatusForSlave": {
+    "errors": [],
+    "requestCount": [0, 1, 2, 3, 4, 5, 6, 7],
+    "queueLength": 23
+  }
 }

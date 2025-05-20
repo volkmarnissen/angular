@@ -51,6 +51,7 @@ import {
   IEntityCommandTopics,
   ImodbusErrorsForSlave,
   apiUri,
+  ImodbusStatusForSlave,
 } from "@modbus2mqtt/server.shared";
 import { MatInput } from "@angular/material/input";
 import {
@@ -194,6 +195,7 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
 
   private updateSlaves(detectSpec?: boolean) {
     this.entityApiService.getSlaves(this.bus.busId).subscribe((slaves) => {
+      console.log(JSON.stringify(slaves))
       this.uiSlaves = [];
       slaves.forEach((s) => {
         this.uiSlaves.push(this.getUiSlave(s, detectSpec));
@@ -777,7 +779,9 @@ export class SelectSlaveComponent extends SessionStorage implements OnInit {
       uiSlave.slaveForm.get("discoverEntitiesList")!.enable();
     else uiSlave.slaveForm.get("discoverEntitiesList")!.disable();
   }
-  getModbusErrors(uiSlave: IuiSlave): ImodbusErrorsForSlave[] | undefined {
-    return uiSlave.slave.modbusErrorsForSlave;
+  getModbusErrors(uiSlave: IuiSlave): ImodbusStatusForSlave | undefined {
+    if( !uiSlave|| ! uiSlave.slave || ! uiSlave.slave.modbusStatusForSlave)
+      return { requestCount:[0,0,0,0,0,0,0,0,0], errors: [], queueLength:0}
+    return uiSlave.slave.modbusStatusForSlave;
   }
 }
