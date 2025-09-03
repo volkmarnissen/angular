@@ -1,5 +1,4 @@
 # Changelog for angular
-# Changelog for angular
 
 ## [Unreleased](https://github.com/modbus2mqtt/angular/tree/HEAD)
 
@@ -72,15 +71,7 @@
 
 ## [v0.12.10](https://github.com/modbus2mqtt/angular/tree/v0.12.10) (2024-11-19)
 
-- Please update me [\#4](https://github.com/modbus2mqtt/angular/pull/4) ([volkmarnissen](https://github.com/volkmarnissen))
-- Fixed package-lock.json [\#3](https://github.com/modbus2mqtt/angular/pull/3) ([volkmarnissen](https://github.com/volkmarnissen))
-- Adding support for discrete inputs [\#2](https://github.com/modbus2mqtt/angular/pull/2) ([arturmietek](https://github.com/arturmietek))
-
-## [v0.12.20](https://github.com/modbus2mqtt/angular/tree/v0.12.20) (2025-04-14)
-
-[Full Changelog](https://github.com/modbus2mqtt/angular/compare/v0.12.19...v0.12.20)
-[Full Changelog](https://github.com/volkmarnissen/angular/compare/v0.12.17...v0.12.18)
-- Modbus Error Handling and Monitoring [\#5](https://github.com/modbus2mqtt/angular/pull/5) ([volkmarnissen](https://github.com/volkmarnissen))
+[Full Changelog](https://github.com/modbus2mqtt/angular/compare/v0.12.9...v0.12.10)
 
 ## [v0.12.9](https://github.com/modbus2mqtt/angular/tree/v0.12.9) (2024-11-16)
 
