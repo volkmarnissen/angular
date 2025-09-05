@@ -88,7 +88,7 @@ let selectEntity: ImodbusEntity = {
  *
  * If other initial values are required, a new test file is required
  */
-export function beforeEachHelper() {
+export function mountEntityComponent(displayHex:boolean) {
   cy.intercept("GET", "**/converters", {
     fixture: "converters.json",
   });
@@ -105,9 +105,15 @@ export function beforeEachHelper() {
       specificationMethods: specificationMethods,
       entity: selectEntity,
       disabled: false,
+      displayHex:displayHex
     },
   });
   cy.openAllExpansionPanels();
+
+}
+
+export function beforeEachHelper() {
+  mountEntityComponent(false);
 }
 /**
  * resets the function set by setOnEntityNameOrVariableFieldsChangeFunc

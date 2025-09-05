@@ -8,6 +8,8 @@ import {
 } from "@angular/core";
 
 import { ApiService } from "../../services/api-service";
+import {HexFormaterDirective, HexFormaterPipe} from '../hexinputfield/hexinputfield'
+
 import {
   AbstractControl,
   FormBuilder,
@@ -104,6 +106,7 @@ const newEntity: ImodbusEntityWithName = {
   styleUrl: "./entity.component.css",
   standalone: true,
   imports: [
+    HexFormaterDirective, 
     MatCard,
     MatCardHeader,
     MatCardTitle,
@@ -170,6 +173,8 @@ export class EntityComponent
   backupEntity: ImodbusEntityWithName | null;
   @Input()
   disabled: boolean = true;
+  @Input()
+  displayHex: boolean = false;
   entityCategories: string[] = ["", "config", "diagnostic"];
 
   mqttValues: HTMLElement;
@@ -229,6 +234,7 @@ export class EntityComponent
           Validators.required,
           Validators.min(0),
           Validators.max(65536),
+          Validators.pattern("^0[xX][0-9a-fA-F]+$|^[0-9]+$")
         ]),
       ],
       registerType: [null as IRegisterType | null, Validators.required],
@@ -442,7 +448,7 @@ export class EntityComponent
     this.entityFormGroup.get("registerType")!.setValue( { registerType: entity.registerType, name: "unknown"});
     converterFormControl.setValue(entity.converter);
     modbusAddressFormControl.setValue(
-      entity.modbusAddress != undefined ? entity.modbusAddress : null,
+      entity.modbusAddress != undefined ? HexFormaterDirective.convertNumberToInput(entity.modbusAddress,this.displayHex) : null,
     );
 
     if (
@@ -454,7 +460,7 @@ export class EntityComponent
       );
       modbusAddressFormControl.setValue(
         entity.modbusAddress && entity.modbusAddress != -1
-          ? entity.modbusAddress
+          ?  HexFormaterDirective.convertNumberToInput(entity.modbusAddress,this.displayHex)!
           : null,
       );
     }
@@ -664,6 +670,10 @@ export class EntityComponent
       this.specificationMethods.copy2Translation(this.entity);
     }
   }
+  onModbusAddressKeyPress(event:KeyboardEvent){
+    const allowed="0123456789xXABCDEFabcdef"
+    return allowed.indexOf( event.key) >=0
+  }
   onModbusAddressChange() {
     if (!this.entity) return;
     this.specificationMethods.setEntitiesTouched();
@@ -676,10 +686,8 @@ export class EntityComponent
       (converterFormControl.value != null &&
         converterFormControl.value !== this.entity.converter)
     ) {
-      this.entity.modbusAddress =
-        modbusAddressFormControl.value != null
-          ? modbusAddressFormControl.value
-          : undefined;
+      if(modbusAddressFormControl.value != null)
+          this.entity.modbusAddress = HexFormaterDirective.convertHexInput(modbusAddressFormControl.value)!
       if (converterFormControl.value !== null) {
         this.entity.converter = converterFormControl.value as Converters;
       }

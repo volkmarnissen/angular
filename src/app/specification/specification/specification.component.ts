@@ -17,6 +17,7 @@ import {
   Validators,
   FormsModule,
   ReactiveFormsModule,
+  FormControl,
 } from "@angular/forms";
 import { ApiService } from "../../services/api-service";
 import {
@@ -73,9 +74,10 @@ import { UploadFilesComponent } from "../upload-files/upload-files.component";
 import {
   MatExpansionPanel,
   MatExpansionPanelHeader,
-  MatExpansionPanelTitle,
+  MatExpansionPanelTitle
 } from "@angular/material/expansion";
 import { MatList, MatListItem } from "@angular/material/list";
+import { MatSlideToggle, MatSlideToggleChange } from "@angular/material/slide-toggle";
 import {
   MatCard,
   MatCardHeader,
@@ -117,6 +119,7 @@ import { MatIconButton } from "@angular/material/button";
     MatInput,
     TranslationComponent,
     EntityComponent,
+    MatSlideToggle
   ],
 })
 export class SpecificationComponent
@@ -134,6 +137,8 @@ export class SpecificationComponent
   currentSpecification: ImodbusSpecification | null;
   originalSpecification: ImodbusSpecification | null;
   uploadModbusDocumentationFormGroup: FormGroup<any>;
+  displayHexFormGroup: FormGroup<any>;
+  displayHex:boolean;
   galleryConfig: GalleryConfig = { thumbs: false };
   private entitiesTouched: boolean = false;
   private saveSubject = new Subject<void>();
@@ -677,10 +682,17 @@ export class SpecificationComponent
       manufacturer: [null as string | null],
       model: [null as string | null],
     });
+    this.displayHexFormGroup = this.fb.group({
+      displayHex: [false]
+    })
     this.validationForms = this.fb.group({ spec: this.enterSpecNameFormGroup });
 
     this.entityApiService.getConfiguration().subscribe((config) => {
       this.config = config;
+      var dispHexFg = this.displayHexFormGroup.get("displayHex");
+      this.displayHex = this.config.displayHex?this.config.displayHex:false;
+      if( dispHexFg )
+        dispHexFg.setValue( this.config.displayHex)
       this.specServices = new SpecificationServices(
         this.config.mqttdiscoverylanguage,
         this.entityApiService,
@@ -841,5 +853,10 @@ export class SpecificationComponent
   }
   getStatusText(status: SpecificationStatus | null): string {
     return SpecificationServices.getStatusText(status);
+  }
+  onDisplayHexChanged(event: MatSlideToggleChange){
+      this.displayHex = event.checked
+      this.config.displayHex = event.checked
+      this.entityApiService.postConfiguration(this.config).subscribe(()=>{})
   }
 }

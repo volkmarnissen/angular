@@ -78,14 +78,20 @@
                     <div class="flexrows">
                         <mat-form-field class="width100pt smallfield">
                             <mat-label>Modbus Addr.</mat-label>
-                            <input #entityModbusAddress matInput type="number" formControlName="modbusAddress"
-                                [errorStateMatcher]="errorStateMatcher" (change)="onModbusAddressChange()">
+                            <input #entityModbusAddress matInput hexFormater [displayHex] ="displayHex" type="text" formControlName="modbusAddress" 
+                                matTooltip="Please enter decimal (0-65536) or hexadecimal (0x123a) number"
+                                [errorStateMatcher]="errorStateMatcher" (change)="onModbusAddressChange()"
+                                (keypress)="onModbusAddressKeyPress($event)" >
                             <mat-error *ngIf="entityFormGroup.get('modbusAddress')!.hasError('required')">
                                 This field is required
                             </mat-error>
                             <mat-error
                                 *ngIf="entityFormGroup.get('modbusAddress')!.hasError('min')|| entityFormGroup.get('modbusAddress')!.hasError('max')">
                                 Range is 1-65536
+                            </mat-error>
+                            <mat-error
+                                *ngIf="entityFormGroup.get('modbusAddress')!.hasError('pattern')">
+                                dec or hex
                             </mat-error>
                         </mat-form-field>
                         <mat-form-field class="smallfield">
