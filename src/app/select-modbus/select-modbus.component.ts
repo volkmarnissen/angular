@@ -102,7 +102,7 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
   modbusIsRtu: boolean[] = [];
   busses: MatTableDataSource<IBus> = new MatTableDataSource<IBus>([]);
   bussesObservable = this.entityApiService.getBusses();
-  baudRates: Array<number> = [9600, 11200, 115700];
+  baudRates: Array<number> = [2400, 4800,9600, 11200, 115700];
   selectedBaudRate: number | undefined = undefined;
   @ViewChild("selectBaudRate") selectBaudRate: MatSelectionList;
   @Input() preselectedBusId: number | undefined = undefined;
