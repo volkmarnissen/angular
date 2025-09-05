@@ -2,6 +2,7 @@ import { ImodbusEntityWithName } from "angular/src/app/services/specificationInt
 import {
   afterEachEntityHelper,
   beforeEachHelper as beforeEachEntityHelper,
+  mountEntityComponent,
   setOnEntityNameOrVariableFieldsChangeFunc,
 } from "./support/entityHelper";
 
@@ -63,4 +64,17 @@ describe("Entity Component tests", () => {
     //cy.get('input[formControlName="name"]').should(
     //  "not.be.null");
   });
+});
+describe("Test for Modbus Address", () => {
+  beforeEach(()=>{mountEntityComponent(true)}); // mounts entity and opens all expansion panels
+  afterEach(afterEachEntityHelper);
+  it("Modbus address in hex", () => {
+    const inputField='input[formControlName="modbusAddress"]'
+    const matField='mat-form-field input[formControlName="modbusAddress"]'
+    cy.get(inputField).should('have.value', '0x4');
+    cy.get(inputField).clear().type('1234').blur().should('have.value', '0x4d2');
+    cy.get(inputField).clear().type('0X12s32').blur().should('have.value', '0x1232');
+    cy.get(inputField).clear().type('0xx7')
+    cy.get(inputField).parent().get( "mat-error").should('contain', 'dec or hex')
+  })
 });

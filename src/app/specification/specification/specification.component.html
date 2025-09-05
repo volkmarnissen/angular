@@ -10,6 +10,7 @@
 </div>
 
 <div class="flexrowsWrapWhenSmall">
+
   <mat-card class="card flex-align">
     <mat-card-header><mat-card-title><mat-icon
           [matTooltip]="getStatusText(currentSpecification?.status)">{{getStatusIcon(currentSpecification?.status)}}</mat-icon>{{getTranslatedSpecName()}}</mat-card-title>
@@ -80,11 +81,14 @@
     </mat-card-content>
   </mat-card>
   <div>
+    <form id="displaySettings" [formGroup]="displayHexFormGroup" class="flexcolumns">
+        <mat-slide-toggle (change)="onDisplayHexChanged($event)" formControlName="displayHex" >Display Modbus Addresses in Hex Format</mat-slide-toggle>
+        </form>
     <div class="flexrows flex-auto">
       @for ( entity of currentSpecification?.entities; track entity.id){
-      <app-entity [specificationMethods]="specificationMethods" [entity]="entity" [disabled]="disabled"></app-entity>
+      <app-entity [specificationMethods]="specificationMethods" [entity]="entity" [disabled]="disabled" [displayHex]="displayHex"></app-entity>
       }
-      <app-entity [specificationMethods]="specificationMethods" [disabled]="disabled"></app-entity>
+      <app-entity [specificationMethods]="specificationMethods" [disabled]="disabled" [displayHex]="displayHex" ></app-entity>
     </div>
   </div>
 </div>
