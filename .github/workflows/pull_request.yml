@@ -1,10 +1,5 @@
 name: Pull Request
 on:
-  workflow_dispatch:
-    inputs:
-      needsone:
-        required: false
-        type: string
   pull_request:
     types: [opened, reopened, edited]
 jobs:
