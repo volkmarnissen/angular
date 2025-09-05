@@ -1,14 +1,6 @@
 # Changelog for angular
 
-## [Unreleased](https://github.com/modbus2mqtt/angular/tree/HEAD)
-
-[Full Changelog](https://github.com/modbus2mqtt/angular/compare/v0.12.22...HEAD)
-
-**Merged pull requests:**
-
-- Enable Display and Input in Hex format for modbus Addresses [\#14](https://github.com/modbus2mqtt/angular/pull/14) ([volkmarnissen](https://github.com/volkmarnissen))
-
-## [v0.12.22](https://github.com/modbus2mqtt/angular/tree/v0.12.22) (2025-09-03)
+## [v0.12.19](https://github.com/volkmarnissen/angular/tree/v0.12.19) (2025-01-16)
 
 [Full Changelog](https://github.com/volkmarnissen/angular/compare/v0.12.18...v0.12.19)
 
